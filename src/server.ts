@@ -1,6 +1,7 @@
 import app from "./app";
 import logger from "silly-logger";
 import { PORT } from "./config/env";
+import "./config/database";
 
 logger.timeFormat("MMM Do YY - h:mm:ss a");
 
