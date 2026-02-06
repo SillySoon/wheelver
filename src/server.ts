@@ -1,10 +1,9 @@
 import app from "./app";
 import logger from "silly-logger";
+import { PORT } from "./config/env";
 
 logger.timeFormat("MMM Do YY - h:mm:ss a");
 
-const port = 3000;
-
-app.listen(port, () => {
-    logger.success(`🚀 Server running at http://localhost:${port}`);
+app.listen(PORT, () => {
+    logger.success(`🚀 Server running at http://localhost:${PORT}`);
 });
