@@ -9,5 +9,5 @@ mongoose
         logger.success("MongoDB connection successful!");
     })
     .catch((error: any) => {
-        logger.error(`Error connecting to MongoDB:m ${error}`);
+        logger.error(`Error connecting to MongoDB: ${error}`);
     });

@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/SillySoon/wheelver#readme",
   "devDependencies": {
+    "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/mongoose": "^5.11.96",
     "@types/node": "^25.2.1",
@@ -29,8 +30,10 @@
     "typescript": "^5.9.3"
   },
   "dependencies": {
+    "cors": "^2.8.6",
     "dotenv": "^17.2.4",
     "express": "^5.2.1",
+    "helmet": "^8.1.0",
     "mongoose": "^9.1.6",
     "silly-logger": "^1.3.1"
   }
