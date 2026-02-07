@@ -24,14 +24,27 @@ router.get("/", async (req, res) => {
 
 router.get("/dashboard", isAuthenticated, async (req, res) => {
     try {
-        const user = req.user; // User object is attached by isAuthenticated middleware
+        const user = (req.user as any).toObject(); // Convert Mongoose document to plain object
         if (!user) {
             return res.redirect("/login"); // Should not happen with isAuthenticated, but as a safeguard
         }
+        console.log("Dashboard user object:", user);
 
         const collections = await CollectionService.getCollections({ owner: user._id });
 
-        res.render("site/dashboard", { user, collections, error: null });
+        const collectionsWithCountAndImages = [];
+        for (const collection of collections) {
+            const totalCount = collection.hotwheels ? collection.hotwheels.length : 0;
+            await collection.populate({
+                path: 'hotwheels',
+                options: { limit: 4 }
+            });
+            const collectionObj = collection.toObject() as any;
+            collectionObj.totalHotwheelsCount = totalCount;
+            collectionsWithCountAndImages.push(collectionObj);
+        }
+
+        res.render("site/dashboard", { user, collections: collectionsWithCountAndImages, error: null });
     } catch (error) {
         console.error("Error loading dashboard:", error);
         res.status(500).render("site/dashboard", { user: req.user, collections: [], error: "Failed to load dashboard data." });

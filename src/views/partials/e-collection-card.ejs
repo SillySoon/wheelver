@@ -14,5 +14,12 @@
 
     <span class="e-collection-card__count"><%= typeof collection.totalHotwheelsCount !== 'undefined' ? collection.totalHotwheelsCount : (collection.hotwheels ? collection.hotwheels.length : 0) %> Hotwheels</span>
     
-    <a href="/c/<%= collection._id %>" class="a-button e-collection-card__button">View collection</a>
+    <% if (locals.isDashboardView) { %>
+        <div class="e-collection-card__action">
+            <a href="/dashboard/c/<%= collection._id %>" class="a-button">Edit</a>
+            <button class="a-button" data-id="<%= collection._id %>">Remove</button>
+        </div>
+    <% } else { %>
+        <a href="/c/<%= collection._id %>" class="a-button e-collection-card__button">View collection</a>
+    <% } %>
 </article>

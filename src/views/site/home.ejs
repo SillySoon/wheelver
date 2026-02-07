@@ -14,18 +14,18 @@
                 <h1 class="m-jumbotron__title">Showcase your<br>Hotwheel collections</h1>
                 <p class="m-jumbotron__description">Wheelver is your tool to build and share your collection with others!</p>
 
-                <form action="/" method="GET" id="user-search-section" class="a-user-search a-user-search--large">
-                    <input type="text" name="search" class="a-user-search__input" placeholder="Search for a user..." value="<%= search %>" minlength="2">
-                    <div class="a-user-search__results" style="<%= (users && users.length > 0) || (search && search.length >= 2) ? 'display: block;' : 'display: none;' %>">
+                <form action="/" method="GET" id="user-search-section" class="a-search a-search--large">
+                    <input type="text" name="search" class="a-search__input" placeholder="Search for a user..." value="<%= search %>" minlength="2">
+                    <div class="a-search__results" style="<%= (users && users.length > 0) || (search && search.length >= 2) ? 'display: block;' : 'display: none;' %>">
                         <% if (users && users.length > 0) { %>
                             <% users.forEach(user => { %>
-                                <div class="a-user-search__item" onclick="window.location.href='/u/<%= user._id %>'">
-                                    <strong class="a-user-search__item-name"><%= user.username || 'No username' %></strong>
-                                    <div class="a-user-search__item-id">ID: <%= user.discordId %></div>
+                                <div class="a-search__item" onclick="window.location.href='/u/<%= user._id %>'">
+                                    <strong class="a-search__item-name"><%= user.username || 'No username' %></strong>
+                                    <div class="a-search__item-id">ID: <%= user.discordId %></div>
                                 </div>
                             <% }); %>
                         <% } else if (search && search.length >= 2) { %>
-                            <div class="a-user-search__no-results">No users found</div>
+                            <div class="a-search__no-results">No users found</div>
                         <% } %>
                     </div>
                 </form>

@@ -8,10 +8,8 @@
 </head>
 <body>
 <div class="content-wrapper">
-    <%- include('../partials/header') %>
+    <%- include('../partials/header', { headerClass: 'm-header--colorful', noNavLinks: true }) %>
     <main class="l-container">
-        <h1>Dashboard</h1>
-
         <% if (error) { %>
             <section class="m-jumbotron">
                 <h2 class="m-jumbotron__title">Error</h2>
@@ -19,109 +17,49 @@
             </section>
         <% } %>
 
-        <div id="profile-section" class="card">
-            <h2>Your Profile</h2>
-            <div id="profile-data">
-                <p>Username: <%= user.username || 'Not set' %></p>
-                <p>ID: <%= user._id %></p>
-                <p>Discord ID: <%= user.discordId || 'Not linked' %></p>
+        <section class="m-user-info">
+            <h1><%= user.username %></h1>
+            <div class="e-stats">
+                <div class="e-stats__item">
+                    <p class="text--muffled">Collections</p>
+                    <span class="text"><%= collections.length %></span>
+                </div>
+                <div class="e-stats__item">
+                    <p class="text--muffled">Discord ID</p>
+                    <span class="text"><%= user.discordId || 'Not linked' %></span>
+                </div>
+                <div class="e-stats__item">
+                    <p class="text--muffled">Joined</p>
+                    <span class="text"><%= new Date(user.createdAt).toLocaleDateString() %></span>
+                </div>
             </div>
             <a href="/dashboard/u/<%= user._id %>" class="a-button">Edit Profile</a>
-        </div>
-        <div id="collections-section" class="card">
+        </section>
+
+        <section class="m-collection">
             <h2>Your Collections</h2>
-            <div id="collections-list">
-                <% if (collections && collections.length > 0) { %>
-                    <% collections.forEach(c => { %>
-                        <div class="collection-item flex-row">
-                            <span><a href="/c/<%= c._id %>" class="a-link"><%= c.name || 'Unnamed Collection' %></a></span>
-                            <div class="actions">
-                                <a href="/dashboard/c/<%= c._id %>" class="a-button">Edit</a>
-                                <button class="a-button remove-collection-btn" data-id="<%= c._id %>">Remove</button>
-                            </div>
-                        </div>
-                    <% }) %>
-                <% } else { %>
-                    <p>No collections found. Create one below!</p>
-                <% } %>
-            </div>
-            <form id="create-collection-form">
-                <div id="form-error-message" class="error"></div>
-                <input type="text" id="new-collection-name" placeholder="Collection Name" required
+            <form id="create-collection-form" class="m-collection__form" data-user-id="<%= user && user._id ? user._id : '' %>">
+                <input class="a-search__input" type="text" id="new-collection-name" placeholder="Collection Name" required
                        pattern="^[a-zA-Z0-9\-_& ]+$"
                        title="Only letters, numbers, spaces, -, _, and & are allowed.">
                 <button type="submit" class="a-button">Create Collection</button>
             </form>
-        </div>
+
+            <div id="form-error-message" class="error"></div>
+
+            <div class="m-collection__grid" id="collections-grid">
+                <% if (collections && collections.length > 0) { %>
+                    <% collections.forEach(collection => { %>
+                        <%- include('../partials/e-collection-card', { collection, isDashboardView: true }) %>
+                    <% }) %>
+                <% } else { %>
+                    <p>No collections found. Create one above!</p>
+                <% } %>
+            </div>
+        </section>
     </main>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            const createForm = document.getElementById('create-collection-form');
-            const nameInput = document.getElementById('new-collection-name');
-            const formErrorEl = document.getElementById('form-error-message');
-
-            const showError = (message) => {
-                if (formErrorEl) {
-                    formErrorEl.textContent = message;
-                }
-            };
-
-            const reloadCollections = () => {
-                window.location.reload(); // Simple reload to refresh collections after action
-            };
-
-            if (createForm && nameInput) {
-                createForm.onsubmit = async (e) => {
-                    e.preventDefault();
-                    const name = nameInput.value.trim();
-                    showError('');
-
-                    try {
-                        const response = await fetch('/api/collection', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({ name, owner: '<%= user._id %>' })
-                        });
-
-                        if (response.ok) {
-                            nameInput.value = '';
-                            reloadCollections();
-                        } else {
-                            const err = await response.json();
-                            showError('Error: ' + (err.message || 'Failed to create collection'));
-                        }
-                    } catch (err) {
-                        console.error(err);
-                        showError('Error creating collection');
-                    }
-                };
-            }
-
-            document.querySelectorAll('.remove-collection-btn').forEach(btn => {
-                btn.onclick = async () => {
-                    if (confirm('Are you sure you want to remove this collection? This cannot be undone.')) {
-                        try {
-                            const collectionId = btn.dataset.id;
-                            const response = await fetch(`/api/collection/${collectionId}`, {
-                                method: 'DELETE'
-                            });
-
-                            if (response.ok) {
-                                reloadCollections();
-                            } else {
-                                const err = await response.json();
-                                showError('Error: ' + (err.message || 'Failed to remove collection'));
-                            }
-                        } catch (err) {
-                            console.error(err);
-                            showError('Error removing collection');
-                        }
-                    }
-                };
-            });
-        });
-    </script>
+    <script src="/js/dashboard.js"></script>
 </div>
 </body>
 </html>

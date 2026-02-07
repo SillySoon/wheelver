@@ -59,3 +59,8 @@
     text-align: center;
     text-decoration: none;
 }
+
+.e-collection-card__action {
+    display: flex;
+    justify-content: space-between;
+}

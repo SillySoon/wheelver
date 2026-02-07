@@ -1,11 +1,11 @@
-.a-user-search {
+.a-search {
     position: relative;
     width: 100%;
     max-width: 300px;
     border-radius: 2000px;
 }
 
-.a-user-search__input {
+.a-search__input {
     width: 100%;
     padding: 0.5rem 1rem;
     border: none;
@@ -18,12 +18,12 @@
     box-sizing: border-box;
 }
 
-.a-user-search__input::placeholder {
+.a-search__input::placeholder {
     font-family: 'Poppins', serif;
     color: var(--text-primary);
 }
 
-.a-user-search__results {
+.a-search__results {
     position: absolute;
     top: calc(100% + 5px);
     left: 0;
@@ -36,7 +36,7 @@
     overflow-y: auto;
 }
 
-.a-user-search__item {
+.a-search__item {
     margin: 0.5rem;
     padding: 0.5rem;
     border-radius: 1rem;
@@ -45,36 +45,36 @@
     transition: background-color 0.2s;
 }
 
-.a-user-search__item:last-child {
+.a-search__item:last-child {
     border-bottom: none;
 }
 
-.a-user-search__item:hover {
+.a-search__item:hover {
     background-color: rgba(0, 0, 0, 0.1);
 }
 
-.a-user-search__item-name {
+.a-search__item-name {
     display: block;
     font-weight: bold;
     color: var(--text-primary);
 }
 
-.a-user-search__item-id {
+.a-search__item-id {
     font-size: 0.8em;
     color: var(--text-primary);
     opacity: 0.8;
 }
 
-.a-user-search__no-results {
+.a-search__no-results {
     padding: 10px 15px;
     color: var(--text-primary);
 }
 
-.a-user-search--large {
+.a-search--large {
     max-width: 400px;
 }
 
-.a-user-search--large .a-user-search__input {
+.a-search--large .a-search__input {
     padding: 0.75rem 1rem;
     font-size: 1rem;
 }

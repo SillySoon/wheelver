@@ -1,6 +1,6 @@
 function setupUserSearch(container) {
-    const searchInput = container.querySelector('.a-user-search__input');
-    const resultsDiv = container.querySelector('.a-user-search__results');
+    const searchInput = container.querySelector('.a-search__input');
+    const resultsDiv = container.querySelector('.a-search__results');
 
     if (!searchInput || !resultsDiv) return;
 
@@ -34,21 +34,21 @@ function setupUserSearch(container) {
                 
                 if (displayList.length > 0) {
                     resultsDiv.innerHTML = displayList.map(user => `
-                        <div class="a-user-search__item" data-id="${user._id}">
-                            <strong class="a-user-search__item-name">${user.username || 'No username'}</strong>
-                            <div class="a-user-search__item-id">ID: ${user.discordId}</div>
+                        <div class="a-search__item" data-id="${user._id}">
+                            <strong class="a-search__item-name">${user.username || 'No username'}</strong>
+                            <div class="a-search__item-id">ID: ${user.discordId}</div>
                         </div>
                     `).join('');
                     resultsDiv.style.display = 'block';
 
-                    resultsDiv.querySelectorAll('.a-user-search__item').forEach(item => {
+                    resultsDiv.querySelectorAll('.a-search__item').forEach(item => {
                         item.onclick = () => {
                             const id = item.dataset.id;
                             window.location.href = `/u/${id}`;
                         };
                     });
                 } else {
-                    resultsDiv.innerHTML = '<div class="a-user-search__no-results">No users found</div>';
+                    resultsDiv.innerHTML = '<div class="a-search__no-results">No users found</div>';
                     resultsDiv.style.display = 'block';
                 }
             } catch (err) {
@@ -66,5 +66,5 @@ function setupUserSearch(container) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.a-user-search').forEach(setupUserSearch);
+    document.querySelectorAll('.a-search').forEach(setupUserSearch);
 });

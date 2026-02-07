@@ -9,7 +9,7 @@
 }
 
 @media (max-width: 850px) {
-    .m-header .a-user-search {
+    .m-header .a-search {
         max-width: 200px;
     }
 }
