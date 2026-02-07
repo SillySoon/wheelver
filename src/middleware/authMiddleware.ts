@@ -28,19 +28,23 @@ export const isCollectionOwner = async (req: Request, res: Response, next: NextF
         return res.status(401).json({ message: "Unauthorized" });
     }
 
-    const user = req.user as any;
+    const userId = (req.user as any)._id.toString();
     const collectionId = req.params.id;
 
-    // Check if the collectionId is in the user's collections
-    // This assumes user.collections is an array of IDs or objects with _id
-    const hasCollection = user.collections.some((c: any) => {
-        const id = c._id ? c._id.toString() : c.toString();
-        return id === collectionId;
-    });
+    try {
+        const { Collection } = require('../models');
+        const collection = await Collection.findById(collectionId);
 
-    if (!hasCollection) {
-        return res.status(403).json({ message: "Forbidden: You do not own this collection" });
+        if (!collection) {
+            return res.status(404).json({ message: "Collection not found" });
+        }
+
+        if (collection.owner.toString() !== userId) {
+            return res.status(403).json({ message: "Forbidden: You do not own this collection" });
+        }
+
+        next();
+    } catch (error: any) {
+        return res.status(500).json({ message: error.message });
     }
-
-    next();
 };

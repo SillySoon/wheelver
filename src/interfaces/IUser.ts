@@ -6,6 +6,5 @@ export interface IUser extends Document{
     discordId: string;
     username?: string;
     isRegistered: boolean;
-    collections: Types.ObjectId[] | ICollection[];
     createdAt: Date;
 }

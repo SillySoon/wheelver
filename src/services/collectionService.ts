@@ -14,10 +14,10 @@ export const createCollection = async (collectionData: any) => {
     }
 }
 
-export const getCollections = async () => {
-    logRequest("Getting all collections");
+export const getCollections = async (filter: any = {}) => {
+    logRequest(`Getting collections with filter ${JSON.stringify(filter)}`);
     try {
-        return await Collection.find();
+        return await Collection.find(filter);
     } catch (error: any) {
         throw new Error(`Failed to get collections: ${error.message}`);
     }
@@ -26,17 +26,13 @@ export const getCollections = async () => {
 export const getCollection = async (id: string) => {
     logRequest(`Getting collection with id ${id}`);
     try {
-        const collection = await Collection.findById(id).populate({
-            path: 'hotwheels',
-            populate: { path: 'series' }
-        }).lean();
-
-        if (collection) {
-            const owner = await User.findOne({ collections: id }).select('username discordId').lean();
-            return { ...collection, owner };
-        }
-
-        return null;
+        return await Collection.findById(id)
+            .populate({
+                path: 'hotwheels',
+                populate: { path: 'series' }
+            })
+            .populate('owner', 'username discordId')
+            .lean();
     } catch (error: any) {
         throw new Error(`Failed to get collection: ${error.message}`);
     }

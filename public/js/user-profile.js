@@ -8,34 +8,38 @@ async function fetchUser() {
     }
 
     try {
-        const response = await fetch(`/api/user/${userId}`);
-        if (!response.ok) {
-            if (response.status === 404) {
+        const userResponse = await fetch(`/api/user/${userId}`);
+        if (!userResponse.ok) {
+            if (userResponse.status === 404) {
                 throw new Error('User not found');
             }
             throw new Error('Failed to fetch user information');
         }
-        const user = await response.json();
-        displayUser(user);
+        const user = await userResponse.json();
+
+        const collectionsResponse = await fetch(`/api/collection?owner=${userId}`);
+        const collections = collectionsResponse.ok ? await collectionsResponse.json() : [];
+
+        displayUser(user, collections);
     } catch (err) {
         showError(err.message);
     }
 }
 
-function displayUser(user) {
+function displayUser(user, collections) {
     document.getElementById('loading').classList.add('hidden');
     document.getElementById('user-content').classList.remove('hidden');
     
     document.getElementById('username').textContent = user.username;
     document.getElementById('discordId').textContent = user.discordId;
-    document.getElementById('collectionsCount').textContent = user.collections ? user.collections.length : 0;
+    document.getElementById('collectionsCount').textContent = collections ? collections.length : 0;
     document.getElementById('createdAt').textContent = new Date(user.createdAt).toLocaleDateString();
 
     const collectionsList = document.getElementById('collections-list');
     collectionsList.innerHTML = '';
     
-    if (user.collections && user.collections.length > 0) {
-        user.collections.forEach(collection => {
+    if (collections && collections.length > 0) {
+        collections.forEach(collection => {
             const li = document.createElement('li');
             const a = document.createElement('a');
             a.href = `/c/${collection._id}`;

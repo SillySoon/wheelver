@@ -8,6 +8,7 @@ async function fetchDashboardData() {
         const profileData = document.getElementById('profile-data');
         if (profileData) {
             profileData.innerHTML = `
+                <p>Username: ${user.username || 'Not set'}</p>
                 <p>ID: ${user._id}</p>
                 <p>Discord ID: ${user.discordId}</p>
                 <p>Registered: ${user.isRegistered ? 'Yes' : 'No'}</p>
@@ -23,8 +24,11 @@ async function fetchDashboardData() {
 
         const collectionsList = document.getElementById('collections-list');
         if (collectionsList) {
-            if (user.collections && user.collections.length > 0) {
-                collectionsList.innerHTML = user.collections.map(c => `
+            const collectionsResponse = await fetch(`/api/collection?owner=${user._id}`);
+            const collections = collectionsResponse.ok ? await collectionsResponse.json() : [];
+
+            if (collections && collections.length > 0) {
+                collectionsList.innerHTML = collections.map(c => `
                     <div>
                         <span>${c.name || 'Unnamed Collection'} (${c._id})</span>
                         <button onclick="window.location.href='/dashboard/c/${c._id}'">Edit</button>

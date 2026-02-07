@@ -24,7 +24,11 @@ export const createCollection = asyncHandler(async (req: Request, res: Response)
 export const getCollections = asyncHandler(async (req: Request, res: Response) => {
     logRequest("GET /collection");
     try {
-        const collections = await CollectionService.getCollections();
+        const filter: any = {};
+        if (req.query.owner) {
+            filter.owner = req.query.owner;
+        }
+        const collections = await CollectionService.getCollections(filter);
         return res.status(200).json(collections);
     } catch (error: any) {
         logWarning(`Error retrieving collections: ${error.message}`);

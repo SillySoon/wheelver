@@ -31,8 +31,7 @@ passport.use(new DiscordStrategy({
             if (!user) {
                 user = await User.create({
                     discordId: profile.id,
-                    isRegistered: false,
-                    collections: []
+                    isRegistered: false
                 });
             }
             return done(null, user as any);
