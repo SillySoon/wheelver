@@ -3,24 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wheelver - Choose Username</title>
+    <title>Wheelver - Login</title>
     <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
-    <%- include('../partials/header') %>
     <div class="content-wrapper">
-        <h1>Welcome to Wheelver!</h1>
-    <p>Please choose a username to complete your registration.</p>
-    <form action="/auth/register" method="POST">
-        <div>
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required minlength="3" maxlength="20">
-        </div>
-        <button type="submit" class="a-button">Complete Registration</button>
-    </form>
-    <div id="error-message" class="error"></div>
+        <%- include('../partials/header') %>
+        <section class="m-jumbotron">
+            <h1 class="m-jumbotron__title">Welcome to Wheelver!</h1>
+            <p class="m-jumbotron__description">Please choose a username to complete your registration.</p>
+            <form id="username-form" class="a-user-search" action="/auth/register" method="POST">
+                <div>
+                    <input class="a-user-search__input" type="text" id="username" name="username" required minlength="3" maxlength="20" placeholder="Enter your username">
+                </div>
+                <div id="error-message" class="error"></div>
+            </form>
 
-    <script src="/js/register.js"></script>
+            <button type="submit" form="username-form" class="a-button">Complete Registration</button>
+        </section>
     </div>
+    <script src="/js/register.js"></script>
 </body>
 </html>
+

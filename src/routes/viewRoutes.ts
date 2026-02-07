@@ -22,8 +22,20 @@ router.get("/", async (req, res) => {
     res.render("site/home", { users, search: search || "" });
 });
 
-router.get("/dashboard", isAuthenticated, (req, res) => {
-    res.render("site/dashboard");
+router.get("/dashboard", isAuthenticated, async (req, res) => {
+    try {
+        const user = req.user; // User object is attached by isAuthenticated middleware
+        if (!user) {
+            return res.redirect("/login"); // Should not happen with isAuthenticated, but as a safeguard
+        }
+
+        const collections = await CollectionService.getCollections({ owner: user._id });
+
+        res.render("site/dashboard", { user, collections, error: null });
+    } catch (error) {
+        console.error("Error loading dashboard:", error);
+        res.status(500).render("site/dashboard", { user: req.user, collections: [], error: "Failed to load dashboard data." });
+    }
 });
 
 router.get("/dashboard/u/:id", isOwner, (req, res) => {
