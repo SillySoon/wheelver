@@ -19,6 +19,16 @@
         <button type="submit">Save Changes</button>
     </form>
 
+    <div id="add-hotwheel-section" style="margin-top: 20px; border: 1px solid #ddd; padding: 15px;">
+        <h3>Add Hot Wheel to Collection</h3>
+        <div style="position: relative;">
+            <input type="text" id="hw-search-input" placeholder="Search by name or toy number..." style="width: 300px;">
+            <button id="add-hw-btn" disabled>Add</button>
+            <div id="search-results" style="position: absolute; background: white; border: 1px solid #ccc; width: 300px; display: none; z-index: 100; max-height: 200px; overflow-y: auto;"></div>
+        </div>
+        <p id="selected-hw-info" style="margin-top: 5px; font-style: italic;"></p>
+    </div>
+
     <div id="hotwheels-container">
         <h2>Hot Wheels in this Collection</h2>
         <div id="hotwheels-list">

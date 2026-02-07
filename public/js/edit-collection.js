@@ -25,6 +25,7 @@ async function fetchCollection() {
         document.getElementById('collection-name').value = collection.name;
 
         renderHotwheels(collection.hotwheels, collectionId);
+        setupSearch(collectionId);
 
         const form = document.getElementById('edit-collection-form');
         form.onsubmit = async (e) => {
@@ -104,6 +105,100 @@ function renderHotwheels(hotwheels, collectionId) {
             }
         };
     });
+}
+
+function setupSearch(collectionId) {
+    const searchInput = document.getElementById('hw-search-input');
+    const resultsDiv = document.getElementById('search-results');
+    const addButton = document.getElementById('add-hw-btn');
+    const selectedInfo = document.getElementById('selected-hw-info');
+
+    let selectedHw = null;
+    let debounceTimer;
+
+    searchInput.addEventListener('input', () => {
+        clearTimeout(debounceTimer);
+        const query = searchInput.value.trim();
+        
+        selectedHw = null;
+        addButton.disabled = true;
+        selectedInfo.textContent = '';
+
+        if (query.length < 2) {
+            resultsDiv.style.display = 'none';
+            return;
+        }
+
+        debounceTimer = setTimeout(async () => {
+            try {
+                const response = await fetch(`/api/hotwheel?search=${encodeURIComponent(query)}`);
+                if (!response.ok) throw new Error('Search failed');
+                const hotwheels = await response.json();
+                
+                // Show max 5
+                const displayList = hotwheels.slice(0, 5);
+                
+                if (displayList.length > 0) {
+                    resultsDiv.innerHTML = displayList.map(hw => `
+                        <div class="search-item" data-id="${hw._id}" style="padding: 5px; cursor: pointer; border-bottom: 1px solid #eee;">
+                            ${hw.name} (${hw.toyNumber})
+                        </div>
+                    `).join('');
+                    resultsDiv.style.display = 'block';
+
+                    resultsDiv.querySelectorAll('.search-item').forEach(item => {
+                        item.onclick = () => {
+                            const id = item.dataset.id;
+                            selectedHw = displayList.find(h => h._id === id);
+                            searchInput.value = selectedHw.name;
+                            selectedInfo.textContent = `Selected: ${selectedHw.name} (${selectedHw.toyNumber})`;
+                            addButton.disabled = false;
+                            resultsDiv.style.display = 'none';
+                        };
+                    });
+                } else {
+                    resultsDiv.innerHTML = '<div style="padding: 5px;">No results found</div>';
+                    resultsDiv.style.display = 'block';
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }, 300);
+    });
+
+    // Close results when clicking outside
+    document.addEventListener('click', (e) => {
+        if (e.target !== searchInput && e.target !== resultsDiv) {
+            resultsDiv.style.display = 'none';
+        }
+    });
+
+    addButton.onclick = async () => {
+        if (!selectedHw) return;
+
+        try {
+            const response = await fetch(`/api/collection/${collectionId}/hotwheel/${selectedHw._id}`, {
+                method: 'POST'
+            });
+
+            if (response.ok) {
+                const updatedCollection = await response.json();
+                renderHotwheels(updatedCollection.hotwheels, collectionId);
+                
+                // Reset search
+                searchInput.value = '';
+                selectedHw = null;
+                addButton.disabled = true;
+                selectedInfo.textContent = '';
+            } else {
+                const err = await response.json();
+                showError(err.message || 'Failed to add hotwheel');
+            }
+        } catch (err) {
+            console.error(err);
+            showError('Error adding hotwheel');
+        }
+    };
 }
 
 fetchCollection();
