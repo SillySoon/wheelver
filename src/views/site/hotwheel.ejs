@@ -3,51 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wheelver - Hot Wheel Info</title>
+    <title>Wheelver - <%= hotwheel ? hotwheel.name : 'Hotwheel Info' %></title>
     <link rel="stylesheet" href="/css/main.css">
-    <style>
-        .info-grid { display: grid; grid-template-columns: 150px 1fr; gap: 0.5rem; }
-        .label { font-weight: bold; }
-        .photo { max-width: 100%; height: auto; margin-top: 1rem; border-radius: 4px; }
-    </style>
 </head>
 <body>
-<%- include('../partials/header') %>
 <div class="content-wrapper">
-    <h1>Hot Wheel Details</h1>
-    <div id="loading">Loading hot wheel information...</div>
+    <%- include('../partials/header', { headerClass: 'm-header--colorful', noNavLinks: true }) %>
+    <main>
+        <% if (error) { %>
+            <section class="m-jumbotron">
+                <h1 class="m-jumbotron__title">Error</h1>
+                <p class="m-jumbotron__description"><%= error %></p>
+            </section>
+        <% } else if (hotwheel) { %>
+            <section class="m-user-info">
+                <h1><%= hotwheel.name %></h1>
+            </section>
 
-    <div id="hw-content" class="hidden">
-        <div class="hotwheel-info">
-            <h2 id="hw-name"></h2>
-            <div class="info-grid">
-                <div class="label">Series:</div>
-                <div id="hw-series"></div>
+            <div class="m-hotwheel-detail">
+                <div class="m-hotwheel-detail__image-wrapper">
+                    <img src="<%= hotwheel.photoUrl || '/images/default.jpg' %>" alt="<%= hotwheel.name %>" class="m-hotwheel-detail__img">
+                </div>
+                
+                <div class="m-hotwheel-detail__content">
+                    <h2>Specifications</h2>
+                    <div class="m-hotwheel-detail__info-grid">
+                        <div class="m-hotwheel-detail__label">Series</div>
+                        <div class="m-hotwheel-detail__value"><%= (hotwheel.series && hotwheel.series.name) ? hotwheel.series.name : 'N/A' %></div>
 
-                <div class="label">Series Number:</div>
-                <div id="hw-series-number"></div>
+                        <div class="m-hotwheel-detail__label">Series Number</div>
+                        <div class="m-hotwheel-detail__value"><%= hotwheel.seriesNumber || 'N/A' %></div>
 
-                <div class="label">Toy Number:</div>
-                <div id="hw-toy-number"></div>
+                        <div class="m-hotwheel-detail__label">Toy Number</div>
+                        <div class="m-hotwheel-detail__value"><%= hotwheel.toyNumber || 'N/A' %></div>
 
-                <div class="label">Col. Number:</div>
-                <div id="hw-col-number"></div>
+                        <div class="m-hotwheel-detail__label">Collector Number</div>
+                        <div class="m-hotwheel-detail__value"><%= hotwheel.colNumber || 'N/A' %></div>
 
-                <div class="label">Year:</div>
-                <div id="hw-year"></div>
+                        <div class="m-hotwheel-detail__label">Year</div>
+                        <div class="m-hotwheel-detail__value"><%= hotwheel.year || 'N/A' %></div>
 
-                <div class="label">Extra:</div>
-                <div id="hw-extra"></div>
+                        <% if (hotwheel.extra) { %>
+                            <div class="m-hotwheel-detail__label">Extra Info</div>
+                            <div class="m-hotwheel-detail__value"><%= hotwheel.extra %></div>
+                        <% } %>
+                    </div>
+                </div>
             </div>
-            <div id="hw-photo-container" class="hidden">
-                <img id="hw-photo" class="photo" src="" alt="Hot Wheel Photo">
-            </div>
-        </div>
-    </div>
-
-    <div id="error-message" class="error hidden"></div>
-
-    <script src="/js/hotwheel-profile.js"></script>
+        <% } %>
+    </main>
 </div>
 </body>
 </html>

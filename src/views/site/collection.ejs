@@ -3,31 +3,52 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wheelver - Collection Details</title>
+    <title>Wheelver - <%= collection ? collection.name : 'Collection Details' %></title>
     <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
-<%- include('../partials/header') %>
 <div class="content-wrapper">
-    <h1>Collection Details</h1>
-    <div id="loading">Loading collection information...</div>
+    <%- include('../partials/header', { headerClass: 'm-header--colorful', noNavLinks: true }) %>
+    <main class="l-container">
+        <% if (error) { %>
+            <section class="m-jumbotron">
+                <h1 class="m-jumbotron__title">Error</h1>
+                <p class="m-jumbotron__description"><%= error %></p>
+            </section>
+        <% } else if (collection) { %>
+            <section class="m-user-info">
+                <h1><%= collection.name %></h1>
+                <div class="e-stats">
+                    <div class="e-stats__item">
+                        <p class="text--muffled">Hotwheels</p>
+                        <span class="text"><%= collection.hotwheels ? collection.hotwheels.length : 0 %></span>
+                    </div>
+                    <div class="e-stats__item">
+                        <p class="text--muffled">Owner</p>
+                        <span class="text">
+                            <% if (collection.owner) { %>
+                                <a href="/u/<%= collection.owner._id || collection.owner %>" class="a-link text"><%= collection.owner.username || 'View Profile' %></a>
+                            <% } else { %>
+                                Unknown
+                            <% } %>
+                        </span>
+                    </div>
+                </div>
+            </section>
 
-    <div id="collection-content" class="hidden">
-        <div class="collection-info">
-            <p><strong>Name:</strong> <span id="collection-name"></span></p>
-            <p><strong>Owner:</strong> <span id="collection-owner"></span></p>
-            <p><strong>Hot Wheels Count:</strong> <span id="hotwheels-count"></span></p>
-        </div>
-
-        <h2>Hot Wheels</h2>
-        <div id="hotwheels-list" style="max-width: 422px;">
-            <!-- Hot Wheels will be inserted here -->
-        </div>
-    </div>
-
-    <div id="error-message" class="error hidden"></div>
-
-    <script src="/js/collection-profile.js"></script>
+            <section class="m-collection">
+                <div class="m-collection__grid">
+                    <% if (collection.hotwheels && collection.hotwheels.length > 0) { %>
+                        <% collection.hotwheels.forEach(hotwheel => { %>
+                            <%- include('../partials/e-hotwheel-card', { hotwheel }) %>
+                        <% }); %>
+                    <% } else { %>
+                        <p>No Hot Wheels in this collection yet.</p>
+                    <% } %>
+                </div>
+            </section>
+        <% } %>
+    </main>
 </div>
 </body>
 </html>

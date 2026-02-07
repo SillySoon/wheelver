@@ -3,6 +3,7 @@ import { Router } from "express";
 import { isAuthenticated, isOwner, isCollectionOwner } from "../middleware/authMiddleware";
 import * as UserService from "../services/userService";
 import * as CollectionService from "../services/collectionService";
+import * as HotwheelService from "../services/hotwheelService";
 import { isValidObjectId } from "../utils/validation";
 
 const router: Router = Router();
@@ -65,12 +66,44 @@ router.get("/u/:id", async (req, res) => {
     }
 });
 
-router.get("/c/:id", (req, res) => {
-    res.render("site/collection");
+router.get("/c/:id", async (req, res) => {
+    const collectionId = req.params.id;
+
+    if (!isValidObjectId(collectionId)) {
+        return res.status(400).render("site/collection", { error: "Invalid Collection ID", collection: null });
+    }
+
+    try {
+        const collection = await CollectionService.getCollection(collectionId);
+        if (!collection) {
+            return res.status(404).render("site/collection", { error: "Collection not found", collection: null });
+        }
+
+        res.render("site/collection", { collection, error: null });
+    } catch (error) {
+        console.error("Error loading collection:", error);
+        res.status(500).render("site/collection", { error: "Failed to load collection", collection: null });
+    }
 });
 
-router.get("/hw/:id", (req, res) => {
-    res.render("site/hotwheel");
+router.get("/hw/:id", async (req, res) => {
+    const hotwheelId = req.params.id;
+
+    if (!isValidObjectId(hotwheelId)) {
+        return res.status(400).render("site/hotwheel", { error: "Invalid Hotwheel ID", hotwheel: null });
+    }
+
+    try {
+        const hotwheel = await HotwheelService.getHotwheel(hotwheelId);
+        if (!hotwheel) {
+            return res.status(404).render("site/hotwheel", { error: "Hotwheel not found", hotwheel: null });
+        }
+
+        res.render("site/hotwheel", { hotwheel, error: null });
+    } catch (error) {
+        console.error("Error loading hotwheel:", error);
+        res.status(500).render("site/hotwheel", { error: "Failed to load hotwheel", hotwheel: null });
+    }
 });
 
 export default router;

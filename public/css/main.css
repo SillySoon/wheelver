@@ -6,11 +6,13 @@
 @import url("../css/element/navigation.css");
 @import url("../css/element/stats.css");
 @import url("../css/element/collection-card.css");
+@import url("../css/element/hotwheel-card.css");
 
 @import url("../css/module/header.css");
 @import url("../css/module/jumbotron.css");
 @import url("../css/module/user-info.css");
 @import url("../css/module/collection.css");
+@import url("../css/module/hotwheel-detail.css");
 
 @import url("../css/taxonomy.css");
 
