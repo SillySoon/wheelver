@@ -34,12 +34,10 @@ function displayHotwheel(hw) {
     document.getElementById('hw-year').textContent = hw.year || 'N/A';
     document.getElementById('hw-extra').textContent = hw.extra || 'None';
 
-    if (hw.photoUrl) {
-        const photoContainer = document.getElementById('hw-photo-container');
-        const photoImg = document.getElementById('hw-photo');
-        photoImg.src = hw.photoUrl;
-        photoContainer.classList.remove('hidden');
-    }
+    const photoContainer = document.getElementById('hw-photo-container');
+    const photoImg = document.getElementById('hw-photo');
+    photoImg.src = hw.photoUrl || '/images/default.jpg';
+    photoContainer.classList.remove('hidden');
 }
 
 function showError(message) {

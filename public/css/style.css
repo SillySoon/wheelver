@@ -10,6 +10,25 @@ input { padding: 5px; margin-bottom: 5px; }
 .actions { display: flex; gap: 5px; }
 .collection-item, .hotwheel-item { border: 1px solid #ccc; padding: 10px; margin-bottom: 5px; border-radius: 4px; max-width: 400px; display: block; }
 
+.hotwheel-item {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.hw-preview {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 4px;
+    border: 1px solid #eee;
+    flex-shrink: 0;
+}
+
+.hw-info {
+    flex-grow: 1;
+}
+
 .demo-banner {
     background-color: #f55555;
     color: #ffffff;

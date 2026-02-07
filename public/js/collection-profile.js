@@ -48,13 +48,17 @@ function displayCollection(collection) {
             card.className = 'hotwheel-item';
             
             const seriesName = hw.series ? hw.series.name : 'Unknown Series';
+            const photoUrl = hw.photoUrl || '/images/default.jpg';
             
             card.innerHTML = `
-                <div class="flex-row">
-                    <strong><a href="/hw/${hw._id}">${hw.name}</a></strong>
-                    <span>(${hw.toyNumber || 'N/A'})</span>
+                <img src="${photoUrl}" alt="${hw.name}" class="hw-preview">
+                <div class="hw-info">
+                    <div class="flex-row">
+                        <strong><a href="/hw/${hw._id}">${hw.name}</a></strong>
+                        <span>(${hw.toyNumber || 'N/A'})</span>
+                    </div>
+                    <div>${seriesName} (${hw.seriesNumber || 'N/A'}) - ${hw.year || 'N/A'}</div>
                 </div>
-                <div>${seriesName} (${hw.seriesNumber || 'N/A'}) - ${hw.year || 'N/A'}</div>
             `;
             listContainer.appendChild(card);
         });

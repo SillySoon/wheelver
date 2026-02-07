@@ -74,14 +74,20 @@ function renderHotwheels(hotwheels, collectionId) {
         return;
     }
 
-    list.innerHTML = hotwheels.map(hw => `
-        <div class="hotwheel-item flex-row">
-            <div>
-                <strong>${hw.name}</strong> (${hw.toyNumber}) - ${hw.series?.name || 'No Series'}
+    list.innerHTML = hotwheels.map(hw => {
+        const photoUrl = hw.photoUrl || '/images/default.jpg';
+        return `
+        <div class="hotwheel-item">
+            <img src="${photoUrl}" alt="${hw.name}" class="hw-preview">
+            <div class="hw-info">
+                <div class="flex-row">
+                    <strong>${hw.name}</strong>
+                    <button class="remove-hw-btn" data-hw-id="${hw._id}">Remove</button>
+                </div>
+                <div>(${hw.toyNumber}) - ${hw.series?.name || 'No Series'}</div>
             </div>
-            <button class="remove-hw-btn" data-hw-id="${hw._id}">Remove</button>
         </div>
-    `).join('');
+    `}).join('');
 
     list.querySelectorAll('.remove-hw-btn').forEach(btn => {
         btn.onclick = async () => {
@@ -139,11 +145,17 @@ function setupSearch(collectionId) {
                 const displayList = hotwheels.slice(0, 5);
                 
                 if (displayList.length > 0) {
-                    resultsDiv.innerHTML = displayList.map(hw => `
-                        <div class="search-item" data-id="${hw._id}" style="padding: 5px; cursor: pointer; border-bottom: 1px solid #eee;">
-                            ${hw.name} (${hw.toyNumber})
+                    resultsDiv.innerHTML = displayList.map(hw => {
+                        const photoUrl = hw.photoUrl || '/images/default.jpg';
+                        return `
+                        <div class="search-item" data-id="${hw._id}" style="padding: 5px; cursor: pointer; border-bottom: 1px solid #eee; display: flex; align-items: center; gap: 10px;">
+                            <img src="${photoUrl}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
+                            <div>
+                                <div>${hw.name}</div>
+                                <div style="font-size: 0.8em; color: #666;">(${hw.toyNumber}) - ${hw.series?.name || 'No Series'}</div>
+                            </div>
                         </div>
-                    `).join('');
+                    `}).join('');
                     resultsDiv.style.display = 'block';
 
                     resultsDiv.querySelectorAll('.search-item').forEach(item => {
