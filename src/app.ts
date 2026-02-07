@@ -13,8 +13,13 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static(path.join("public")));
 app.get("/", (req, res) => {
-    res.json({ message: "Hello from Express + TypeScript!" });
+    res.sendFile(path.join(__dirname, "views", "index.html"));
 });
 app.use("/api", apiRoutes);
+
+// 404 Not Found Handler
+app.use((req, res) => {
+    res.status(404).sendFile(path.join(__dirname, "views", "404", "index.html"));
+});
 
 export default app;
