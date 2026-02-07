@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wheelver - Collection Details</title>
+    <style>
+        body { font-family: sans-serif; margin: 2rem; line-height: 1.5; }
+        .collection-info { border-bottom: 2px solid #eee; padding-bottom: 1rem; margin-bottom: 1.5rem; }
+        .hotwheel-card { border: 1px solid #ccc; padding: 1rem; border-radius: 8px; margin-bottom: 1rem; }
+        .hotwheel-card h3 { margin-top: 0; }
+        .error { color: red; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <h1>Collection Details</h1>
+    <div id="loading">Loading collection information...</div>
+    
+    <div id="collection-content" class="hidden">
+        <div class="collection-info">
+            <p><strong>Name:</strong> <span id="collection-name"></span></p>
+            <p><strong>Owner:</strong> <span id="collection-owner"></span></p>
+            <p><strong>Hot Wheels Count:</strong> <span id="hotwheels-count"></span></p>
+        </div>
+
+        <h2>Hot Wheels List</h2>
+        <div id="hotwheels-list">
+            <!-- Hot Wheels will be inserted here -->
+        </div>
+    </div>
+
+    <div id="error-message" class="error hidden"></div>
+    <p><a href="/">Back to Home</a></p>
+
+    <script src="/js/collection-profile.js"></script>
+</body>
+</html>

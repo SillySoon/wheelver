@@ -17,13 +17,7 @@ export const createUser = async (userData: any) => {
 export const getUsers = async () => {
     logRequest("Getting all users");
     try {
-        return await User.find().populate({
-            path: "collections",
-            populate: {
-                path: "hotwheels",
-                populate: { path: "series" }
-            }
-        });
+        return await User.find();
     } catch (error: any) {
         throw new Error(`Failed to get users: ${error.message}`);
     }

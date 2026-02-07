@@ -1,6 +1,6 @@
 // src/services/collectionService.ts
 import { createLogger } from "../utils/logger";
-import { Collection, Hotwheel } from "../models";
+import { Collection, Hotwheel, User } from "../models";
 
 const { logRequest } = createLogger("COLLECTION_SERVICE", "cyan");
 
@@ -17,10 +17,7 @@ export const createCollection = async (collectionData: any) => {
 export const getCollections = async () => {
     logRequest("Getting all collections");
     try {
-        return await Collection.find().populate({
-            path: 'hotwheels',
-            populate: { path: 'series' }
-        });
+        return await Collection.find();
     } catch (error: any) {
         throw new Error(`Failed to get collections: ${error.message}`);
     }
@@ -29,10 +26,17 @@ export const getCollections = async () => {
 export const getCollection = async (id: string) => {
     logRequest(`Getting collection with id ${id}`);
     try {
-        return await Collection.findById(id).populate({
+        const collection = await Collection.findById(id).populate({
             path: 'hotwheels',
             populate: { path: 'series' }
-        });
+        }).lean();
+
+        if (collection) {
+            const owner = await User.findOne({ collections: id }).select('username discordId').lean();
+            return { ...collection, owner };
+        }
+
+        return null;
     } catch (error: any) {
         throw new Error(`Failed to get collection: ${error.message}`);
     }

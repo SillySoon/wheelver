@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wheelver - User Profile</title>
+    <style>
+        body { font-family: sans-serif; margin: 2rem; }
+        .user-info { border: 1px solid #ccc; padding: 1rem; border-radius: 8px; max-width: 400px; }
+        .error { color: red; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <h1>User Profile</h1>
+    <div id="loading">Loading user information...</div>
+    <div id="user-content" class="hidden">
+        <div class="user-info">
+            <p><strong>Username:</strong> <span id="username"></span></p>
+            <p><strong>Discord ID:</strong> <span id="discordId"></span></p>
+            <p><strong>Collections Count:</strong> <span id="collectionsCount"></span></p>
+            <p><strong>Joined:</strong> <span id="createdAt"></span></p>
+        </div>
+    </div>
+    <div id="error-message" class="error hidden"></div>
+    <p><a href="/">Back to Home</a></p>
+
+    <script src="/js/user-profile.js"></script>
+</body>
+</html>

@@ -15,6 +15,12 @@ app.use(express.static(path.join("public")));
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "views", "index.html"));
 });
+app.get("/u/:id", (req, res) => {
+    res.sendFile(path.join(__dirname, "views", "u", "index.html"));
+});
+app.get("/c/:id", (req, res) => {
+    res.sendFile(path.join(__dirname, "views", "c", "index.html"));
+});
 app.use("/api", apiRoutes);
 
 // 404 Not Found Handler
