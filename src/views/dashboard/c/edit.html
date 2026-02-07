@@ -10,6 +10,7 @@
     <script src="/js/header-loader.js"></script>
     <h1>Edit Collection</h1>
     <div id="error-message" style="color: red;"></div>
+    <div id="owner-info"></div>
     <form id="edit-collection-form">
         <label for="collection-name">Collection Name:</label>
         <input type="text" id="collection-name" name="name" required
@@ -17,6 +18,13 @@
             title="Only letters, numbers, spaces, -, _, and & are allowed.">
         <button type="submit">Save Changes</button>
     </form>
+
+    <div id="hotwheels-container">
+        <h2>Hot Wheels in this Collection</h2>
+        <div id="hotwheels-list">
+            <p>Loading hotwheels...</p>
+        </div>
+    </div>
 
     <script src="/js/edit-collection.js"></script>
 </body>

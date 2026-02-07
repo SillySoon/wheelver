@@ -30,7 +30,9 @@ function displayCollection(collection) {
     
     const ownerEl = document.getElementById('collection-owner');
     if (collection.owner) {
-        ownerEl.textContent = `${collection.owner.username} (${collection.owner.discordId})`;
+        const ownerName = collection.owner.username || 'Unknown';
+        const ownerId = collection.owner._id || collection.owner;
+        ownerEl.innerHTML = `<a href="/u/${ownerId}">${ownerName}</a> (${collection.owner.discordId})`;
     } else {
         ownerEl.textContent = 'Unknown';
     }
