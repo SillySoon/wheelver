@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wheelver - Hot Wheel Info</title>
+    <style>
+        body { font-family: sans-serif; margin: 2rem; line-height: 1.5; }
+        .hotwheel-info { border: 1px solid #ccc; padding: 1.5rem; border-radius: 8px; max-width: 600px; }
+        .hotwheel-info h2 { margin-top: 0; }
+        .info-grid { display: grid; grid-template-columns: 150px 1fr; gap: 0.5rem; }
+        .label { font-weight: bold; }
+        .error { color: red; }
+        .hidden { display: none; }
+        .photo { max-width: 100%; height: auto; margin-top: 1rem; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <h1>Hot Wheel Details</h1>
+    <div id="loading">Loading hot wheel information...</div>
+    
+    <div id="hw-content" class="hidden">
+        <div class="hotwheel-info">
+            <h2 id="hw-name"></h2>
+            <div class="info-grid">
+                <div class="label">Series:</div>
+                <div id="hw-series"></div>
+                
+                <div class="label">Series Number:</div>
+                <div id="hw-series-number"></div>
+                
+                <div class="label">Toy Number:</div>
+                <div id="hw-toy-number"></div>
+                
+                <div class="label">Col. Number:</div>
+                <div id="hw-col-number"></div>
+                
+                <div class="label">Year:</div>
+                <div id="hw-year"></div>
+                
+                <div class="label">Extra:</div>
+                <div id="hw-extra"></div>
+            </div>
+            <div id="hw-photo-container" class="hidden">
+                <img id="hw-photo" class="photo" src="" alt="Hot Wheel Photo">
+            </div>
+        </div>
+    </div>
+
+    <div id="error-message" class="error hidden"></div>
+    <p><a href="/">Back to Home</a></p>
+
+    <script src="/js/hotwheel-profile.js"></script>
+</body>
+</html>
