@@ -23,8 +23,9 @@ export const createHotwheel = asyncHandler(async (req: Request, res: Response) =
 
 export const getHotwheels = asyncHandler(async (req: Request, res: Response) => {
     logRequest("GET /hotwheel");
+    const search = (req.query.query || req.query.search) as string;
     try {
-        const hotwheels = await HotwheelService.getHotwheels();
+        const hotwheels = await HotwheelService.getHotwheels(search);
         return res.status(200).json(hotwheels);
     } catch (error: any) {
         logWarning(`Error retrieving hotwheels: ${error.message}`);

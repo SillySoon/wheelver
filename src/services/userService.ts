@@ -14,10 +14,19 @@ export const createUser = async (userData: any) => {
     }
 };
 
-export const getUsers = async () => {
-    logRequest("Getting all users");
+export const getUsers = async (search?: string) => {
+    logRequest("Getting all users" + (search ? ` with search: ${search}` : ""));
     try {
-        return await User.find();
+        let query = {};
+        if (search) {
+            query = {
+                $or: [
+                    { username: { $regex: search, $options: "i" } },
+                    { discordId: { $regex: search, $options: "i" } }
+                ]
+            };
+        }
+        return await User.find(query);
     } catch (error: any) {
         throw new Error(`Failed to get users: ${error.message}`);
     }

@@ -14,10 +14,19 @@ export const createHotwheel = async (hotwheelData: any) => {
     }
 };
 
-export const getHotwheels = async () => {
-    logRequest("Getting all hotwheels");
+export const getHotwheels = async (search?: string) => {
+    logRequest("Getting all hotwheels" + (search ? ` with search: ${search}` : ""));
     try {
-        return await Hotwheel.find().populate('series');
+        let query = {};
+        if (search) {
+            query = {
+                $or: [
+                    { name: { $regex: search, $options: "i" } },
+                    { toyNumber: { $regex: search, $options: "i" } }
+                ]
+            };
+        }
+        return await Hotwheel.find(query).populate('series');
     } catch (error: any) {
         throw new Error(`Failed to get hotwheels: ${error.message}`);
     }

@@ -23,8 +23,9 @@ export const createUser = asyncHandler(async (req: Request, res: Response) => {
 
 export const getUsers = asyncHandler(async (req: Request, res: Response) => {
     logRequest("GET /user");
+    const search = (req.query.query || req.query.search) as string;
     try {
-        const users = await UserService.getUsers();
+        const users = await UserService.getUsers(search);
         return res.status(200).json(users);
     } catch (error: any) {
         logWarning(`Error retrieving users: ${error.message}`);
