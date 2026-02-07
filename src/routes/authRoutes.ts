@@ -1,7 +1,6 @@
 // src/routes/authRoutes.ts
 import { Router } from 'express';
 import passport from 'passport';
-import path from 'path';
 import User from '../models/User';
 import { IUser } from '../interfaces/IUser';
 
@@ -32,7 +31,7 @@ router.get('/register', (req, res) => {
     if (user.isRegistered) {
         return res.redirect('/');
     }
-    res.sendFile(path.join(__dirname, '..', 'views', 'auth', 'register.html'));
+    res.render('auth/register');
 });
 
 router.post('/register', async (req, res) => {
@@ -75,7 +74,7 @@ router.get('/login', (req, res) => {
             return res.redirect('/auth/register');
         }
     }
-    res.sendFile(path.join(__dirname, '..', 'views', 'auth', 'login.html'));
+    res.render('auth/login');
 });
 
 // Logout route

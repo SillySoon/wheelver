@@ -4,15 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wheelver - Collection Details</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
-    <div id="header-container"></div>
-    <script src="/js/header-loader.js"></script>
-    <div class="content-wrapper">
-        <h1>Collection Details</h1>
+<%- include('../partials/header') %>
+<div class="content-wrapper">
+    <h1>Collection Details</h1>
     <div id="loading">Loading collection information...</div>
-    
+
     <div id="collection-content" class="hidden">
         <div class="collection-info">
             <p><strong>Name:</strong> <span id="collection-name"></span></p>
@@ -29,6 +28,6 @@
     <div id="error-message" class="error hidden"></div>
 
     <script src="/js/collection-profile.js"></script>
-    </div>
+</div>
 </body>
 </html>

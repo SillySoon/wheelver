@@ -1,0 +1,8 @@
+.e-navigation__list {
+    margin: 0;
+    padding: 0;
+}
+
+.e-navigation__item {
+    list-style: none;
+}

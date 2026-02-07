@@ -1,0 +1,30 @@
+<header class="m-header">
+    <div class="m-header__wrapper">
+        <a class="a-logo" href="/">Wheelver</a>
+        <nav class="e-navigation">
+            <ul class="e-navigation__list">
+                <li class="e-navigation__item">
+                    <a class="a-link" href="/">Discord</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <div class="m-header__wrapper">
+        <div class="a-user-search">
+            <input type="text" class="a-user-search__input" placeholder="Search for a user...">
+            <div class="a-user-search__results" style="display: none;"></div>
+        </div>
+        <div id="auth-links">
+            <% if (user) { %>
+                <a href="/dashboard" id="dashboard-link">
+                    <button class="a-button">Dashboard</button>
+                </a>
+            <% } else { %>
+                <a href="/auth/login" id="login-link">
+                    <button class="a-button">Login</button>
+                </a>
+            <% } %>
+        </div>
+    </div>
+</header>
+<script src="/js/user-search.js"></script>

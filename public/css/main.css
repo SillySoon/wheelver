@@ -1,0 +1,52 @@
+@import url("../css/atom/logo.css");
+@import url("../css/atom/link.css");
+@import url("../css/atom/button.css");
+@import url("../css/atom/user-search.css");
+
+@import url("../css/element/navigation.css");
+
+@import url("../css/module/header.css");
+@import url("../css/module/jumbotron.css");
+
+:root {
+    --bg-primary: #f1ffe7;
+
+
+    --text-primary: #20381d;
+    --text-secondary: #376032;
+    --text-colorful: #90eb88;
+    --text-muted: #757068;
+}
+
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-family: sans-serif;
+    margin: 0;
+}
+
+.content-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+@media (max-width: 1200px) {
+    .content-wrapper {
+        margin-inline: 2rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .content-wrapper {
+        margin-inline: 1rem;
+    }
+}
+
+.demo-banner {
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+    background-color: var(--bg-primary);
+    color: #db3838;
+}

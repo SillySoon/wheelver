@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wheelver - Hot Wheel Info</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/main.css">
     <style>
         .info-grid { display: grid; grid-template-columns: 150px 1fr; gap: 0.5rem; }
         .label { font-weight: bold; }
@@ -12,31 +12,30 @@
     </style>
 </head>
 <body>
-    <div id="header-container"></div>
-    <script src="/js/header-loader.js"></script>
-    <div class="content-wrapper">
-        <h1>Hot Wheel Details</h1>
+<%- include('../partials/header') %>
+<div class="content-wrapper">
+    <h1>Hot Wheel Details</h1>
     <div id="loading">Loading hot wheel information...</div>
-    
+
     <div id="hw-content" class="hidden">
         <div class="hotwheel-info">
             <h2 id="hw-name"></h2>
             <div class="info-grid">
                 <div class="label">Series:</div>
                 <div id="hw-series"></div>
-                
+
                 <div class="label">Series Number:</div>
                 <div id="hw-series-number"></div>
-                
+
                 <div class="label">Toy Number:</div>
                 <div id="hw-toy-number"></div>
-                
+
                 <div class="label">Col. Number:</div>
                 <div id="hw-col-number"></div>
-                
+
                 <div class="label">Year:</div>
                 <div id="hw-year"></div>
-                
+
                 <div class="label">Extra:</div>
                 <div id="hw-extra"></div>
             </div>
@@ -49,6 +48,6 @@
     <div id="error-message" class="error hidden"></div>
 
     <script src="/js/hotwheel-profile.js"></script>
-    </div>
+</div>
 </body>
 </html>

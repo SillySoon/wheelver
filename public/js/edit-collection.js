@@ -82,7 +82,7 @@ function renderHotwheels(hotwheels, collectionId) {
             <div class="hw-info">
                 <div class="flex-row">
                     <strong>${hw.name}</strong>
-                    <button class="remove-hw-btn" data-hw-id="${hw._id}">Remove</button>
+                    <button class="a-button remove-hw-btn" data-hw-id="${hw._id}">Remove</button>
                 </div>
                 <div>(${hw.toyNumber}) - ${hw.series?.name || 'No Series'}</div>
             </div>

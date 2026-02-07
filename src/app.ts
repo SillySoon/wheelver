@@ -36,6 +36,14 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use((req, res, next) => {
+    res.locals.user = req.user;
+    next();
+});
+
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+
 app.use(express.static(path.join("public")));
 app.use("/", viewRoutes);
 app.use("/auth", authRoutes);
@@ -43,7 +51,7 @@ app.use("/api", apiRoutes);
 
 // 404 Not Found Handler
 app.use((req, res) => {
-    res.status(404).sendFile(path.join(__dirname, "views", "404", "index.html"));
+    res.status(404).render("site/404");
 });
 
 export default app;

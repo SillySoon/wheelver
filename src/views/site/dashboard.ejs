@@ -4,17 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wheelver - Dashboard</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
-    <div id="header-container"></div>
-    <script src="/js/header-loader.js"></script>
-    <div class="content-wrapper">
-        <h1>Dashboard</h1>
+<%- include('../partials/header') %>
+<div class="content-wrapper">
+    <h1>Dashboard</h1>
     <div id="profile-section" class="card">
         <h2>Your Profile</h2>
         <div id="profile-data">Loading profile...</div>
-        <button id="edit-profile-btn">Edit Profile</button>
+        <button id="edit-profile-btn" class="a-button">Edit Profile</button>
     </div>
     <div id="collections-section" class="card">
         <h2>Your Collections</h2>
@@ -22,13 +21,13 @@
         <form id="create-collection-form">
             <div id="error-message" class="error"></div>
             <input type="text" id="new-collection-name" placeholder="Collection Name" required
-                pattern="^[a-zA-Z0-9\-_& ]+$"
-                title="Only letters, numbers, spaces, -, _, and & are allowed.">
-            <button type="submit">Create Collection</button>
+                   pattern="^[a-zA-Z0-9\-_& ]+$"
+                   title="Only letters, numbers, spaces, -, _, and & are allowed.">
+            <button type="submit" class="a-button">Create Collection</button>
         </form>
     </div>
 
     <script src="/js/dashboard.js"></script>
-    </div>
+</div>
 </body>
 </html>

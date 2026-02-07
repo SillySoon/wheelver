@@ -4,11 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wheelver - Choose Username</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
-    <div id="header-container"></div>
-    <script src="/js/header-loader.js"></script>
+    <%- include('../partials/header') %>
     <div class="content-wrapper">
         <h1>Welcome to Wheelver!</h1>
     <p>Please choose a username to complete your registration.</p>
@@ -17,7 +16,7 @@
             <label for="username">Username:</label>
             <input type="text" id="username" name="username" required minlength="3" maxlength="20">
         </div>
-        <button type="submit">Complete Registration</button>
+        <button type="submit" class="a-button">Complete Registration</button>
     </form>
     <div id="error-message" class="error"></div>
 

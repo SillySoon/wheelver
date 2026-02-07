@@ -4,28 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Collection</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
-    <div id="header-container"></div>
-    <script src="/js/header-loader.js"></script>
-    <div class="content-wrapper">
-        <h1>Edit Collection</h1>
+<%- include('../partials/header') %>
+<div class="content-wrapper">
+    <h1>Edit Collection</h1>
     <div id="error-message" class="error"></div>
     <div id="owner-info"></div>
     <form id="edit-collection-form">
         <label for="collection-name">Collection Name:</label>
         <input type="text" id="collection-name" name="name" required
-            pattern="^[a-zA-Z0-9\-_& ]+$"
-            title="Only letters, numbers, spaces, -, _, and & are allowed.">
-        <button type="submit">Save Changes</button>
+               pattern="^[a-zA-Z0-9\-_& ]+$"
+               title="Only letters, numbers, spaces, -, _, and & are allowed.">
+        <button type="submit" class="a-button">Save Changes</button>
     </form>
 
     <div id="add-hotwheel-section" class="card" style="margin-top: 20px;">
         <h3>Add Hot Wheel to Collection</h3>
         <div style="position: relative;">
             <input type="text" id="hw-search-input" placeholder="Search by name or toy number..." style="width: 300px;">
-            <button id="add-hw-btn" disabled>Add</button>
+            <button id="add-hw-btn" class="a-button" disabled>Add</button>
             <div id="search-results" style="position: absolute; background: white; border: 1px solid #ccc; width: 300px; display: none; z-index: 100; max-height: 200px; overflow-y: auto;"></div>
         </div>
         <p id="selected-hw-info" style="margin-top: 5px; font-style: italic;"></p>
@@ -39,6 +38,6 @@
     </div>
 
     <script src="/js/edit-collection.js"></script>
-    </div>
+</div>
 </body>
 </html>

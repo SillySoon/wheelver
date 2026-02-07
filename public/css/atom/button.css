@@ -1,0 +1,15 @@
+.a-button {
+    background-color: var(--text-primary);
+    color: var(--bg-primary);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 2000px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: background-color 0.2s;
+}
+
+.a-button:hover {
+    background-color: var(--text-secondary);
+}

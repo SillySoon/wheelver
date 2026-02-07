@@ -4,23 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wheelver - Home</title>
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
-    <div id="header-container"></div>
-    <script src="/js/header-loader.js"></script>
-    <div class="content-wrapper">
-        <h1>Welcome to Wheelver</h1>
-    <p>Your Hot Wheels Collection Manager</p>
+<%- include('../partials/header') %>
+<main>
+    <div class="m-jumbotron">
+        <h1 class="m-jumbotron__title">Showcase your<br>Hotwheel collections</h1>
+        <p class="m-jumbotron__description">Wheelver is your tool to build and share your collection with others!</p>
 
-    <div id="user-search-section" class="card" style="margin-top: 30px;">
-        <h3>Find a User</h3>
-        <div style="position: relative;">
-            <input type="text" id="user-search-input" placeholder="Search for a user..." style="width: 300px; padding: 5px;">
-            <div id="user-search-results" style="position: absolute; background: white; border: 1px solid #ccc; width: 310px; display: none; z-index: 100; max-height: 200px; overflow-y: auto;"></div>
+        <div id="user-search-section" class="a-user-search a-user-search--large">
+            <input type="text" class="a-user-search__input" placeholder="Search for a user...">
+            <div class="a-user-search__results" style="display: none;"></div>
         </div>
+
+        <span class="m-jumbotron__example">View <a href="https://wheelver.sillysoon.de/u/69873da51f4c298bdcc513dc" class="a-link">Example</a></span>
     </div>
 
+
+    <div class="content-wrapper">
         <code>
             Hello dear testing people.
 
@@ -37,8 +39,9 @@
 
             Goal find it to find bugs and enhance the useability, every feedback is welcome!
         </code>
-
-    <script src="/js/home.js"></script>
     </div>
+
+    <script src="/js/user-search.js"></script>
+</main>
 </body>
 </html>

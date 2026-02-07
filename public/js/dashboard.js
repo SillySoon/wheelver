@@ -32,8 +32,8 @@ async function fetchDashboardData() {
                         <div class="collection-item flex-row">
                             <span>${c.name || 'Unnamed Collection'}</span>
                             <div class="actions">
-                                <button class="edit-collection-btn" data-id="${c._id}">Edit</button>
-                                <button class="remove-collection-btn" data-id="${c._id}">Remove</button>
+                                <button class="a-button edit-collection-btn" data-id="${c._id}">Edit</button>
+                                <button class="a-button remove-collection-btn" data-id="${c._id}">Remove</button>
                             </div>
                         </div>
                     `).join('');

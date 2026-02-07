@@ -22,6 +22,7 @@
   "homepage": "https://github.com/SillySoon/wheelver#readme",
   "devDependencies": {
     "@types/cors": "^2.8.19",
+    "@types/ejs": "^3.1.5",
     "@types/express": "^5.0.6",
     "@types/express-session": "^1.18.2",
     "@types/mongoose": "^5.11.96",
@@ -36,6 +37,7 @@
     "cors": "^2.8.6",
     "discord-strategy": "^2.5.0",
     "dotenv": "^17.2.4",
+    "ejs": "^4.0.1",
     "express": "^5.2.1",
     "express-session": "^1.19.0",
     "helmet": "^8.1.0",

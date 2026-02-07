@@ -1,40 +1,35 @@
 // src/routes/viewRoutes.ts
 import { Router } from "express";
-import path from "path";
 import { isAuthenticated, isOwner, isCollectionOwner } from "../middleware/authMiddleware";
 
 const router: Router = Router();
 
 router.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "..", "views", "index.html"));
-});
-
-router.get("/partials/header.html", (req, res) => {
-    res.sendFile(path.join(__dirname, "..", "views", "partials", "header.html"));
+    res.render("site/home");
 });
 
 router.get("/dashboard", isAuthenticated, (req, res) => {
-    res.sendFile(path.join(__dirname, "..", "views", "dashboard", "index.html"));
+    res.render("site/dashboard");
 });
 
 router.get("/dashboard/u/:id", isOwner, (req, res) => {
-    res.sendFile(path.join(__dirname, "..", "views", "dashboard", "u", "edit.html"));
+    res.render("site/dashboard_user");
 });
 
 router.get("/dashboard/c/:id", isCollectionOwner, (req, res) => {
-    res.sendFile(path.join(__dirname, "..", "views", "dashboard", "c", "edit.html"));
+    res.render("site/dashboard_collection");
 });
 
 router.get("/u/:id", (req, res) => {
-    res.sendFile(path.join(__dirname, "..", "views", "u", "index.html"));
+    res.render("site/user");
 });
 
 router.get("/c/:id", (req, res) => {
-    res.sendFile(path.join(__dirname, "..", "views", "c", "index.html"));
+    res.render("site/collection");
 });
 
 router.get("/hw/:id", (req, res) => {
-    res.sendFile(path.join(__dirname, "..", "views", "hw", "index.html"));
+    res.render("site/hotwheel");
 });
 
 export default router;

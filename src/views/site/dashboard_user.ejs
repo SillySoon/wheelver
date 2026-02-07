@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit User Profile</title>
+    <link rel="stylesheet" href="/css/main.css">
+</head>
+<body>
+<%- include('../partials/header') %>
+<div class="content-wrapper">
+    <h1>Edit Profile</h1>
+    <div id="error-message" class="error"></div>
+    <form id="edit-user-form">
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required
+                   pattern="^[a-zA-Z0-9_]{3,20}$"
+                   title="Username must be 3-20 characters long and contain only letters, numbers, and underscores."
+                   minlength="3" maxlength="20">
+        </div>
+        <div>
+            <p>Discord ID: <span id="discord-id"></span></p>
+        </div>
+        <button type="submit" class="a-button">Save Changes</button>
+    </form>
+    <script src="/js/edit-user.js"></script>
+</div>
+</body>
+</html>
