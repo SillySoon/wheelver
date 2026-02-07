@@ -29,10 +29,12 @@ async function fetchDashboardData() {
 
                 if (collections && collections.length > 0) {
                     collectionsList.innerHTML = collections.map(c => `
-                        <div class="collection-item">
-                            <span>${c.name || 'Unnamed Collection'} (${c._id})</span>
-                            <button class="edit-collection-btn" data-id="${c._id}">Edit</button>
-                            <button class="remove-collection-btn" data-id="${c._id}">Remove</button>
+                        <div class="collection-item flex-row">
+                            <span>${c.name || 'Unnamed Collection'}</span>
+                            <div class="actions">
+                                <button class="edit-collection-btn" data-id="${c._id}">Edit</button>
+                                <button class="remove-collection-btn" data-id="${c._id}">Remove</button>
+                            </div>
                         </div>
                     `).join('');
 

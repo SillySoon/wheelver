@@ -75,7 +75,7 @@ function renderHotwheels(hotwheels, collectionId) {
     }
 
     list.innerHTML = hotwheels.map(hw => `
-        <div class="hotwheel-item" style="border: 1px solid #ccc; padding: 10px; margin-bottom: 5px; display: flex; justify-content: space-between; align-items: center;">
+        <div class="hotwheel-item flex-row">
             <div>
                 <strong>${hw.name}</strong> (${hw.toyNumber}) - ${hw.series?.name || 'No Series'}
             </div>

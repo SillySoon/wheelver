@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Collection</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
     <div id="header-container"></div>
     <script src="/js/header-loader.js"></script>
     <h1>Edit Collection</h1>
-    <div id="error-message" style="color: red;"></div>
+    <div id="error-message" class="error"></div>
     <div id="owner-info"></div>
     <form id="edit-collection-form">
         <label for="collection-name">Collection Name:</label>
@@ -19,7 +20,7 @@
         <button type="submit">Save Changes</button>
     </form>
 
-    <div id="add-hotwheel-section" style="margin-top: 20px; border: 1px solid #ddd; padding: 15px;">
+    <div id="add-hotwheel-section" class="card" style="margin-top: 20px;">
         <h3>Add Hot Wheel to Collection</h3>
         <div style="position: relative;">
             <input type="text" id="hw-search-input" placeholder="Search by name or toy number..." style="width: 300px;">

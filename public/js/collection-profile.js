@@ -32,7 +32,7 @@ function displayCollection(collection) {
     if (collection.owner) {
         const ownerName = collection.owner.username || 'Unknown';
         const ownerId = collection.owner._id || collection.owner;
-        ownerEl.innerHTML = `<a href="/u/${ownerId}">${ownerName}</a> (${collection.owner.discordId})`;
+        ownerEl.innerHTML = `<a href="/u/${ownerId}">${ownerName}</a>`;
     } else {
         ownerEl.textContent = 'Unknown';
     }
@@ -45,15 +45,16 @@ function displayCollection(collection) {
     if (collection.hotwheels && collection.hotwheels.length > 0) {
         collection.hotwheels.forEach(hw => {
             const card = document.createElement('div');
-            card.className = 'hotwheel-card';
+            card.className = 'hotwheel-item';
             
             const seriesName = hw.series ? hw.series.name : 'Unknown Series';
             
             card.innerHTML = `
-                <h3><a href="/hw/${hw._id}">${hw.name}</a></h3>
-                <p><strong>Series:</strong> ${seriesName} (${hw.seriesNumber || 'N/A'})</p>
-                <p><strong>Toy Number:</strong> ${hw.toyNumber || 'N/A'}</p>
-                <p><strong>Year:</strong> ${hw.year || 'N/A'}</p>
+                <div class="flex-row">
+                    <strong><a href="/hw/${hw._id}">${hw.name}</a></strong>
+                    <span>(${hw.toyNumber || 'N/A'})</span>
+                </div>
+                <div>${seriesName} (${hw.seriesNumber || 'N/A'}) - ${hw.year || 'N/A'}</div>
             `;
             listContainer.appendChild(card);
         });

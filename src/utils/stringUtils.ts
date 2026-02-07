@@ -8,12 +8,11 @@ export const escapeRegExp = (string: string): string => {
 };
 
 /**
- * Converts a search string into a regex pattern that matches diacritics/accents.
- * For example, 'a' will match 'a', 'á', 'à', 'ä', etc.
+ * Converts a search string into a fuzzy regex pattern that matches diacritics/accents
+ * and ignores non-alphanumeric character differences (like hyphens, spaces).
+ * For example, 'mazda mx5' will match 'Mazda MX-5'.
  */
 export const diacriticSensitiveRegex = (search: string): string => {
-    const escaped = escapeRegExp(search);
-    
     const diacriticsMap: { [key: string]: string } = {
         'a': '[aàáâãäåāăą]',
         'A': '[AÀÁÂÃÄÅĀĂĄ]',
@@ -55,5 +54,16 @@ export const diacriticSensitiveRegex = (search: string): string => {
         'Z': '[ZŹŻŽ]'
     };
 
-    return escaped.split('').map(char => diacriticsMap[char] || char).join('');
+    // Filter out non-alphanumeric characters from search query for fuzzier matching
+    const cleanSearch = search.replace(/[^a-zA-Z0-9]/g, '');
+    
+    if (cleanSearch.length === 0) {
+        return escapeRegExp(search);
+    }
+
+    const separator = '[^a-zA-Z0-9]*';
+    return cleanSearch
+        .split('')
+        .map(char => diacriticsMap[char] || char)
+        .join(separator);
 };

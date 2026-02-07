@@ -4,21 +4,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wheelver - Dashboard</title>
+    <link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
     <div id="header-container"></div>
     <script src="/js/header-loader.js"></script>
     <h1>Dashboard</h1>
-    <div id="profile-section">
+    <div id="profile-section" class="card">
         <h2>Your Profile</h2>
         <div id="profile-data">Loading profile...</div>
         <button id="edit-profile-btn">Edit Profile</button>
     </div>
-    <div id="collections-section">
+    <div id="collections-section" class="card">
         <h2>Your Collections</h2>
         <div id="collections-list">Loading collections...</div>
         <form id="create-collection-form">
-            <div id="error-message" style="color: red;"></div>
+            <div id="error-message" class="error"></div>
             <input type="text" id="new-collection-name" placeholder="Collection Name" required
                 pattern="^[a-zA-Z0-9\-_& ]+$"
                 title="Only letters, numbers, spaces, -, _, and & are allowed.">

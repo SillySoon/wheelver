@@ -40,22 +40,19 @@ function displayUser(user, collections) {
     
     if (collections && collections.length > 0) {
         collections.forEach(collection => {
-            const li = document.createElement('li');
-            const a = document.createElement('a');
-            a.href = `/c/${collection._id}`;
-            a.textContent = collection.name || `Collection ${collection._id}`;
-            li.appendChild(a);
+            const div = document.createElement('div');
+            div.className = 'collection-item';
             
-            if (collection.hotwheels) {
-                const span = document.createElement('span');
-                span.textContent = ` (${collection.hotwheels.length} items)`;
-                li.appendChild(span);
-            }
+            const count = collection.hotwheels ? collection.hotwheels.length : 0;
+            div.innerHTML = `
+                <a href="/c/${collection._id}">${collection.name || 'Unnamed Collection'}</a>
+                <span>(${count} items)</span>
+            `;
             
-            collectionsList.appendChild(li);
+            collectionsList.appendChild(div);
         });
     } else {
-        collectionsList.innerHTML = '<li>No collections found.</li>';
+        collectionsList.innerHTML = '<p>No collections found.</p>';
     }
 }
 
