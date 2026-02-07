@@ -1,6 +1,6 @@
 // src/services/hotwheelService.ts
 import { createLogger } from "../utils/logger";
-import { Hotwheel } from "../models";
+import { Hotwheel, Collection } from "../models";
 
 const { logRequest } = createLogger("HOTWHEEL_SERVICE", "cyan");
 
@@ -26,7 +26,7 @@ export const getHotwheels = async () => {
 export const getHotwheel = async (id: string) => {
     logRequest(`Getting hotwheel with id ${id}`);
     try {
-        return await Hotwheel.findById(id).populate('series');
+        return await Hotwheel.findById(id).populate('series').lean();
     } catch (error: any) {
         throw new Error(`Failed to get hotwheel: ${error.message}`);
     }

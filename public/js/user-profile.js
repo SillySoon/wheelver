@@ -30,6 +30,29 @@ function displayUser(user) {
     document.getElementById('discordId').textContent = user.discordId;
     document.getElementById('collectionsCount').textContent = user.collections ? user.collections.length : 0;
     document.getElementById('createdAt').textContent = new Date(user.createdAt).toLocaleDateString();
+
+    const collectionsList = document.getElementById('collections-list');
+    collectionsList.innerHTML = '';
+    
+    if (user.collections && user.collections.length > 0) {
+        user.collections.forEach(collection => {
+            const li = document.createElement('li');
+            const a = document.createElement('a');
+            a.href = `/c/${collection._id}`;
+            a.textContent = collection.name || `Collection ${collection._id}`;
+            li.appendChild(a);
+            
+            if (collection.hotwheels) {
+                const span = document.createElement('span');
+                span.textContent = ` (${collection.hotwheels.length} items)`;
+                li.appendChild(span);
+            }
+            
+            collectionsList.appendChild(li);
+        });
+    } else {
+        collectionsList.innerHTML = '<li>No collections found.</li>';
+    }
 }
 
 function showError(message) {

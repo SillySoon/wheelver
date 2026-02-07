@@ -48,7 +48,7 @@ function displayCollection(collection) {
             const seriesName = hw.series ? hw.series.name : 'Unknown Series';
             
             card.innerHTML = `
-                <h3>${hw.name}</h3>
+                <h3><a href="/hw/${hw._id}">${hw.name}</a></h3>
                 <p><strong>Series:</strong> ${seriesName} (${hw.seriesNumber || 'N/A'})</p>
                 <p><strong>Toy Number:</strong> ${hw.toyNumber || 'N/A'}</p>
                 <p><strong>Year:</strong> ${hw.year || 'N/A'}</p>

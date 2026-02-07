@@ -1,26 +1,26 @@
 import express, { Express } from "express";
 import apiRoutes from "./routes/apiRoutes";
+import viewRoutes from "./routes/viewRoutes";
 import path from "path";
 import cors from "cors";
 import helmet from "helmet";
 
 const app: Express = express();
 
-app.use(helmet());
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            ...helmet.contentSecurityPolicy.getDefaultDirectives(),
+            "img-src": ["'self'", "data:", "https://static.wikia.nocookie.net"],
+        },
+    },
+}));
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(express.static(path.join("public")));
-app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "views", "index.html"));
-});
-app.get("/u/:id", (req, res) => {
-    res.sendFile(path.join(__dirname, "views", "u", "index.html"));
-});
-app.get("/c/:id", (req, res) => {
-    res.sendFile(path.join(__dirname, "views", "c", "index.html"));
-});
+app.use("/", viewRoutes);
 app.use("/api", apiRoutes);
 
 // 404 Not Found Handler
