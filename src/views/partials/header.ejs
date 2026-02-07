@@ -1,19 +1,25 @@
-<header class="m-header">
+<header class="m-header l-container <%= locals.headerClass || '' %>" style="<%= locals.headerStyle || '' %>">
     <div class="m-header__wrapper">
-        <a class="a-logo" href="/">Wheelver</a>
-        <nav class="e-navigation">
-            <ul class="e-navigation__list">
-                <li class="e-navigation__item">
-                    <a class="a-link" href="/">Discord</a>
-                </li>
-            </ul>
-        </nav>
+        <% if (!locals.noLogo) { %>
+            <a class="a-logo" href="/">Wheelver</a>
+        <% } %>
+        <% if (!locals.noNavLinks) { %>
+            <nav class="e-navigation">
+                <ul class="e-navigation__list">
+                    <li class="e-navigation__item">
+                        <a class="a-link" href="/">Discord</a>
+                    </li>
+                </ul>
+            </nav>
+        <% } %>
     </div>
     <div class="m-header__wrapper">
-        <div class="a-user-search">
-            <input type="text" class="a-user-search__input" placeholder="Search for a user...">
-            <div class="a-user-search__results" style="display: none;"></div>
-        </div>
+        <% if (!locals.noSearch) { %>
+            <form action="/" method="GET" class="a-user-search">
+                <input type="text" name="search" class="a-user-search__input" placeholder="Search for a user...">
+                <div class="a-user-search__results" style="display: none;"></div>
+            </form>
+        <% } %>
         <div id="auth-links">
             <% if (user) { %>
                 <a href="/dashboard" id="dashboard-link">

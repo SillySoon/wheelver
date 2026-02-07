@@ -1,0 +1,32 @@
+h1 {
+    margin: 0;
+    padding: 0;
+}
+
+h2 {
+    margin: 0;
+    padding: 0;
+}
+
+h3 {
+    margin: 0;
+    padding: 0;
+}
+
+p {
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    margin: 0;
+    padding: 0;
+}
+
+.text {
+    color: var(--text-primary);
+}
+
+.text--muffled {
+    color: var(--text-muted);
+}

@@ -1,0 +1,14 @@
+.m-user-info {
+    padding: 0 3rem 3rem;
+    margin-bottom: 5rem;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+
+    background-color: var(--text-colorful);
+
+    border-radius: 0 0 2rem 2rem;
+}

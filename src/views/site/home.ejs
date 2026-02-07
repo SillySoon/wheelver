@@ -7,41 +7,51 @@
     <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
-<%- include('../partials/header') %>
-<main>
-    <div class="m-jumbotron">
-        <h1 class="m-jumbotron__title">Showcase your<br>Hotwheel collections</h1>
-        <p class="m-jumbotron__description">Wheelver is your tool to build and share your collection with others!</p>
-
-        <div id="user-search-section" class="a-user-search a-user-search--large">
-            <input type="text" class="a-user-search__input" placeholder="Search for a user...">
-            <div class="a-user-search__results" style="display: none;"></div>
-        </div>
-
-        <span class="m-jumbotron__example">View <a href="https://wheelver.sillysoon.de/u/69873da51f4c298bdcc513dc" class="a-link">Example</a></span>
-    </div>
-
-
     <div class="content-wrapper">
-        <code>
-            Hello dear testing people.
+        <%- include('../partials/header', { noSearch: true }) %>
+        <main>
+            <section class="m-jumbotron">
+                <h1 class="m-jumbotron__title">Showcase your<br>Hotwheel collections</h1>
+                <p class="m-jumbotron__description">Wheelver is your tool to build and share your collection with others!</p>
 
-            I have a contest to win (not actually). It is a Hackerton, a competition in my company to code cool projects on the weekend and present them!
-            And i need your help!
+                <form action="/" method="GET" id="user-search-section" class="a-user-search a-user-search--large">
+                    <input type="text" name="search" class="a-user-search__input" placeholder="Search for a user..." value="<%= search %>" minlength="2">
+                    <div class="a-user-search__results" style="<%= (users && users.length > 0) || (search && search.length >= 2) ? 'display: block;' : 'display: none;' %>">
+                        <% if (users && users.length > 0) { %>
+                            <% users.forEach(user => { %>
+                                <div class="a-user-search__item" onclick="window.location.href='/u/<%= user._id %>'">
+                                    <strong class="a-user-search__item-name"><%= user.username || 'No username' %></strong>
+                                    <div class="a-user-search__item-id">ID: <%= user.discordId %></div>
+                                </div>
+                            <% }); %>
+                        <% } else if (search && search.length >= 2) { %>
+                            <div class="a-user-search__no-results">No users found</div>
+                        <% } %>
+                    </div>
+                </form>
 
-            This is a Hotwheels collection site.
-            I have added a sample collection already. if you search for the user "Silly" and make sure you see the ID: 421772263864401921 you can view my collections.
-            A collection is basically a list of Hotwheels i collected. The data is sample data.
+                <span class="m-jumbotron__example">View <a href="https://wheelver.sillysoon.de/u/69873da51f4c298bdcc513dc" class="a-link">Example</a></span>
+            </section>
 
-            If you want to make your own list (and please do so for testing ;3) you can login via discord.
-            On the dashboard you can then create collections, and in those add hotwheels.
-            Just look up for some cool cars and add them if you want.
 
-            Goal find it to find bugs and enhance the useability, every feedback is welcome!
-        </code>
+            <code>
+                Hello dear testing people.
+
+                I have a contest to win (not actually). It is a Hackerton, a competition in my company to code cool projects on the weekend and present them!
+                And i need your help!
+
+                This is a Hotwheels collection site.
+                I have added a sample collection already. if you search for the user "Silly" and make sure you see the ID: 421772263864401921 you can view my collections.
+                A collection is basically a list of Hotwheels i collected. The data is sample data.
+
+                If you want to make your own list (and please do so for testing ;3) you can login via discord.
+                On the dashboard you can then create collections, and in those add hotwheels.
+                Just look up for some cool cars and add them if you want.
+
+                Goal find it to find bugs and enhance the useability, every feedback is welcome!
+            </code>
+            <script src="/js/user-search.js"></script>
+        </main>
     </div>
-
-    <script src="/js/user-search.js"></script>
-</main>
 </body>
 </html>

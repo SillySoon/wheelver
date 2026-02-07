@@ -1,0 +1,18 @@
+<article class="e-collection-card">
+    <div class="e-collection-card__grid">
+        <% for (let i = 0; i < 4; i++) { %>
+            <% const hw = (collection.hotwheels && collection.hotwheels[i]) ? collection.hotwheels[i] : null; %>
+            <% if (hw && hw.photoUrl) { %>
+                <img src="<%= hw.photoUrl %>" alt="<%= hw.name %>" class="e-collection-card__img">
+            <% } else { %>
+                <div class="e-collection-card__placeholder"></div>
+            <% } %>
+        <% } %>
+    </div>
+
+    <h3 class="e-collection-card__title"><%= collection.name || 'Unnamed Collection' %></h3>
+
+    <span class="e-collection-card__count"><%= typeof collection.totalHotwheelsCount !== 'undefined' ? collection.totalHotwheelsCount : (collection.hotwheels ? collection.hotwheels.length : 0) %> Hotwheels</span>
+    
+    <a href="/c/<%= collection._id %>" class="a-button e-collection-card__button">View collection</a>
+</article>

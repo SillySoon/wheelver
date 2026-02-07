@@ -4,6 +4,14 @@ function setupUserSearch(container) {
 
     if (!searchInput || !resultsDiv) return;
 
+    // Prevent form submission on Enter
+    const form = container.closest('form');
+    if (form) {
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+        });
+    }
+
     let debounceTimer;
 
     searchInput.addEventListener('input', () => {
