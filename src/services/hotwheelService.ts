@@ -1,6 +1,7 @@
 // src/services/hotwheelService.ts
 import { createLogger } from "../utils/logger";
 import { Hotwheel } from "../models";
+import { diacriticSensitiveRegex } from "../utils/stringUtils";
 
 const { logRequest } = createLogger("HOTWHEEL_SERVICE", "cyan");
 
@@ -19,10 +20,11 @@ export const getHotwheels = async (search?: string) => {
     try {
         let query = {};
         if (search) {
+            const fuzzySearch = diacriticSensitiveRegex(search);
             query = {
                 $or: [
-                    { name: { $regex: search, $options: "i" } },
-                    { toyNumber: { $regex: search, $options: "i" } }
+                    { name: { $regex: fuzzySearch, $options: "i" } },
+                    { toyNumber: { $regex: fuzzySearch, $options: "i" } }
                 ]
             };
         }

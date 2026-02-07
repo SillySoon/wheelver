@@ -1,6 +1,7 @@
 // src/services/userService.ts
 import { createLogger } from "../utils/logger";
 import { User, Collection } from "../models";
+import { diacriticSensitiveRegex } from "../utils/stringUtils";
 
 const { logRequest } = createLogger("USER_SERVICE", "cyan");
 
@@ -19,10 +20,11 @@ export const getUsers = async (search?: string) => {
     try {
         let query = {};
         if (search) {
+            const fuzzySearch = diacriticSensitiveRegex(search);
             query = {
                 $or: [
-                    { username: { $regex: search, $options: "i" } },
-                    { discordId: { $regex: search, $options: "i" } }
+                    { username: { $regex: fuzzySearch, $options: "i" } },
+                    { discordId: { $regex: fuzzySearch, $options: "i" } }
                 ]
             };
         }
