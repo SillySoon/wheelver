@@ -9,9 +9,20 @@
     <div id="header-container"></div>
     <script src="/js/header-loader.js"></script>
     <h1>Edit Profile</h1>
+    <div id="error-message" style="color: red;"></div>
     <form id="edit-user-form">
-        <!-- Add form fields here -->
+        <div>
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required 
+                pattern="^[a-zA-Z0-9_]{3,20}$" 
+                title="Username must be 3-20 characters long and contain only letters, numbers, and underscores."
+                minlength="3" maxlength="20">
+        </div>
+        <div>
+            <p>Discord ID: <span id="discord-id"></span></p>
+        </div>
         <button type="submit">Save Changes</button>
     </form>
+    <script src="/js/edit-user.js"></script>
 </body>
 </html>

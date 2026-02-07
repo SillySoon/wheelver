@@ -11,7 +11,6 @@ async function fetchDashboardData() {
                 <p>Username: ${user.username || 'Not set'}</p>
                 <p>ID: ${user._id}</p>
                 <p>Discord ID: ${user.discordId}</p>
-                <p>Registered: ${user.isRegistered ? 'Yes' : 'No'}</p>
             `;
         }
         
@@ -29,11 +28,17 @@ async function fetchDashboardData() {
 
             if (collections && collections.length > 0) {
                 collectionsList.innerHTML = collections.map(c => `
-                    <div>
+                    <div class="collection-item">
                         <span>${c.name || 'Unnamed Collection'} (${c._id})</span>
-                        <button onclick="window.location.href='/dashboard/c/${c._id}'">Edit</button>
+                        <button class="edit-collection-btn" data-id="${c._id}">Edit</button>
                     </div>
                 `).join('');
+
+                collectionsList.querySelectorAll('.edit-collection-btn').forEach(btn => {
+                    btn.onclick = () => {
+                        window.location.href = `/dashboard/c/${btn.dataset.id}`;
+                    };
+                });
             } else {
                 collectionsList.innerHTML = '<p>No collections found.</p>';
             }
