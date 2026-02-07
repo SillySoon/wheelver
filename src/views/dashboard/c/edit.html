@@ -9,9 +9,15 @@
     <div id="header-container"></div>
     <script src="/js/header-loader.js"></script>
     <h1>Edit Collection</h1>
+    <div id="error-message" style="color: red;"></div>
     <form id="edit-collection-form">
-        <!-- Add form fields here -->
+        <label for="collection-name">Collection Name:</label>
+        <input type="text" id="collection-name" name="name" required
+            pattern="^[a-zA-Z0-9\-_& ]+$"
+            title="Only letters, numbers, spaces, -, _, and & are allowed.">
         <button type="submit">Save Changes</button>
     </form>
+
+    <script src="/js/edit-collection.js"></script>
 </body>
 </html>

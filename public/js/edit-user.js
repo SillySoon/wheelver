@@ -3,7 +3,7 @@ async function fetchUserData() {
     const userId = pathParts[pathParts.length - 1];
     
     if (!userId) {
-        showError('No user ID provided');
+        alert('No user ID provided');
         return;
     }
 
@@ -26,14 +26,7 @@ async function handleFormSubmit(event) {
     const userId = pathParts[pathParts.length - 1];
     
     const username = document.getElementById('username').value;
-    const errorMessage = document.getElementById('error-message');
-    errorMessage.textContent = '';
-
-    const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
-    if (!usernameRegex.test(username)) {
-        showError('Username must be 3-20 characters long and contain only letters, numbers, and underscores.');
-        return;
-    }
+    showError('');
 
     try {
         const response = await fetch(`/api/user/${userId}`, {
@@ -45,6 +38,7 @@ async function handleFormSubmit(event) {
         });
 
         if (response.ok) {
+            alert('Profile updated successfully');
             window.location.href = '/dashboard';
         } else {
             const data = await response.json();

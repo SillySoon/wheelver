@@ -17,6 +17,13 @@
     <div id="collections-section">
         <h2>Your Collections</h2>
         <div id="collections-list">Loading collections...</div>
+        <form id="create-collection-form">
+            <div id="error-message" style="color: red;"></div>
+            <input type="text" id="new-collection-name" placeholder="Collection Name" required
+                pattern="^[a-zA-Z0-9\-_& ]+$"
+                title="Only letters, numbers, spaces, -, _, and & are allowed.">
+            <button type="submit">Create Collection</button>
+        </form>
     </div>
 
     <script src="/js/dashboard.js"></script>

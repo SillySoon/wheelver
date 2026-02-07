@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { createLogger } from "../utils/logger";
 import { asyncHandler } from "../handlers/asyncHandler";
 import * as CollectionService from "../services/collectionService";
-import { isValidObjectId } from "../utils/validation";
+import { isValidObjectId, isValidCollectionName } from "../utils/validation";
 
 const { logRequest, logWarning } = createLogger(
     "COLLECTION_CONTROLLER",
@@ -13,6 +13,10 @@ const { logRequest, logWarning } = createLogger(
 export const createCollection = asyncHandler(async (req: Request, res: Response) => {
     logRequest("POST /collection");
     try {
+        const { name } = req.body;
+        if (name && !isValidCollectionName(name)) {
+            return res.status(400).json({ message: "Invalid collection name. Only letters, numbers, spaces, -, _, and & are allowed." });
+        }
         const collection = await CollectionService.createCollection(req.body);
         return res.status(201).json(collection);
     } catch (error: any) {
@@ -65,6 +69,10 @@ export const updateCollection = asyncHandler(async (req: Request, res: Response)
     }
 
     try {
+        const { name } = req.body;
+        if (name && !isValidCollectionName(name)) {
+            return res.status(400).json({ message: "Invalid collection name. Only letters, numbers, spaces, -, _, and & are allowed." });
+        }
         const collection = await CollectionService.updateCollection(req.params.id as string, req.body);
         if (!collection) {
             return res.status(404).json({ message: "Collection not found" });

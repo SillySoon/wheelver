@@ -23,24 +23,79 @@ async function fetchDashboardData() {
 
         const collectionsList = document.getElementById('collections-list');
         if (collectionsList) {
-            const collectionsResponse = await fetch(`/api/collection?owner=${user._id}`);
-            const collections = collectionsResponse.ok ? await collectionsResponse.json() : [];
+            const loadCollections = async () => {
+                const collectionsResponse = await fetch(`/api/collection?owner=${user._id}`);
+                const collections = collectionsResponse.ok ? await collectionsResponse.json() : [];
 
-            if (collections && collections.length > 0) {
-                collectionsList.innerHTML = collections.map(c => `
-                    <div class="collection-item">
-                        <span>${c.name || 'Unnamed Collection'} (${c._id})</span>
-                        <button class="edit-collection-btn" data-id="${c._id}">Edit</button>
-                    </div>
-                `).join('');
+                if (collections && collections.length > 0) {
+                    collectionsList.innerHTML = collections.map(c => `
+                        <div class="collection-item">
+                            <span>${c.name || 'Unnamed Collection'} (${c._id})</span>
+                            <button class="edit-collection-btn" data-id="${c._id}">Edit</button>
+                            <button class="remove-collection-btn" data-id="${c._id}">Remove</button>
+                        </div>
+                    `).join('');
 
-                collectionsList.querySelectorAll('.edit-collection-btn').forEach(btn => {
-                    btn.onclick = () => {
-                        window.location.href = `/dashboard/c/${btn.dataset.id}`;
-                    };
-                });
-            } else {
-                collectionsList.innerHTML = '<p>No collections found.</p>';
+                    collectionsList.querySelectorAll('.edit-collection-btn').forEach(btn => {
+                        btn.onclick = () => {
+                            window.location.href = `/dashboard/c/${btn.dataset.id}`;
+                        };
+                    });
+
+                    collectionsList.querySelectorAll('.remove-collection-btn').forEach(btn => {
+                        btn.onclick = async () => {
+                            if (confirm('are you sure? this cannot be reversed')) {
+                                try {
+                                    const response = await fetch(`/api/collection/${btn.dataset.id}`, {
+                                        method: 'DELETE'
+                                    });
+                                    if (response.ok) {
+                                        await loadCollections();
+                                    } else {
+                                        const err = await response.json();
+                                        showError('Error: ' + (err.message || 'Failed to remove collection'));
+                                    }
+                                } catch (err) {
+                                    console.error(err);
+                                    showError('Error removing collection');
+                                }
+                            }
+                        };
+                    });
+                } else {
+                    collectionsList.innerHTML = '<p>No collections found.</p>';
+                }
+            };
+
+            await loadCollections();
+
+            const createForm = document.getElementById('create-collection-form');
+            const nameInput = document.getElementById('new-collection-name');
+            if (createForm && nameInput) {
+                createForm.onsubmit = async (e) => {
+                    e.preventDefault();
+                    const name = nameInput.value.trim();
+                    showError('');
+
+                    try {
+                        const response = await fetch('/api/collection', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ name, owner: user._id })
+                        });
+
+                        if (response.ok) {
+                            nameInput.value = '';
+                            await loadCollections();
+                        } else {
+                            const err = await response.json();
+                            showError('Error: ' + (err.message || 'Failed to create collection'));
+                        }
+                    } catch (err) {
+                        console.error(err);
+                        showError('Error creating collection');
+                    }
+                };
             }
         }
     } catch (error) {
@@ -52,3 +107,10 @@ async function fetchDashboardData() {
     }
 }
 fetchDashboardData();
+
+function showError(message) {
+    const errorEl = document.getElementById('error-message');
+    if (errorEl) {
+        errorEl.textContent = message;
+    }
+}
