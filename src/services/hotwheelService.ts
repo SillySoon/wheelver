@@ -1,6 +1,6 @@
 // src/services/hotwheelService.ts
 import { createLogger } from "../utils/logger";
-import { Hotwheel, Collection } from "../models";
+import { Hotwheel } from "../models";
 
 const { logRequest } = createLogger("HOTWHEEL_SERVICE", "cyan");
 

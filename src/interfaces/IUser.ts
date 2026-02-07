@@ -4,7 +4,8 @@ import { ICollection } from "./ICollection";
 
 export interface IUser extends Document{
     discordId: string;
-    username: string;
+    username?: string;
+    isRegistered: boolean;
     collections: Types.ObjectId[] | ICollection[];
     createdAt: Date;
 }

@@ -11,10 +11,10 @@ export enum HotwheelExtra {
 
 export interface IHotwheel extends Document {
     toyNumber: string;
-    colNumber?: string;
+    colNumber?: number;
     name: string;
     series: ISeries;
-    seriesNumber: string;
+    seriesNumber: number;
     year: number;
     extra?: Types.ObjectId | HotwheelExtra;
     photoUrl?: string;
