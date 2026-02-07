@@ -16,6 +16,7 @@ app.use(helmet({
         directives: {
             ...helmet.contentSecurityPolicy.getDefaultDirectives(),
             "img-src": ["'self'", "data:", "https://static.wikia.nocookie.net", "https://cdn.discordapp.com"],
+            "script-src": ["'self'"],
         },
     },
 }));

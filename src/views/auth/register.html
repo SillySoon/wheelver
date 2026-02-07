@@ -6,6 +6,8 @@
     <title>Wheelver - Choose Username</title>
 </head>
 <body>
+    <div id="header-container"></div>
+    <script src="/js/header-loader.js"></script>
     <h1>Welcome to Wheelver!</h1>
     <p>Please choose a username to complete your registration.</p>
     <form action="/auth/register" method="POST">
@@ -17,12 +19,6 @@
     </form>
     <div id="error-message" style="color: red;"></div>
 
-    <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const error = urlParams.get('error');
-        if (error) {
-            document.getElementById('error-message').textContent = error;
-        }
-    </script>
+    <script src="/js/register.js"></script>
 </body>
 </html>
