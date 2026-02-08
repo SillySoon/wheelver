@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  app:
+    build: .
+    ports:
+      - "3005:3000"
+    environment:
+      - PORT=#{PORT}
+      - MONGODB_URI=${MONGODB_URI}
+      - DISCORD_SECRET=${DISCORD_SECRET}
+      - DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID}
