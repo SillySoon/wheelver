@@ -3,7 +3,6 @@ async function fetchUserData() {
     const userId = pathParts[pathParts.length - 1];
     
     if (!userId) {
-        alert('No user ID provided');
         return;
     }
 
@@ -38,8 +37,6 @@ async function handleFormSubmit(event) {
         });
 
         if (response.ok) {
-            alert('Profile updated successfully');
-            window.location.href = '/dashboard';
         } else {
             const data = await response.json();
             showError(data.message || 'Failed to update profile');

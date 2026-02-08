@@ -6,7 +6,11 @@
     <div class="e-hotwheel-card__info">
         <div class="e-hotwheel-card__header">
             <h3 class="e-hotwheel-card__title">
-                <a href="/hw/<%= hotwheel._id %>" class="a-link"><%= hotwheel.name %></a>
+                <% if (locals.isDashboardView) { %>
+                    <%= hotwheel.name %>
+                <% } else { %>
+                    <a href="/hw/<%= hotwheel._id %>" class="a-link"><%= hotwheel.name %></a>
+                <% } %>
             </h3>
             <span class="e-hotwheel-card__toy-number"><%= hotwheel.toyNumber || 'N/A' %></span>
         </div>
@@ -20,5 +24,9 @@
             </div>
             <div class="e-hotwheel-card__year text--muffled"><%= hotwheel.year || 'N/A' %></div>
         </div>
+
+        <% if (locals.isDashboardView) { %>
+            <button class="a-button remove-hotwheel-btn" data-id="<%= hotwheel._id %>" data-collection-id="<%= collection._id %>">Remove</button>
+        <% } %>
     </div>
 </article>

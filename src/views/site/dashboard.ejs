@@ -15,48 +15,48 @@
                 <h2 class="m-jumbotron__title">Error</h2>
                 <p class="m-jumbotron__description"><%= error %></p>
             </section>
+        <% } else { %>
+            <section class="m-user-info">
+                <h1><%= user.username %></h1>
+                <div class="e-stats">
+                    <div class="e-stats__item">
+                        <p class="text--muffled">Collections</p>
+                        <span class="text"><%= collections.length %></span>
+                    </div>
+                    <div class="e-stats__item">
+                        <p class="text--muffled">Discord ID</p>
+                        <span class="text"><%= user.discordId || 'Not linked' %></span>
+                    </div>
+                    <div class="e-stats__item">
+                        <p class="text--muffled">Joined</p>
+                        <span class="text"><%= new Date(user.createdAt).toLocaleDateString() %></span>
+                    </div>
+                </div>
+                <a href="/dashboard/u/<%= user._id %>" class="a-button">Edit Profile</a>
+            </section>
+
+            <section class="m-collection">
+                <h2>Your Collections</h2>
+                <form id="create-collection-form" class="m-collection__form" data-user-id="<%= user && user._id ? user._id : '' %>">
+                    <input class="a-search__input a-search--large" type="text" id="new-collection-name" placeholder="Enter Collection Name..." required
+                           pattern="^[a-zA-Z0-9\-_& ]+$"
+                           title="Only letters, numbers, spaces, -, _, and & are allowed.">
+                    <button type="submit" class="a-button">Create</button>
+                </form>
+
+                <div id="form-error-message" class="error"></div>
+
+                <div class="m-collection__grid" id="collections-grid">
+                    <% if (collections && collections.length > 0) { %>
+                        <% collections.forEach(collection => { %>
+                            <%- include('../partials/e-collection-card', { collection, isDashboardView: true }) %>
+                        <% }) %>
+                    <% } else { %>
+                        <p>No collections found. Create one above!</p>
+                    <% } %>
+                </div>
+            </section>
         <% } %>
-
-        <section class="m-user-info">
-            <h1><%= user.username %></h1>
-            <div class="e-stats">
-                <div class="e-stats__item">
-                    <p class="text--muffled">Collections</p>
-                    <span class="text"><%= collections.length %></span>
-                </div>
-                <div class="e-stats__item">
-                    <p class="text--muffled">Discord ID</p>
-                    <span class="text"><%= user.discordId || 'Not linked' %></span>
-                </div>
-                <div class="e-stats__item">
-                    <p class="text--muffled">Joined</p>
-                    <span class="text"><%= new Date(user.createdAt).toLocaleDateString() %></span>
-                </div>
-            </div>
-            <a href="/dashboard/u/<%= user._id %>" class="a-button">Edit Profile</a>
-        </section>
-
-        <section class="m-collection">
-            <h2>Your Collections</h2>
-            <form id="create-collection-form" class="m-collection__form" data-user-id="<%= user && user._id ? user._id : '' %>">
-                <input class="a-search__input" type="text" id="new-collection-name" placeholder="Collection Name" required
-                       pattern="^[a-zA-Z0-9\-_& ]+$"
-                       title="Only letters, numbers, spaces, -, _, and & are allowed.">
-                <button type="submit" class="a-button">Create Collection</button>
-            </form>
-
-            <div id="form-error-message" class="error"></div>
-
-            <div class="m-collection__grid" id="collections-grid">
-                <% if (collections && collections.length > 0) { %>
-                    <% collections.forEach(collection => { %>
-                        <%- include('../partials/e-collection-card', { collection, isDashboardView: true }) %>
-                    <% }) %>
-                <% } else { %>
-                    <p>No collections found. Create one above!</p>
-                <% } %>
-            </div>
-        </section>
     </main>
 
     <script src="/js/dashboard.js"></script>

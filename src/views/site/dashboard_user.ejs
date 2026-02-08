@@ -7,24 +7,32 @@
     <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
-<%- include('../partials/header') %>
-<main class="l-container">
-    <h1>Edit Profile</h1>
-    <div id="error-message" class="error"></div>
-    <form id="edit-user-form">
-        <div>
-            <label for="username">Username:</label>
-            <input type="text" id="username" name="username" required
-                   pattern="^[a-zA-Z0-9_]{3,20}$"
-                   title="Username must be 3-20 characters long and contain only letters, numbers, and underscores."
-                   minlength="3" maxlength="20">
-        </div>
-        <div>
-            <p>Discord ID: <span id="discord-id"></span></p>
-        </div>
-        <button type="submit" class="a-button">Save Changes</button>
-    </form>
-    <script src="/js/edit-user.js"></script>
-</main>
+<div class="content-wrapper">
+    <%- include('../partials/header') %>
+    <main>
+        <section class="m-jumbotron">
+            <h1 class="m-jumbotron__title">Edit Profile</h1>
+            <p class="m-jumbotron__description">Change your Profile settings</p>
+            <div id="error-message" class="error"></div>
+            <form id="edit-user-form">
+                <div>
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username" required
+                           pattern="^[a-zA-Z0-9_]{3,20}$"
+                           title="Username must be 3-20 characters long and contain only letters, numbers, and underscores."
+                           minlength="3" maxlength="20"
+                           class="a-search__input"
+                    >
+                </div>
+            </form>
+            <div>
+                <p>Discord ID: <span id="discord-id"></span></p>
+            </div>
+            <button form="edit-user-form" type="submit" class="a-button">Save Changes</button>
+            <a href="/dashboard" class="m-jumbotron__example a-link">Return to Dashboard</a>
+        </section>
+        <script src="/js/edit-user.js"></script>
+    </main>
+</div>
 </body>
 </html>

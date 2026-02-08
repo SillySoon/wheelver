@@ -3,40 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Collection</title>
+    <title>Wheelver - Edit <%= collection ? collection.name : 'Collection' %></title>
     <link rel="stylesheet" href="/css/main.css">
 </head>
 <body>
-<%- include('../partials/header') %>
 <div class="content-wrapper">
-    <h1>Edit Collection</h1>
-    <div id="error-message" class="error"></div>
-    <div id="owner-info"></div>
-    <form id="edit-collection-form">
-        <label for="collection-name">Collection Name:</label>
-        <input type="text" id="collection-name" name="name" required
-               pattern="^[a-zA-Z0-9\-_& ]+$"
-               title="Only letters, numbers, spaces, -, _, and & are allowed.">
-        <button type="submit" class="a-button">Save Changes</button>
-    </form>
+    <%- include('../partials/header', { headerClass: 'm-header--colorful', noNavLinks: true }) %>
+    <main class="l-container" data-collection-id="<%= collection && collection._id ? collection._id : '' %>">
+        <% if (error) { %>
+            <section class="m-jumbotron">
+                <h2 class="m-jumbotron__title">Error</h2>
+                <p class="m-jumbotron__description"><%= error %></p>
+            </section>
+        <% } else if (collection) { %>
+            <section class="m-user-info">
+                <h1><%= collection.name %></h1>
+                <div class="e-stats">
+                    <div class="e-stats__item">
+                        <p class="text--muffled">Hotwheels</p>
+                        <span class="text"><%= collection.hotwheels ? collection.hotwheels.length : 0 %></span>
+                    </div>
+                    <div class="e-stats__item">
+                        <p class="text--muffled">Owner</p>
+                        <span class="text">
+                            <% if (collection.owner) { %>
+                                <a href="/u/<%= collection.owner._id || collection.owner %>" class="a-link text"><%= collection.owner.username || 'View Profile' %></a>
+                            <% } else { %>
+                                Unknown
+                            <% } %>
+                        </span>
+                    </div>
+                </div>
+                <form id="edit-collection-form" class="m-collection__form">
+                    <input type="text" id="collection-name" name="name" value="<%= collection.name %>" required
+                           pattern="^[a-zA-Z0-9\-_& ]+$"
+                           title="Only letters, numbers, spaces, -, _, and & are allowed."
+                    class="a-search__input">
+                    <button type="submit" class="a-button">Save Changes</button>
+                </form>
 
-    <div id="add-hotwheel-section" class="card" style="margin-top: 20px;">
-        <h3>Add Hot Wheel to Collection</h3>
-        <div style="position: relative;">
-            <input type="text" id="hw-search-input" placeholder="Search by name or toy number..." style="width: 300px;">
-            <button id="add-hw-btn" class="a-button" disabled>Add</button>
-            <div id="search-results" style="position: absolute; background: white; border: 1px solid #ccc; width: 300px; display: none; z-index: 100; max-height: 200px; overflow-y: auto;"></div>
-        </div>
-        <p id="selected-hw-info" style="margin-top: 5px; font-style: italic;"></p>
-    </div>
+                <div id="form-error-message" class="error"></div>
+            </section>
 
-    <div id="hotwheels-container">
-        <h2>Hot Wheels in this Collection</h2>
-        <div id="hotwheels-list">
-            <p>Loading hotwheels...</p>
-        </div>
-    </div>
+            <section class="m-collection">
+                <h2>Hot Wheels in this Collection</h2>
+                <div id="add-hotwheel-section" class="m-collection__form" style="width: 100%;">
+                    <div class="a-search">
+                        <input type="text" id="hw-search-input" class="a-search__input a-search--large" placeholder="Search by name or toy number...">
+                        <div id="hw-search-results" class="a-search__results"></div>
+                    </div>
 
+                    <button id="add-hw-btn" class="a-button" disabled>Add</button>
+                </div>
+                <p id="selected-hw-info" style="margin-top: 5px; font-style: italic;"></p>
+
+                <div class="m-collection__grid" id="hotwheels-list">
+                    <% if (collection.hotwheels && collection.hotwheels.length > 0) { %>
+                        <% collection.hotwheels.forEach(hotwheel => { %>
+                            <%- include('../partials/e-hotwheel-card', { hotwheel, isDashboardView: true, collection: collection }) %>
+                        <% }); %>
+                    <% } else { %>
+                        <p>No hotwheels in this collection yet.</p>
+                    <% } %>
+                </div>
+            </section>
+        <% } %>
+    </main>
     <script src="/js/edit-collection.js"></script>
 </div>
 </body>

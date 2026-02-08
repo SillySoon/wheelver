@@ -13,6 +13,5 @@
 
 .m-collection__form {
     display: flex;
-    gap: 2rem;
-    justify-content: space-between;
+    gap: 1rem;
 }

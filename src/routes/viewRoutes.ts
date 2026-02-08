@@ -55,8 +55,24 @@ router.get("/dashboard/u/:id", isOwner, (req, res) => {
     res.render("site/dashboard_user");
 });
 
-router.get("/dashboard/c/:id", isCollectionOwner, (req, res) => {
-    res.render("site/dashboard_collection");
+router.get("/dashboard/c/:id", isCollectionOwner, async (req, res) => {
+    const collectionId: string  = req.params.id as string;
+
+    if (!isValidObjectId(collectionId)) {
+        return res.status(400).render("site/dashboard_collection", { error: "Invalid Collection ID", collection: null });
+    }
+
+    try {
+        const collection = await CollectionService.getCollection(collectionId);
+        if (!collection) {
+            return res.status(404).render("site/dashboard_collection", { error: "Collection not found", collection: null });
+        }
+
+        res.render("site/dashboard_collection", { collection, error: null });
+    } catch (error) {
+        console.error("Error loading dashboard collection:", error);
+        res.status(500).render("site/dashboard_collection", { error: "Failed to load collection for editing", collection: null });
+    }
 });
 
 router.get("/u/:id", async (req, res) => {

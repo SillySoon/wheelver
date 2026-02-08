@@ -6,7 +6,6 @@
 }
 
 .a-search__input {
-    width: 100%;
     padding: 0.5rem 1rem;
     border: none;
     border-radius: 1rem;
@@ -39,7 +38,7 @@
 .a-search__item {
     margin: 0.5rem;
     padding: 0.5rem;
-    border-radius: 1rem;
+    border-radius: 0.5rem;
     cursor: pointer;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     transition: background-color 0.2s;
@@ -71,7 +70,7 @@
 }
 
 .a-search--large {
-    max-width: 400px;
+    width: 100%;
 }
 
 .a-search--large .a-search__input {
