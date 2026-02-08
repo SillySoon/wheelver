@@ -66,11 +66,15 @@ document.addEventListener('DOMContentLoaded', () => {
             selectedHw = null;
             addHwBtn.disabled = true;
             selectedHwInfo.textContent = '';
-            hwSearchResultsDiv.style.display = 'none';
 
             if (query.length < 2) {
+                hwSearchResultsDiv.innerHTML = '';
+                hwSearchResultsDiv.style.display = 'none';
                 return;
             }
+
+            hwSearchResultsDiv.innerHTML = '<div class="a-search__loading" style="padding: 5px;">Loading...</div>';
+            hwSearchResultsDiv.style.display = 'block';
 
             debounceTimer = setTimeout(async () => {
                 try {
@@ -115,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         document.addEventListener('click', (e) => {
-            if (e.target !== hwSearchInput && e.target !== hwSearchResultsDiv) {
+            if (hwSearchResultsDiv && e.target !== hwSearchInput && e.target !== hwSearchResultsDiv) {
                 hwSearchResultsDiv.style.display = 'none';
             }
         });
