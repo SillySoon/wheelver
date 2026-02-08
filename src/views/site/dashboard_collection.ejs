@@ -57,7 +57,7 @@
                 </div>
                 <p id="selected-hw-info" style="margin-top: 5px; font-style: italic;"></p>
 
-                <div class="m-collection__grid" id="hotwheels-list">
+                <div class="m-collection__grid">
                     <% if (collection.hotwheels && collection.hotwheels.length > 0) { %>
                         <% collection.hotwheels.forEach(hotwheel => { %>
                             <%- include('../partials/e-hotwheel-card', { hotwheel, isDashboardView: true, collection: collection }) %>
