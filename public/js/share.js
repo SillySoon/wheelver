@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('#share-button').forEach(button => {
         button.addEventListener('click', async () => {
-            const urlToCopy = button.dataset.shareUrl || window.location.href;
+            const urlToCopy = window.location.href;
             try {
                 await navigator.clipboard.writeText(urlToCopy);
                 // Provide visual feedback
