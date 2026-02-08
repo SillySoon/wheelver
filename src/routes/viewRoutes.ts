@@ -101,7 +101,8 @@ router.get("/u/:id", async (req, res) => {
             collectionObj.totalHotwheelsCount = totalCount;
             collectionsWithCount.push(collectionObj);
         }
-        res.render("site/user", { user, collections: collectionsWithCount, error: null });
+        const currentUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+        res.render("site/user", { user, collections: collectionsWithCount, error: null, currentUrl });
     } catch (error) {
         res.status(500).render("site/user", { error: "Failed to load user profile", user: null, collections: [] });
     }
@@ -120,7 +121,8 @@ router.get("/c/:id", async (req, res) => {
             return res.status(404).render("site/collection", { error: "Collection not found", collection: null });
         }
 
-        res.render("site/collection", { collection, error: null });
+        const currentUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+        res.render("site/collection", { collection, error: null, currentUrl });
     } catch (error) {
         console.error("Error loading collection:", error);
         res.status(500).render("site/collection", { error: "Failed to load collection", collection: null });

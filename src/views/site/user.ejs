@@ -35,7 +35,11 @@
             </section>
 
             <section class="m-collection">
-                <h2>Collections</h2>
+                <div class="m-collection__header">
+                    <h2>Collections</h2>
+                    <button id="share-button" class="a-button" data-share-url="<%= currentUrl %>">Share</button>
+                </div>
+
                 <div class="m-collection__grid">
                     <% if (collections && collections.length > 0) { %>
                         <% collections.forEach(collection => { %>
@@ -48,6 +52,7 @@
             </section>
         <% } %>
     </main>
+    <script src="/js/share.js"></script>
 </div>
 </body>
 </html>
