@@ -66,5 +66,5 @@ function setupUserSearch(container) {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    document.querySelectorAll('.a-search').forEach(setupUserSearch);
+    document.querySelectorAll('[data-user-search]').forEach(setupUserSearch);
 });

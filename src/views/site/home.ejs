@@ -14,7 +14,7 @@
                 <h1 class="m-jumbotron__title">Showcase your<br>Hotwheel collections</h1>
                 <p class="m-jumbotron__description">Wheelver is your tool to build and share your collection with others!</p>
 
-                <form action="/" method="GET" id="user-search-section" class="a-search a-search--large">
+                <form action="/" method="GET" id="user-search-section" class="a-search a-search--large" data-user-search>
                     <input type="text" name="search" class="a-search__input" placeholder="Search for a user..." value="<%= search %>" minlength="2">
                     <div class="a-search__results" style="<%= (users && users.length > 0) || (search && search.length >= 2) ? 'display: block;' : 'display: none;' %>">
                         <% if (users && users.length > 0) { %>

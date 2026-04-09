@@ -47,27 +47,30 @@
 
             <section class="m-collection">
                 <h2>Hot Wheels in this Collection</h2>
-                <div id="add-hotwheel-section" class="m-collection__form" style="width: 100%;">
-                    <div class="a-search">
-                        <input type="text" id="hw-search-input" class="a-search__input a-search--large" placeholder="Search by name or toy number...">
-                        <div id="hw-search-results" class="a-search__results"></div>
+
+                <div class="m-hw-add">
+                    <div class="m-hw-add__search-side">
+                        <div class="a-search" style="max-width: none;">
+                            <input type="text" id="hw-search-input" class="a-search__input a-search--large" placeholder="Search by name or toy number...">
+                            <div id="hw-search-results" class="a-search__results"></div>
+                        </div>
                     </div>
 
-                    <button id="add-hw-btn" class="a-button" disabled>Add</button>
+                    <div class="m-hw-add__preview" id="hw-preview">
+                        <p class="m-hw-add__placeholder text--muffled">Search for a Hot Wheel to preview it here.</p>
+                    </div>
                 </div>
-                <p id="selected-hw-info" style="margin-top: 5px; font-style: italic;"></p>
 
-                <% if (collection.hotwheels && collection.hotwheels.length > 0) { %>
-                <div class="m-collection__controls">
-                    <input type="text" id="hw-filter-search" class="a-search__input" placeholder="Search by name or toy number...">
+                <div id="form-error-message" class="error"></div>
 
+                <div class="m-collection__controls" id="list-controls"<% if (!collection.hotwheels || collection.hotwheels.length === 0) { %> style="display:none"<% } %>>
+                    <input type="text" id="hw-filter-search" class="a-search__input" placeholder="Filter list...">
                     <div class="m-collection__pills">
                         <button class="a-pill a-pill--active" data-extra="all">All</button>
                         <button class="a-pill" data-extra="Treasure Hunt">TH</button>
                         <button class="a-pill" data-extra="Super Treasure Hunt">STH</button>
                         <button class="a-pill" data-extra="Chase">Chase</button>
                     </div>
-
                     <select id="hw-sort" class="a-select">
                         <option value="collected-desc">Recently collected</option>
                         <option value="name-asc">Name A–Z</option>
@@ -77,23 +80,24 @@
                     </select>
                 </div>
 
-                    <ul class="m-hw-list">
-                        <li class="m-hw-list__header">
-                            <span></span>
-                            <span>Name</span>
-                            <span>Series</span>
-                            <span>Toy #</span>
-                            <span>Collected</span>
-                            <span></span>
-                        </li>
+                <ul class="m-hw-list" id="hw-list">
+                    <li class="m-hw-list__header">
+                        <span></span>
+                        <span>Name</span>
+                        <span>Series</span>
+                        <span>Toy #</span>
+                        <span>Collected</span>
+                        <span></span>
+                    </li>
+                    <% if (!collection.hotwheels || collection.hotwheels.length === 0) { %>
+                        <li class="m-hw-list__empty" id="hw-empty">No hotwheels in this collection yet.</li>
+                    <% } else { %>
                         <% collection.hotwheels.forEach(entry => { %>
                             <%- include('../partials/e-hotwheel-row', { hotwheel: entry.hotwheel, entry, collection }) %>
                         <% }); %>
-                    </ul>
-                <p id="hw-no-results" style="display:none;" class="text--muffled">No hotwheels match your search.</p>
-                <% } else { %>
-                    <p>No hotwheels in this collection yet.</p>
-                <% } %>
+                    <% } %>
+                </ul>
+                <p id="hw-no-results" style="display:none;" class="text--muffled">No hotwheels match your filter.</p>
             </section>
         <% } %>
     </main>
