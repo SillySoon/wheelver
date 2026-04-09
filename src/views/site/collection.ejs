@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wheelver - <%= collection ? collection.name : 'Collection Details' %></title>
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="icon" href="/images/favicon.ico">
+    <%- include('../partials/head', {
+        metaTitle: (collection ? collection.name + ' - Wheelver' : 'Wheelver'),
+        metaDescription: collection
+            ? (collection.owner && collection.owner.username ? collection.owner.username + "'s " : '') + 'collection "' + collection.name + '" on Wheelver - ' + (collection.hotwheels ? collection.hotwheels.length : 0) + ' cars.'
+            : 'View Hot Wheels collections on Wheelver.',
+        metaUrl: locals.currentUrl || 'https://wheelver.sillysoon.de'
+    }) %>
 </head>
 <body>
 <div class="content-wrapper">

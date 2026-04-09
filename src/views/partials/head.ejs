@@ -1,0 +1,37 @@
+<%
+    const BASE_URL = 'https://wheelver.sillysoon.de';
+    const _title       = locals.metaTitle       || 'Wheelver';
+    const _description = locals.metaDescription || 'Showcase and share your Hot Wheels collection with other collectors.';
+    const _url         = locals.metaUrl         || BASE_URL;
+    const _image       = locals.metaImage       || (BASE_URL + '/images/banner.png');
+%>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#90eb88">
+
+<!-- Primary -->
+<title><%= _title %></title>
+<meta name="title" content="<%= _title %>">
+<meta name="description" content="<%= _description %>">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:locale" content="en_US">
+<meta property="og:url" content="<%= _url %>">
+<meta property="og:title" content="<%= _title %>">
+<meta property="og:description" content="<%= _description %>">
+<meta property="og:site_name" content="Wheelver">
+<meta property="og:image" content="<%= _image %>">
+<meta property="og:image:type" content="image/png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="628">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:url" content="<%= _url %>">
+<meta name="twitter:title" content="<%= _title %>">
+<meta name="twitter:description" content="<%= _description %>">
+<meta name="twitter:image" content="<%= _image %>">
+
+<link rel="icon" href="/images/favicon.ico">
+<link rel="stylesheet" href="/css/main.css">

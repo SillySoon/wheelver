@@ -1,11 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wheelver - <%= hotwheel ? hotwheel.name : 'Hotwheel Info' %></title>
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="icon" href="/images/favicon.ico">
+    <%- include('../partials/head', {
+        metaTitle: (hotwheel ? hotwheel.name + ' - Wheelver' : 'Wheelver'),
+        metaDescription: hotwheel
+            ? hotwheel.name + (hotwheel.year ? ' · ' + hotwheel.year : '') + (hotwheel.series && hotwheel.series.name ? ' · ' + hotwheel.series.name : '') + ' - Hot Wheels on Wheelver.'
+            : 'Hot Wheels details on Wheelver.',
+        metaUrl: hotwheel ? 'https://wheelver.sillysoon.de/hw/' + hotwheel._id : 'https://wheelver.sillysoon.de',
+        metaImage: hotwheel && hotwheel.photoUrl ? hotwheel.photoUrl : undefined
+    }) %>
 </head>
 <body>
 <div class="content-wrapper">

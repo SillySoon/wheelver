@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Helpers ---
     const formatDate = (date) => {
-        if (!date) return '—';
+        if (!date) return '-';
         return new Date(date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
     };
 
@@ -88,8 +88,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 <span class="e-hw-row__name">${hw.name}</span>
                 ${buildBadgeHTML(hw.extra)}
             </div>
-            <span class="e-hw-row__series text--muffled">${hw.series?.name || '—'}</span>
-            <span class="e-hw-row__toy-number text--muffled">${hw.toyNumber || '—'}</span>
+            <span class="e-hw-row__series text--muffled">${hw.series?.name || '-'}</span>
+            <span class="e-hw-row__toy-number text--muffled">${hw.toyNumber || '-'}</span>
             <span class="e-hw-row__date text--muffled">${formatDate(collectedAt)}</span>
             <button class="a-button a-button--danger remove-hotwheel-btn" data-id="${hw._id}" data-collection-id="${collectionId}">Remove</button>
         `;

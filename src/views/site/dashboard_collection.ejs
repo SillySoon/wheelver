@@ -1,11 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wheelver - Edit <%= collection ? collection.name : 'Collection' %></title>
-    <link rel="stylesheet" href="/css/main.css">
-    <link rel="icon" href="/images/favicon.ico">
+    <%- include('../partials/head', {
+        metaTitle: (collection ? 'Edit ' + collection.name : 'Edit Collection') + ' - Wheelver',
+        metaDescription: 'Edit your Hot Wheels collection on Wheelver.'
+    }) %>
 </head>
 <body>
 <div class="content-wrapper">

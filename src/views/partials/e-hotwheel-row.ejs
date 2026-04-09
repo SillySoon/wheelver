@@ -17,9 +17,9 @@
         <% } %>
     </div>
 
-    <span class="e-hw-row__series text--muffled"><%= (hotwheel.series && hotwheel.series.name) ? hotwheel.series.name : '—' %></span>
-    <span class="e-hw-row__toy-number text--muffled"><%= hotwheel.toyNumber || '—' %></span>
-    <span class="e-hw-row__date text--muffled"><%= entry.collectedAt ? new Date(entry.collectedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—' %></span>
+    <span class="e-hw-row__series text--muffled"><%= (hotwheel.series && hotwheel.series.name) ? hotwheel.series.name : '-' %></span>
+    <span class="e-hw-row__toy-number text--muffled"><%= hotwheel.toyNumber || '-' %></span>
+    <span class="e-hw-row__date text--muffled"><%= entry.collectedAt ? new Date(entry.collectedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '-' %></span>
 
     <button class="a-button a-button--danger remove-hotwheel-btn" data-id="<%= hotwheel._id %>" data-collection-id="<%= collection._id %>">Remove</button>
 </li>

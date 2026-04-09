@@ -40,7 +40,7 @@ async function migrate() {
         // Already migrated: first entry is an object with a `hotwheel` field
         const first = col.hotwheels[0];
         if (first !== null && typeof first === "object" && !mongoose.Types.ObjectId.isValid(first)) {
-            console.log(`  [SKIP] collection "${col.name}" (${col._id}) — already migrated`);
+            console.log(`  [SKIP] collection "${col.name}" (${col._id}) - already migrated`);
             skipped++;
             continue;
         }
@@ -58,7 +58,7 @@ async function migrate() {
             { $set: { hotwheels: newHotwheels } }
         );
 
-        console.log(`  [MIGRATED] collection "${col.name}" (${col._id}) — ${newHotwheels.length} hotwheel(s), collectedAt=${collectedAt.toISOString()}`);
+        console.log(`  [MIGRATED] collection "${col.name}" (${col._id}) - ${newHotwheels.length} hotwheel(s), collectedAt=${collectedAt.toISOString()}`);
         migrated++;
     }
 
