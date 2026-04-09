@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wheelver - <%= collection ? collection.name : 'Collection Details' %></title>
     <link rel="stylesheet" href="/css/main.css">
+    <link rel="icon" href="/images/favicon.ico">
 </head>
 <body>
 <div class="content-wrapper">
@@ -16,13 +17,30 @@
                 <p class="m-jumbotron__description"><%= error %></p>
             </section>
         <% } else if (collection) { %>
+            <%
+                const total = collection.hotwheels ? collection.hotwheels.length : 0;
+                const seriesSet = new Set(collection.hotwheels ? collection.hotwheels.filter(e => e.hotwheel && e.hotwheel.series).map(e => e.hotwheel.series._id ? e.hotwheel.series._id.toString() : e.hotwheel.series.toString()) : []);
+                const specialCount = collection.hotwheels ? collection.hotwheels.filter(e => e.hotwheel && e.hotwheel.extra && e.hotwheel.extra !== 'Regular').length : 0;
+                const isOwner = currentUser && collection.owner && (collection.owner._id || collection.owner).toString() === currentUser._id.toString();
+            %>
+
             <section class="m-user-info">
                 <h1><%= collection.name %></h1>
                 <div class="e-stats">
                     <div class="e-stats__item">
                         <p class="text--muffled">Hotwheels</p>
-                        <span class="text"><%= collection.hotwheels ? collection.hotwheels.length : 0 %></span>
+                        <span class="text"><%= total %></span>
                     </div>
+                    <div class="e-stats__item">
+                        <p class="text--muffled">Series</p>
+                        <span class="text"><%= seriesSet.size %></span>
+                    </div>
+                    <% if (specialCount > 0) { %>
+                    <div class="e-stats__item">
+                        <p class="text--muffled">Special</p>
+                        <span class="text"><%= specialCount %></span>
+                    </div>
+                    <% } %>
                     <div class="e-stats__item">
                         <p class="text--muffled">Owner</p>
                         <span class="text">
@@ -39,7 +57,12 @@
             <section class="m-collection">
                 <div class="m-collection__header">
                     <h2>Hotwheels</h2>
-                    <button id="share-button" class="a-button">Share</button>
+                    <div style="display:flex; gap: 0.5rem;">
+                        <% if (isOwner) { %>
+                            <a href="/dashboard/c/<%= collection._id %>" class="a-button">Edit</a>
+                        <% } %>
+                        <button id="share-button" class="a-button">Share</button>
+                    </div>
                 </div>
 
                 <% if (collection.hotwheels && collection.hotwheels.length > 0) { %>

@@ -1,7 +1,37 @@
+<%
+    const hwCount = typeof collection.totalHotwheelsCount !== 'undefined' ? collection.totalHotwheelsCount : (collection.hotwheels ? collection.hotwheels.length : 0);
+    const entries = collection.hotwheels || [];
+
+    // Sort newest first, then deduplicate by hotwheel ID for stats and preview
+    const sortedEntries = [...entries].sort((a, b) => new Date(b.collectedAt) - new Date(a.collectedAt));
+    const seenIds = new Set();
+    const uniqueEntries = [];
+    for (const e of sortedEntries) {
+        const hw = e.hotwheel;
+        if (!hw) continue;
+        const id = hw._id ? hw._id.toString() : hw.toString();
+        if (!seenIds.has(id)) {
+            seenIds.add(id);
+            uniqueEntries.push(e);
+        }
+    }
+
+    const seriesIds = new Set(uniqueEntries.filter(e => e.hotwheel && e.hotwheel.series).map(e => {
+        const s = e.hotwheel.series;
+        return s._id ? s._id.toString() : s.toString();
+    }));
+    const specialCount = uniqueEntries.filter(e => e.hotwheel && e.hotwheel.extra && e.hotwheel.extra !== 'Regular').length;
+    const previewEntries = uniqueEntries.slice(0, 4);
+%>
+<% if (locals.isDashboardView) { %>
 <article class="e-collection-card">
+<% } else { %>
+<a href="/c/<%= collection._id %>" class="e-collection-card">
+<% } %>
+
     <div class="e-collection-card__grid">
         <% for (let i = 0; i < 4; i++) { %>
-            <% const hw = (collection.hotwheels && collection.hotwheels[i]) ? collection.hotwheels[i] : null; %>
+            <% const hw = previewEntries[i] && previewEntries[i].hotwheel ? previewEntries[i].hotwheel : null; %>
             <% if (hw && hw.photoUrl) { %>
                 <img src="<%= hw.photoUrl %>" alt="<%= hw.name %>" class="e-collection-card__img">
             <% } else { %>
@@ -10,16 +40,30 @@
         <% } %>
     </div>
 
-    <h3 class="e-collection-card__title"><%= collection.name || 'Unnamed Collection' %></h3>
+    <div class="e-collection-card__body">
+        <div class="e-collection-card__title-row">
+            <h3 class="e-collection-card__title"><%= collection.name || 'Unnamed Collection' %></h3>
+            <% if (specialCount > 0) { %>
+                <span class="e-collection-card__special" title="<%= specialCount %> special car<%= specialCount > 1 ? 's' : '' %>">★ <%= specialCount %></span>
+            <% } %>
+        </div>
+        <div class="e-collection-card__meta">
+            <span class="text--muffled"><%= hwCount %> car<%= hwCount !== 1 ? 's' : '' %></span>
+            <% if (seriesIds.size > 0) { %>
+                <span class="text--muffled"><%= seriesIds.size %> series</span>
+            <% } %>
+        </div>
+    </div>
 
-    <span class="e-collection-card__count"><%= typeof collection.totalHotwheelsCount !== 'undefined' ? collection.totalHotwheelsCount : (collection.hotwheels ? collection.hotwheels.length : 0) %> Hotwheels</span>
-    
     <% if (locals.isDashboardView) { %>
         <div class="e-collection-card__action">
             <a href="/dashboard/c/<%= collection._id %>" class="a-button">Edit</a>
-            <button class="a-button remove-collection-btn" data-id="<%= collection._id %>">Remove</button>
+            <button class="a-button a-button--danger remove-collection-btn" data-id="<%= collection._id %>">Remove</button>
         </div>
-    <% } else { %>
-        <a href="/c/<%= collection._id %>" class="a-button e-collection-card__button">View collection</a>
     <% } %>
+
+<% if (locals.isDashboardView) { %>
 </article>
+<% } else { %>
+</a>
+<% } %>

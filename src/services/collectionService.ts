@@ -23,6 +23,21 @@ export const getCollections = async (filter: any = {}) => {
     }
 };
 
+export const getCollectionsWithHotwheels = async (filter: any = {}) => {
+    logRequest(`Getting collections with hotwheels for filter ${JSON.stringify(filter)}`);
+    try {
+        const collections = await Collection.find(filter)
+            .populate({ path: 'hotwheels.hotwheel' })
+            .lean();
+        return collections.map((col: any) => ({
+            ...col,
+            totalHotwheelsCount: col.hotwheels ? col.hotwheels.length : 0,
+        }));
+    } catch (error: any) {
+        throw new Error(`Failed to get collections: ${error.message}`);
+    }
+};
+
 export const getCollection = async (id: string) => {
     logRequest(`Getting collection with id ${id}`);
     try {

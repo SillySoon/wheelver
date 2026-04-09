@@ -30,21 +30,8 @@ router.get("/dashboard", isAuthenticated, async (req, res) => {
         }
         console.log("Dashboard user object:", user);
 
-        const collections = await CollectionService.getCollections({ owner: user._id });
-
-        const collectionsWithCountAndImages = [];
-        for (const collection of collections) {
-            const totalCount = collection.hotwheels ? collection.hotwheels.length : 0;
-            await collection.populate({
-                path: 'hotwheels',
-                options: { limit: 4 }
-            });
-            const collectionObj = collection.toObject() as any;
-            collectionObj.totalHotwheelsCount = totalCount;
-            collectionsWithCountAndImages.push(collectionObj);
-        }
-
-        res.render("site/dashboard", { user, collections: collectionsWithCountAndImages, error: null });
+        const collections = await CollectionService.getCollectionsWithHotwheels({ owner: user._id });
+        res.render("site/dashboard", { user, collections, error: null });
     } catch (error) {
         console.error("Error loading dashboard:", error);
         res.status(500).render("site/dashboard", { user: req.user, collections: [], error: "Failed to load dashboard data." });
@@ -88,21 +75,9 @@ router.get("/u/:id", async (req, res) => {
             return res.status(404).render("site/user", { error: "User not found", user: null, collections: [] });
         }
 
-        const collections = await CollectionService.getCollections({ owner: userId });
-        // Populate hotwheels to get images for the cards, but keep track of the total count
-        const collectionsWithCount = [];
-        for (const collection of collections) {
-            const totalCount = collection.hotwheels ? collection.hotwheels.length : 0;
-            await collection.populate({
-                path: 'hotwheels',
-                options: { limit: 4 }
-            });
-            const collectionObj = collection.toObject() as any;
-            collectionObj.totalHotwheelsCount = totalCount;
-            collectionsWithCount.push(collectionObj);
-        }
+        const collections = await CollectionService.getCollectionsWithHotwheels({ owner: userId });
         const currentUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
-        res.render("site/user", { user, collections: collectionsWithCount, error: null, currentUrl });
+        res.render("site/user", { user, collections, error: null, currentUrl });
     } catch (error) {
         res.status(500).render("site/user", { error: "Failed to load user profile", user: null, collections: [] });
     }
@@ -122,7 +97,7 @@ router.get("/c/:id", async (req, res) => {
         }
 
         const currentUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
-        res.render("site/collection", { collection, error: null, currentUrl });
+        res.render("site/collection", { collection, error: null, currentUrl, currentUser: req.user || null });
     } catch (error) {
         console.error("Error loading collection:", error);
         res.status(500).render("site/collection", { error: "Failed to load collection", collection: null });

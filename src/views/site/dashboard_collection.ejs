@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wheelver - Edit <%= collection ? collection.name : 'Collection' %></title>
     <link rel="stylesheet" href="/css/main.css">
+    <link rel="icon" href="/images/favicon.ico">
 </head>
 <body>
 <div class="content-wrapper">
@@ -16,33 +17,45 @@
                 <p class="m-jumbotron__description"><%= error %></p>
             </section>
         <% } else if (collection) { %>
+            <%
+                const total = collection.hotwheels ? collection.hotwheels.length : 0;
+                const seriesSet = new Set(collection.hotwheels ? collection.hotwheels.filter(e => e.hotwheel && e.hotwheel.series).map(e => e.hotwheel.series._id ? e.hotwheel.series._id.toString() : e.hotwheel.series.toString()) : []);
+                const specialCount = collection.hotwheels ? collection.hotwheels.filter(e => e.hotwheel && e.hotwheel.extra && e.hotwheel.extra !== 'Regular').length : 0;
+            %>
+
             <section class="m-user-info">
-                <h1><%= collection.name %></h1>
+<h1><%= collection.name %></h1>
                 <div class="e-stats">
                     <div class="e-stats__item">
                         <p class="text--muffled">Hotwheels</p>
-                        <span class="text"><%= collection.hotwheels ? collection.hotwheels.length : 0 %></span>
+                        <span class="text"><%= total %></span>
                     </div>
                     <div class="e-stats__item">
-                        <p class="text--muffled">Owner</p>
-                        <span class="text">
-                            <% if (collection.owner) { %>
-                                <a href="/u/<%= collection.owner._id || collection.owner %>" class="a-link text"><%= collection.owner.username || 'View Profile' %></a>
-                            <% } else { %>
-                                Unknown
-                            <% } %>
-                        </span>
+                        <p class="text--muffled">Series</p>
+                        <span class="text"><%= seriesSet.size %></span>
                     </div>
+                    <% if (specialCount > 0) { %>
+                    <div class="e-stats__item">
+                        <p class="text--muffled">Special</p>
+                        <span class="text"><%= specialCount %></span>
+                    </div>
+                    <% } %>
                 </div>
+
                 <form id="edit-collection-form" class="m-collection__form">
                     <input type="text" id="collection-name" name="name" value="<%= collection.name %>" required
                            pattern="^[a-zA-Z0-9\-_& ]+$"
                            title="Only letters, numbers, spaces, -, _, and & are allowed."
-                    class="a-search__input">
-                    <button type="submit" class="a-button">Save Changes</button>
+                           class="a-search__input">
+                    <button type="submit" class="a-button">Rename</button>
                 </form>
 
                 <div id="form-error-message" class="error"></div>
+
+                <div class="m-collection__header-actions">
+                    <a href="/c/<%= collection._id %>" class="a-button">View as public</a>
+                    <button id="delete-collection-btn" class="a-button a-button--danger">Delete collection</button>
+                </div>
             </section>
 
             <section class="m-collection">
@@ -60,8 +73,6 @@
                         <p class="m-hw-add__placeholder text--muffled">Search for a Hot Wheel to preview it here.</p>
                     </div>
                 </div>
-
-                <div id="form-error-message" class="error"></div>
 
                 <div class="m-collection__controls" id="list-controls"<% if (!collection.hotwheels || collection.hotwheels.length === 0) { %> style="display:none"<% } %>>
                     <input type="text" id="hw-filter-search" class="a-search__input" placeholder="Filter list...">

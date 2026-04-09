@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wheelver - User Profile</title>
+    <title>Wheelver - <%= user ? user.username : 'User Profile' %></title>
     <link rel="stylesheet" href="/css/main.css">
+    <link rel="icon" href="/images/favicon.ico">
 </head>
 <body>
 <div class="content-wrapper">
@@ -16,6 +17,12 @@
                 <p class="m-jumbotron__description"><%= error %></p>
             </section>
         <% } else if (user) { %>
+            <%
+                const totalCars = collections.reduce((sum, c) => sum + (typeof c.totalHotwheelsCount !== 'undefined' ? c.totalHotwheelsCount : (c.hotwheels ? c.hotwheels.length : 0)), 0);
+                const allEntries = collections.flatMap(c => c.hotwheels || []);
+                const allSeriesIds = new Set(allEntries.filter(e => e.hotwheel && e.hotwheel.series).map(e => e.hotwheel.series._id ? e.hotwheel.series._id.toString() : e.hotwheel.series.toString()));
+                const totalSpecial = allEntries.filter(e => e.hotwheel && e.hotwheel.extra && e.hotwheel.extra !== 'Regular').length;
+            %>
             <section class="m-user-info">
                 <h1><%= user.username %></h1>
                 <div class="e-stats">
@@ -25,11 +32,23 @@
                     </div>
                     <div class="e-stats__item">
                         <p class="text--muffled">Hotwheels</p>
-                        <span class="text"><%= collections.reduce((total, collection) => total + (typeof collection.totalHotwheelsCount !== 'undefined' ? collection.totalHotwheelsCount : (collection.hotwheels ? collection.hotwheels.length : 0)), 0) %></span>
+                        <span class="text"><%= totalCars %></span>
                     </div>
+                    <% if (allSeriesIds.size > 0) { %>
+                    <div class="e-stats__item">
+                        <p class="text--muffled">Series</p>
+                        <span class="text"><%= allSeriesIds.size %></span>
+                    </div>
+                    <% } %>
+                    <% if (totalSpecial > 0) { %>
+                    <div class="e-stats__item">
+                        <p class="text--muffled">Special</p>
+                        <span class="text"><%= totalSpecial %></span>
+                    </div>
+                    <% } %>
                     <div class="e-stats__item">
                         <p class="text--muffled">Joined</p>
-                        <span class="text"><%= new Date(user.createdAt).toLocaleDateString() %></span>
+                        <span class="text"><%= new Date(user.createdAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) %></span>
                     </div>
                 </div>
             </section>
@@ -46,7 +65,9 @@
                             <%- include('../partials/e-collection-card', { collection }) %>
                         <% }); %>
                     <% } else { %>
-                        <p>No collections found.</p>
+                        <div class="m-collection__empty">
+                            <p>No collections yet.</p>
+                        </div>
                     <% } %>
                 </div>
             </section>

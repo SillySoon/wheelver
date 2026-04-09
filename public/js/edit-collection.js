@@ -143,6 +143,25 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('.remove-hotwheel-btn').forEach(btn => btn.addEventListener('click', handleRemove));
 
+    // --- Delete Collection ---
+    const deleteBtn = document.getElementById('delete-collection-btn');
+    if (deleteBtn) {
+        deleteBtn.onclick = async () => {
+            if (!confirm('Are you sure you want to delete this collection? This cannot be undone.')) return;
+            try {
+                const res = await fetch(`/api/collection/${collectionId}`, { method: 'DELETE' });
+                if (res.ok) {
+                    window.location.href = '/dashboard';
+                } else {
+                    const err = await res.json();
+                    showError(err.message || 'Failed to delete collection');
+                }
+            } catch {
+                showError('Error deleting collection');
+            }
+        };
+    }
+
     // --- Search & Preview ---
     const hwSearchInput = document.getElementById('hw-search-input');
     const hwSearchResultsDiv = document.getElementById('hw-search-results');

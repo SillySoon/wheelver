@@ -16,10 +16,9 @@
 }
 
 .a-button--danger {
-    background-color: transparent;
-    color: #ef4444;
-    border: 1.5px solid #ef4444;
-    font-weight: 600;
+    background-color: var(--text-secondary);
+    color: var(--bg-primary);
+    border: none;
 }
 
 .a-button--danger:hover {

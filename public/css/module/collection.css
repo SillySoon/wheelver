@@ -16,10 +16,23 @@
     gap: 1rem;
 }
 
+.m-collection__back {
+    font-size: 0.85rem;
+    align-self: flex-start;
+}
+
 .m-collection__header {
     display: flex;
     gap: 1rem;
     justify-content: space-between;
+    align-items: center;
+}
+
+.m-collection__header-actions {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
 }
 
 .m-collection__controls {
@@ -29,7 +42,21 @@
     flex-wrap: wrap;
 }
 
+.m-collection__controls .a-search__input {
+    flex: 1;
+    min-width: 10rem;
+}
+
 .m-collection__pills {
     display: flex;
     gap: 0.4rem;
+}
+
+.m-collection__empty {
+    grid-column: 1 / -1;
+    padding: 3rem;
+    text-align: center;
+    color: var(--text-muted);
+    background-color: white;
+    border-radius: 1rem;
 }

@@ -43,6 +43,20 @@
     color: var(--text-primary);
 }
 
+.m-hotwheel-detail__title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.m-hotwheel-detail__badge {
+    position: static;
+    font-size: 0.85rem;
+    padding: 0.3rem 0.7rem;
+}
+
 @media (max-width: 768px) {
     .m-hotwheel-detail {
         grid-template-columns: 1fr;

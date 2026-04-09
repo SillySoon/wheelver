@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wheelver - <%= hotwheel ? hotwheel.name : 'Hotwheel Info' %></title>
     <link rel="stylesheet" href="/css/main.css">
+    <link rel="icon" href="/images/favicon.ico">
 </head>
 <body>
 <div class="content-wrapper">
@@ -17,14 +18,21 @@
             </section>
         <% } else if (hotwheel) { %>
             <section class="m-user-info">
-                <h1><%= hotwheel.name %></h1>
+                <div class="m-hotwheel-detail__title">
+                    <h1><%= hotwheel.name %></h1>
+                    <% if (hotwheel.extra && hotwheel.extra !== 'Regular') { %>
+                        <span class="e-hotwheel-card__badge e-hotwheel-card__badge--extra e-hotwheel-card__badge--<%= hotwheel.extra.toLowerCase().replace(/ /g, '-') %> m-hotwheel-detail__badge">
+                            <%= hotwheel.extra %>
+                        </span>
+                    <% } %>
+                </div>
             </section>
 
             <div class="m-hotwheel-detail">
                 <div class="m-hotwheel-detail__image-wrapper">
                     <img src="<%= hotwheel.photoUrl || '/images/default.jpg' %>" alt="<%= hotwheel.name %>" class="m-hotwheel-detail__img">
                 </div>
-                
+
                 <div class="m-hotwheel-detail__content">
                     <h2>Specifications</h2>
                     <div class="m-hotwheel-detail__info-grid">
@@ -42,11 +50,6 @@
 
                         <div class="m-hotwheel-detail__label">Year</div>
                         <div class="m-hotwheel-detail__value"><%= hotwheel.year || 'N/A' %></div>
-
-                        <% if (hotwheel.extra) { %>
-                            <div class="m-hotwheel-detail__label">Extra Info</div>
-                            <div class="m-hotwheel-detail__value"><%= hotwheel.extra %></div>
-                        <% } %>
                     </div>
                 </div>
             </div>
