@@ -28,7 +28,7 @@ export const getCollection = async (id: string) => {
     try {
         return await Collection.findById(id)
             .populate({
-                path: 'hotwheels',
+                path: 'hotwheels.hotwheel',
                 populate: { path: 'series' }
             })
             .populate('owner', 'username discordId')
@@ -42,7 +42,7 @@ export const updateCollection = async (id: string, collectionData: any) => {
     logRequest(`Updating collection with id ${id}`);
     try {
         return await Collection.findByIdAndUpdate(id, collectionData, { new: true }).populate({
-            path: 'hotwheels',
+            path: 'hotwheels.hotwheel',
             populate: { path: 'series' }
         });
     } catch (error: any) {
@@ -70,10 +70,10 @@ export const addHotwheelToCollection = async (collectionId: string, hotwheelId: 
 
         return await Collection.findByIdAndUpdate(
             collectionId,
-            { $addToSet: { hotwheels: hotwheelId } },
+            { $push: { hotwheels: { hotwheel: hotwheelId, collectedAt: new Date() } } },
             { new: true }
         ).populate({
-            path: 'hotwheels',
+            path: 'hotwheels.hotwheel',
             populate: { path: 'series' }
         });
     } catch (error: any) {
@@ -84,12 +84,22 @@ export const addHotwheelToCollection = async (collectionId: string, hotwheelId: 
 export const removeHotwheelFromCollection = async (collectionId: string, hotwheelId: string) => {
     logRequest(`Removing hotwheel ${hotwheelId} from collection ${collectionId}`);
     try {
+        const collection = await Collection.findById(collectionId);
+        if (!collection) return null;
+
+        const entry = collection.hotwheels?.find(
+            (e) => e.hotwheel.toString() === hotwheelId
+        );
+        if (!entry) {
+            throw new Error(`Hotwheel ${hotwheelId} not found in collection`);
+        }
+
         return await Collection.findByIdAndUpdate(
             collectionId,
-            { $pull: { hotwheels: hotwheelId } },
+            { $pull: { hotwheels: { _id: entry._id } } },
             { new: true }
         ).populate({
-            path: 'hotwheels',
+            path: 'hotwheels.hotwheel',
             populate: { path: 'series' }
         });
     } catch (error: any) {

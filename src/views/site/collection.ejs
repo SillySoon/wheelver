@@ -44,8 +44,8 @@
 
                 <div class="m-collection__grid">
                     <% if (collection.hotwheels && collection.hotwheels.length > 0) { %>
-                        <% collection.hotwheels.forEach(hotwheel => { %>
-                            <%- include('../partials/e-hotwheel-card', { hotwheel }) %>
+                        <% collection.hotwheels.forEach(entry => { %>
+                            <%- include('../partials/e-hotwheel-card', { hotwheel: entry.hotwheel }) %>
                         <% }); %>
                     <% } else { %>
                         <p>No Hot Wheels in this collection yet.</p>
