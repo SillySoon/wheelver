@@ -140,3 +140,7 @@ vite.config.ts.timestamp-*
 # Webstorm folder
 .idea/
 package-lock.json
+
+# Claude
+CLAUDE.md
+.claude/
