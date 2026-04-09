@@ -44,8 +44,18 @@
 
                 <div class="m-collection__grid">
                     <% if (collection.hotwheels && collection.hotwheels.length > 0) { %>
-                        <% collection.hotwheels.forEach(entry => { %>
-                            <%- include('../partials/e-hotwheel-card', { hotwheel: entry.hotwheel }) %>
+                        <%
+                            const countMap = {};
+                            const seen = new Set();
+                            const uniqueEntries = [];
+                            collection.hotwheels.forEach(entry => {
+                                const id = entry.hotwheel._id.toString();
+                                countMap[id] = (countMap[id] || 0) + 1;
+                                if (!seen.has(id)) { seen.add(id); uniqueEntries.push(entry); }
+                            });
+                        %>
+                        <% uniqueEntries.forEach(entry => { %>
+                            <%- include('../partials/e-hotwheel-card', { hotwheel: entry.hotwheel, count: countMap[entry.hotwheel._id.toString()] }) %>
                         <% }); %>
                     <% } else { %>
                         <p>No Hot Wheels in this collection yet.</p>

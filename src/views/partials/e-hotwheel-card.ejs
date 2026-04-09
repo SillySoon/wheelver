@@ -1,28 +1,28 @@
 <article class="e-hotwheel-card">
     <div class="e-hotwheel-card__image-wrapper">
         <img src="<%= hotwheel.photoUrl || '/images/default.jpg' %>" alt="<%= hotwheel.name %>" class="e-hotwheel-card__img">
+
+        <% if (hotwheel.extra && hotwheel.extra !== 'Regular') { %>
+            <span class="e-hotwheel-card__badge e-hotwheel-card__badge--extra e-hotwheel-card__badge--<%= hotwheel.extra.toLowerCase().replace(/ /g, '-') %>">
+                <%= hotwheel.extra === 'Treasure Hunt' ? 'TH' : hotwheel.extra === 'Super Treasure Hunt' ? 'STH' : hotwheel.extra %>
+            </span>
+        <% } %>
+
+        <% if (locals.count && count > 1) { %>
+            <span class="e-hotwheel-card__badge e-hotwheel-card__badge--count">×<%= count %></span>
+        <% } %>
     </div>
 
     <div class="e-hotwheel-card__info">
-        <div class="e-hotwheel-card__header">
-            <h3 class="e-hotwheel-card__title">
-                <% if (locals.isDashboardView) { %>
-                    <%= hotwheel.name %>
-                <% } else { %>
-                    <a href="/hw/<%= hotwheel._id %>" class="a-link"><%= hotwheel.name %></a>
-                <% } %>
-            </h3>
+        <% if (locals.isDashboardView) { %>
+            <p class="e-hotwheel-card__name"><%= hotwheel.name %></p>
+        <% } else { %>
+            <a href="/hw/<%= hotwheel._id %>" class="a-link e-hotwheel-card__name"><%= hotwheel.name %></a>
+        <% } %>
+
+        <div class="e-hotwheel-card__meta">
+            <span class="text--muffled"><%= (hotwheel.series && hotwheel.series.name) ? hotwheel.series.name : 'Unknown Series' %></span>
             <span class="e-hotwheel-card__toy-number"><%= hotwheel.toyNumber || 'N/A' %></span>
-        </div>
-        
-        <div class="e-hotwheel-card__details">
-            <div class="e-hotwheel-card__series">
-                <%= (hotwheel.series && hotwheel.series.name) ? hotwheel.series.name : 'Unknown Series' %>
-                <% if (hotwheel.seriesNumber) { %>
-                    <span class="text--muffled">(<%= hotwheel.seriesNumber %>)</span>
-                <% } %>
-            </div>
-            <div class="e-hotwheel-card__year text--muffled"><%= hotwheel.year || 'N/A' %></div>
         </div>
 
         <% if (locals.isDashboardView) { %>
