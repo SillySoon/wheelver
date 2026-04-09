@@ -42,6 +42,28 @@
                     <button id="share-button" class="a-button">Share</button>
                 </div>
 
+                <% if (collection.hotwheels && collection.hotwheels.length > 0) { %>
+                <div class="m-collection__controls">
+                    <input type="text" id="hw-filter-search" class="a-search__input" placeholder="Search by name or toy number...">
+
+                    <div class="m-collection__pills">
+                        <button class="a-pill a-pill--active" data-extra="all">All</button>
+                        <button class="a-pill" data-extra="Treasure Hunt">TH</button>
+                        <button class="a-pill" data-extra="Super Treasure Hunt">STH</button>
+                        <button class="a-pill" data-extra="Chase">Chase</button>
+                    </div>
+
+                    <select id="hw-sort" class="a-select">
+                        <option value="collected-desc">Recently collected</option>
+                        <option value="name-asc">Name A–Z</option>
+                        <option value="name-desc">Name Z–A</option>
+                        <option value="year-desc">Year newest</option>
+                        <option value="year-asc">Year oldest</option>
+                        <option value="count-desc">Most owned</option>
+                    </select>
+                </div>
+                <% } %>
+
                 <div class="m-collection__grid">
                     <% if (collection.hotwheels && collection.hotwheels.length > 0) { %>
                         <%
@@ -55,16 +77,20 @@
                             });
                         %>
                         <% uniqueEntries.forEach(entry => { %>
-                            <%- include('../partials/e-hotwheel-card', { hotwheel: entry.hotwheel, count: countMap[entry.hotwheel._id.toString()] }) %>
+                            <%- include('../partials/e-hotwheel-card', { hotwheel: entry.hotwheel, count: countMap[entry.hotwheel._id.toString()], collectedAt: entry.collectedAt }) %>
                         <% }); %>
                     <% } else { %>
                         <p>No Hot Wheels in this collection yet.</p>
                     <% } %>
                 </div>
+
+                <p id="hw-no-results" style="display:none;" class="text--muffled">No hotwheels match your search.</p>
             </section>
         <% } %>
     </main>
     <script src="/js/share.js"></script>
+    <script src="/js/collection-filter.js"></script>
+    <script src="/js/lightbox.js"></script>
 </div>
 </body>
 </html>

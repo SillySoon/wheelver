@@ -21,3 +21,15 @@
     gap: 1rem;
     justify-content: space-between;
 }
+
+.m-collection__controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.m-collection__pills {
+    display: flex;
+    gap: 0.4rem;
+}

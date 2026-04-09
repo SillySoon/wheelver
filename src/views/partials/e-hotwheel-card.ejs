@@ -1,4 +1,12 @@
-<article class="e-hotwheel-card">
+<article class="e-hotwheel-card"
+    data-name="<%= hotwheel.name.toLowerCase() %>"
+    data-toy-number="<%= (hotwheel.toyNumber || '').toLowerCase() %>"
+    data-series="<%= (hotwheel.series && hotwheel.series.name) ? hotwheel.series.name.toLowerCase() : '' %>"
+    data-year="<%= hotwheel.year || 0 %>"
+    data-extra="<%= hotwheel.extra || 'Regular' %>"
+    data-collected-at="<%= locals.collectedAt ? new Date(collectedAt).getTime() : 0 %>"
+    data-count="<%= locals.count ? count : 1 %>"
+>
     <div class="e-hotwheel-card__image-wrapper">
         <img src="<%= hotwheel.photoUrl || '/images/default.jpg' %>" alt="<%= hotwheel.name %>" class="e-hotwheel-card__img">
 

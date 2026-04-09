@@ -57,19 +57,48 @@
                 </div>
                 <p id="selected-hw-info" style="margin-top: 5px; font-style: italic;"></p>
 
-                <div class="m-collection__grid">
-                    <% if (collection.hotwheels && collection.hotwheels.length > 0) { %>
-                        <% collection.hotwheels.forEach(entry => { %>
-                            <%- include('../partials/e-hotwheel-card', { hotwheel: entry.hotwheel, isDashboardView: true, collection: collection }) %>
-                        <% }); %>
-                    <% } else { %>
-                        <p>No hotwheels in this collection yet.</p>
-                    <% } %>
+                <% if (collection.hotwheels && collection.hotwheels.length > 0) { %>
+                <div class="m-collection__controls">
+                    <input type="text" id="hw-filter-search" class="a-search__input" placeholder="Search by name or toy number...">
+
+                    <div class="m-collection__pills">
+                        <button class="a-pill a-pill--active" data-extra="all">All</button>
+                        <button class="a-pill" data-extra="Treasure Hunt">TH</button>
+                        <button class="a-pill" data-extra="Super Treasure Hunt">STH</button>
+                        <button class="a-pill" data-extra="Chase">Chase</button>
+                    </div>
+
+                    <select id="hw-sort" class="a-select">
+                        <option value="collected-desc">Recently collected</option>
+                        <option value="name-asc">Name A–Z</option>
+                        <option value="name-desc">Name Z–A</option>
+                        <option value="year-desc">Year newest</option>
+                        <option value="year-asc">Year oldest</option>
+                    </select>
                 </div>
+
+                    <ul class="m-hw-list">
+                        <li class="m-hw-list__header">
+                            <span></span>
+                            <span>Name</span>
+                            <span>Series</span>
+                            <span>Toy #</span>
+                            <span>Collected</span>
+                            <span></span>
+                        </li>
+                        <% collection.hotwheels.forEach(entry => { %>
+                            <%- include('../partials/e-hotwheel-row', { hotwheel: entry.hotwheel, entry, collection }) %>
+                        <% }); %>
+                    </ul>
+                <p id="hw-no-results" style="display:none;" class="text--muffled">No hotwheels match your search.</p>
+                <% } else { %>
+                    <p>No hotwheels in this collection yet.</p>
+                <% } %>
             </section>
         <% } %>
     </main>
     <script src="/js/edit-collection.js"></script>
+    <script src="/js/dashboard-filter.js"></script>
 </div>
 </body>
 </html>

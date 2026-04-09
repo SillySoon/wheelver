@@ -1,0 +1,25 @@
+<li class="e-hw-row"
+    data-name="<%= hotwheel.name.toLowerCase() %>"
+    data-toy-number="<%= (hotwheel.toyNumber || '').toLowerCase() %>"
+    data-series="<%= (hotwheel.series && hotwheel.series.name) ? hotwheel.series.name.toLowerCase() : '' %>"
+    data-year="<%= hotwheel.year || 0 %>"
+    data-extra="<%= hotwheel.extra || 'Regular' %>"
+    data-collected-at="<%= entry.collectedAt ? new Date(entry.collectedAt).getTime() : 0 %>"
+>
+    <img class="e-hw-row__thumb" src="<%= hotwheel.photoUrl || '/images/default.jpg' %>" alt="<%= hotwheel.name %>">
+
+    <div class="e-hw-row__main">
+        <span class="e-hw-row__name"><%= hotwheel.name %></span>
+        <% if (hotwheel.extra && hotwheel.extra !== 'Regular') { %>
+            <span class="e-hotwheel-card__badge e-hotwheel-card__badge--extra e-hotwheel-card__badge--<%= hotwheel.extra.toLowerCase().replace(/ /g, '-') %> e-hw-row__badge">
+                <%= hotwheel.extra === 'Treasure Hunt' ? 'TH' : hotwheel.extra === 'Super Treasure Hunt' ? 'STH' : hotwheel.extra %>
+            </span>
+        <% } %>
+    </div>
+
+    <span class="e-hw-row__series text--muffled"><%= (hotwheel.series && hotwheel.series.name) ? hotwheel.series.name : '—' %></span>
+    <span class="e-hw-row__toy-number text--muffled"><%= hotwheel.toyNumber || '—' %></span>
+    <span class="e-hw-row__date text--muffled"><%= entry.collectedAt ? new Date(entry.collectedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '—' %></span>
+
+    <button class="a-button a-button--danger remove-hotwheel-btn" data-id="<%= hotwheel._id %>" data-collection-id="<%= collection._id %>">Remove</button>
+</li>

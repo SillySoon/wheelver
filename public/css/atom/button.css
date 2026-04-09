@@ -14,3 +14,57 @@
 .a-button:hover {
     background-color: var(--text-secondary);
 }
+
+.a-button--danger {
+    background-color: transparent;
+    color: #ef4444;
+    border: 1.5px solid #ef4444;
+    font-weight: 600;
+}
+
+.a-button--danger:hover {
+    background-color: #ef4444;
+    color: #fff;
+}
+
+.a-pill {
+    background-color: transparent;
+    color: var(--text-muted);
+    border: 1.5px solid var(--text-muted);
+    padding: 0.3rem 0.85rem;
+    border-radius: 2000px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    font-family: inherit;
+    transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.a-pill:hover {
+    border-color: var(--text-primary);
+    color: var(--text-primary);
+}
+
+.a-pill--active {
+    background-color: var(--text-primary);
+    color: var(--bg-primary);
+    border-color: var(--text-primary);
+}
+
+.a-select {
+    background-color: transparent;
+    color: var(--text-primary);
+    border: 1.5px solid var(--text-muted);
+    padding: 0.3rem 0.75rem;
+    border-radius: 2000px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s;
+}
+
+.a-select:hover,
+.a-select:focus {
+    border-color: var(--text-primary);
+}
