@@ -8,7 +8,7 @@ import { DISCORD_CLIENT_ID, DISCORD_SECRET, DISCORD_CALLBACK_URL } from './env';
  * Creates or updates the user from the Discord profile on every login.
  * The handle follows the Discord username; an old handle is kept for redirects.
  */
-const syncDiscordUser = async (profile: DiscordProfile) => {
+export const syncDiscordUser = async (profile: DiscordProfile) => {
     const handle = profile.username.toLowerCase();
     const displayName = profile.global_name || profile.username;
 

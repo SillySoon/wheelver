@@ -2,6 +2,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { ADMIN_DISCORD_IDS } from '../config/env';
 import { isValidObjectId } from '../utils/validation';
+import { Collection } from '../models';
 
 export const isAuthenticated = (req: Request, res: Response, next: NextFunction) => {
     if (req.isAuthenticated()) {
@@ -63,7 +64,6 @@ export const isCollectionOwner = async (req: Request, res: Response, next: NextF
     }
 
     try {
-        const { Collection } = require('../models');
         const collection = await Collection.findById(collectionId);
 
         if (!collection) {

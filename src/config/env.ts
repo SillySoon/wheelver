@@ -12,6 +12,7 @@ export let DISCORD_CALLBACK_URL: string;
 export let SESSION_SECRET: string;
 export let ADMIN_DISCORD_IDS: string[];
 export const IS_PRODUCTION = process.env.NODE_ENV === "production";
+export const IS_TEST = process.env.NODE_ENV === "test";
 
 if (!process.env.PORT) {
     logger.warn("PORT is not defined, using default port 3000");

@@ -9,9 +9,15 @@ import { MongoStore } from "connect-mongo";
 import { rateLimit } from "express-rate-limit";
 import passport from "./config/passport";
 import { csrfProtection } from "./middleware/csrf";
-import { SESSION_SECRET, MONGODB_URI, IS_PRODUCTION } from "./config/env";
+import { SESSION_SECRET, MONGODB_URI, IS_PRODUCTION, IS_TEST } from "./config/env";
 
 const app: Express = express();
+
+export const sessionStore = MongoStore.create({
+    mongoUrl: MONGODB_URI,
+    collectionName: "sessions",
+    ttl: 14 * 24 * 60 * 60, // 14 days
+});
 
 // Behind a reverse proxy in production; needed for secure cookies and correct client IPs
 if (IS_PRODUCTION) {
@@ -34,11 +40,7 @@ app.use(session({
     secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
-    store: MongoStore.create({
-        mongoUrl: MONGODB_URI,
-        collectionName: "sessions",
-        ttl: 14 * 24 * 60 * 60, // 14 days
-    }),
+    store: sessionStore,
     cookie: {
         httpOnly: true,
         sameSite: "lax",
@@ -63,8 +65,8 @@ app.set("views", path.join(__dirname, "views"));
 
 app.use(express.static(path.join("public")));
 app.use("/", viewRoutes);
-app.use("/auth", rateLimit({ windowMs: 15 * 60 * 1000, limit: 30 }), authRoutes);
-app.use("/api", rateLimit({ windowMs: 60 * 1000, limit: 120 }), apiRoutes);
+app.use("/auth", rateLimit({ windowMs: 15 * 60 * 1000, limit: 30, skip: () => IS_TEST }), authRoutes);
+app.use("/api", rateLimit({ windowMs: 60 * 1000, limit: 120, skip: () => IS_TEST }), apiRoutes);
 
 // 404 Not Found Handler
 app.use((req, res) => {
