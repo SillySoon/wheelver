@@ -1,9 +1,9 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const createForm = document.getElementById('create-collection-form');
+document.addEventListener("DOMContentLoaded", () => {
+    const createForm = document.getElementById("create-collection-form");
     if (!createForm) return;
 
-    const nameInput = document.getElementById('new-collection-name');
-    const formErrorEl = document.getElementById('form-error-message');
+    const nameInput = document.getElementById("new-collection-name");
+    const formErrorEl = document.getElementById("form-error-message");
 
     const showError = (message) => {
         if (formErrorEl) {
@@ -19,47 +19,47 @@ document.addEventListener('DOMContentLoaded', () => {
         createForm.onsubmit = async (e) => {
             e.preventDefault();
             const name = nameInput.value.trim();
-            showError('');
+            showError("");
 
             try {
-                const response = await fetch('/api/collection', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name })
+                const response = await fetch("/api/collection", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name }),
                 });
 
                 if (response.ok) {
-                    nameInput.value = '';
+                    nameInput.value = "";
                     reloadCollections();
                 } else {
                     const err = await response.json();
-                    showError('Error: ' + (err.message || 'Failed to create collection'));
+                    showError("Error: " + (err.message || "Failed to create collection"));
                 }
             } catch (err) {
                 console.error(err);
-                showError('Error creating collection');
+                showError("Error creating collection");
             }
         };
     }
 
-    document.querySelectorAll('.remove-collection-btn').forEach(btn => {
+    document.querySelectorAll(".remove-collection-btn").forEach((btn) => {
         btn.onclick = async () => {
-            if (confirm('Are you sure you want to remove this collection? This cannot be undone.')) {
+            if (confirm("Are you sure you want to remove this collection? This cannot be undone.")) {
                 try {
                     const collectionId = btn.dataset.id;
                     const response = await fetch(`/api/collection/${collectionId}`, {
-                        method: 'DELETE'
+                        method: "DELETE",
                     });
 
                     if (response.ok) {
                         reloadCollections();
                     } else {
                         const err = await response.json();
-                        showError('Error: ' + (err.message || 'Failed to remove collection'));
+                        showError("Error: " + (err.message || "Failed to remove collection"));
                     }
                 } catch (err) {
                     console.error(err);
-                    showError('Error removing collection');
+                    showError("Error removing collection");
                 }
             }
         };

@@ -1,8 +1,8 @@
 // src/config/passport.ts
-import passport from 'passport';
-import { Strategy as DiscordStrategy, DiscordProfile, VerifyCallback } from 'discord-strategy';
-import User from '../models/User';
-import { DISCORD_CLIENT_ID, DISCORD_SECRET, DISCORD_CALLBACK_URL } from './env';
+import passport from "passport";
+import { Strategy as DiscordStrategy, DiscordProfile, DiscordScope, VerifyCallback } from "discord-strategy";
+import User from "../models/User";
+import { DISCORD_CLIENT_ID, DISCORD_SECRET, DISCORD_CALLBACK_URL } from "./env";
 
 /**
  * Creates or updates the user from the Discord profile on every login.
@@ -36,8 +36,8 @@ export const syncDiscordUser = async (profile: DiscordProfile) => {
     return await existing.save();
 };
 
-passport.serializeUser((user: any, done) => {
-    done(null, user.id);
+passport.serializeUser((user, done) => {
+    done(null, user._id.toString());
 });
 
 passport.deserializeUser(async (id: string, done) => {
@@ -49,22 +49,22 @@ passport.deserializeUser(async (id: string, done) => {
     }
 });
 
-passport.use(new DiscordStrategy({
-    authorizationURL: 'https://discord.com/api/oauth2/authorize',
-    tokenURL: 'https://discord.com/api/oauth2/token',
-    clientID: DISCORD_CLIENT_ID,
-    clientSecret: DISCORD_SECRET,
-    callbackURL: DISCORD_CALLBACK_URL,
-    scope: ['identify'] as any
-}, ((accessToken: string, refreshToken: string, profile: DiscordProfile, done: VerifyCallback) => {
-    (async () => {
-        try {
-            const user = await syncDiscordUser(profile);
-            return done(null, user as any);
-        } catch (err) {
-            return done(err as Error, undefined);
-        }
-    })();
-}) as any));
+passport.use(
+    new DiscordStrategy(
+        {
+            authorizationURL: "https://discord.com/api/oauth2/authorize",
+            tokenURL: "https://discord.com/api/oauth2/token",
+            clientID: DISCORD_CLIENT_ID,
+            clientSecret: DISCORD_SECRET,
+            callbackURL: DISCORD_CALLBACK_URL,
+            scope: [DiscordScope.Identify],
+        },
+        (accessToken: string, refreshToken: string, profile: DiscordProfile, done: VerifyCallback) => {
+            syncDiscordUser(profile)
+                .then((user) => done(null, user))
+                .catch((err) => done(err));
+        },
+    ),
+);
 
 export default passport;

@@ -1,76 +1,87 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const mainElement = document.querySelector('main.l-container');
+document.addEventListener("DOMContentLoaded", () => {
+    const mainElement = document.querySelector("main.l-container");
     const collectionId = mainElement ? mainElement.dataset.collectionId : null;
 
     if (!collectionId) {
-        console.error('Collection ID not found.');
+        console.error("Collection ID not found.");
         return;
     }
 
     // Escape values before inserting them into HTML strings
-    const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ({
-        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-    })[c]);
+    const esc = (value) =>
+        String(value ?? "").replace(
+            /[&<>"']/g,
+            (c) =>
+                ({
+                    "&": "&amp;",
+                    "<": "&lt;",
+                    ">": "&gt;",
+                    '"': "&quot;",
+                    "'": "&#39;",
+                })[c],
+        );
 
-    const formErrorEl = document.getElementById('form-error-message');
-    const showError = (msg) => { if (formErrorEl) formErrorEl.textContent = msg; };
+    const formErrorEl = document.getElementById("form-error-message");
+    const showError = (msg) => {
+        if (formErrorEl) formErrorEl.textContent = msg;
+    };
 
     // --- Edit Collection Name ---
-    const editCollectionForm = document.getElementById('edit-collection-form');
-    const collectionNameInput = document.getElementById('collection-name');
+    const editCollectionForm = document.getElementById("edit-collection-form");
+    const collectionNameInput = document.getElementById("collection-name");
 
     if (editCollectionForm && collectionNameInput) {
         editCollectionForm.onsubmit = async (e) => {
             e.preventDefault();
-            showError('');
+            showError("");
             try {
                 const res = await fetch(`/api/collection/${collectionId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name: collectionNameInput.value.trim() })
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ name: collectionNameInput.value.trim() }),
                 });
                 if (res.ok) {
                     window.location.reload();
                 } else {
                     const err = await res.json();
-                    showError(err.message || 'Failed to update collection');
+                    showError(err.message || "Failed to update collection");
                 }
             } catch {
-                showError('Error updating collection');
+                showError("Error updating collection");
             }
         };
     }
 
     // --- Helpers ---
     const formatDate = (date) => {
-        if (!date) return '-';
-        return new Date(date).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+        if (!date) return "-";
+        return new Date(date).toLocaleDateString("en-GB", { day: "numeric", month: "short", year: "numeric" });
     };
 
     const extraBadgeClass = (extra) =>
-        `e-hotwheel-card__badge e-hotwheel-card__badge--extra e-hotwheel-card__badge--${extra.toLowerCase().replace(/ /g, '-')} e-hw-row__badge`;
+        `e-hotwheel-card__badge e-hotwheel-card__badge--extra e-hotwheel-card__badge--${extra.toLowerCase().replace(/ /g, "-")} e-hw-row__badge`;
 
     const extraBadgeLabel = (extra) =>
-        extra === 'Treasure Hunt' ? 'TH' : extra === 'Super Treasure Hunt' ? 'STH' : extra;
+        extra === "Treasure Hunt" ? "TH" : extra === "Super Treasure Hunt" ? "STH" : extra;
 
     const buildBadgeHTML = (extra) =>
-        extra && extra !== 'Regular'
+        extra && extra !== "Regular"
             ? `<span class="${esc(extraBadgeClass(extra))}">${esc(extraBadgeLabel(extra))}</span>`
-            : '';
+            : "";
 
     // --- Owned counts (tracked in memory) ---
     const ownedCounts = {};
-    document.querySelectorAll('.e-hw-row').forEach(row => {
-        const id = row.querySelector('.remove-hotwheel-btn')?.dataset.hotwheelId;
+    document.querySelectorAll(".e-hw-row").forEach((row) => {
+        const id = row.querySelector(".remove-hotwheel-btn")?.dataset.hotwheelId;
         if (id) ownedCounts[id] = (ownedCounts[id] || 0) + 1;
     });
 
-    const listControls = document.getElementById('list-controls');
-    const hwList = document.getElementById('hw-list');
-    const hwEmpty = document.getElementById('hw-empty');
+    const listControls = document.getElementById("list-controls");
+    const hwList = document.getElementById("hw-list");
+    const hwEmpty = document.getElementById("hw-empty");
 
     const showListControls = () => {
-        if (listControls) listControls.style.display = '';
+        if (listControls) listControls.style.display = "";
         if (hwEmpty) hwEmpty.remove();
     };
 
@@ -79,36 +90,39 @@ document.addEventListener('DOMContentLoaded', () => {
         const collectedAt = item.acquiredAt;
         showListControls();
 
-        const li = document.createElement('li');
-        li.className = 'e-hw-row';
+        const li = document.createElement("li");
+        li.className = "e-hw-row";
         li.dataset.name = hw.name.toLowerCase();
-        li.dataset.toyNumber = (hw.toyNumber || '').toLowerCase();
-        li.dataset.series = (hw.series?.name || '').toLowerCase();
+        li.dataset.toyNumber = (hw.toyNumber || "").toLowerCase();
+        li.dataset.series = (hw.series?.name || "").toLowerCase();
         li.dataset.year = hw.year || 0;
-        li.dataset.extra = hw.extra || 'Regular';
+        li.dataset.extra = hw.extra || "Regular";
         li.dataset.collectedAt = collectedAt ? new Date(collectedAt).getTime() : Date.now();
 
         li.innerHTML = `
-            <img class="e-hw-row__thumb" src="${esc(hw.photoUrl || '/images/default.jpg')}" alt="${esc(hw.name)}">
+            <img class="e-hw-row__thumb" src="${esc(hw.photoUrl || "/images/default.jpg")}" alt="${esc(hw.name)}">
             <div class="e-hw-row__main">
                 <span class="e-hw-row__name">${esc(hw.name)}</span>
                 ${buildBadgeHTML(hw.extra)}
             </div>
-            <span class="e-hw-row__series text--muffled">${esc(hw.series?.name || '-')}</span>
-            <span class="e-hw-row__toy-number text--muffled">${esc(hw.toyNumber || '-')}</span>
+            <span class="e-hw-row__series text--muffled">${esc(hw.series?.name || "-")}</span>
+            <span class="e-hw-row__toy-number text--muffled">${esc(hw.toyNumber || "-")}</span>
             <span class="e-hw-row__date text--muffled">${formatDate(collectedAt)}</span>
             <button class="a-button a-button--danger remove-hotwheel-btn" data-item-id="${esc(item._id)}" data-hotwheel-id="${esc(hw._id)}">Remove</button>
         `;
 
-        li.querySelector('.remove-hotwheel-btn').addEventListener('click', handleRemove);
+        li.querySelector(".remove-hotwheel-btn").addEventListener("click", handleRemove);
 
-        const header = hwList?.querySelector('.m-hw-list__header');
-        if (header) header.insertAdjacentElement('afterend', li);
+        const header = hwList?.querySelector(".m-hw-list__header");
+        if (header) header.insertAdjacentElement("afterend", li);
         else hwList?.prepend(li);
 
         // Brief highlight
-        li.style.backgroundColor = '#e8f5e9';
-        setTimeout(() => { li.style.transition = 'background-color 0.8s'; li.style.backgroundColor = ''; }, 50);
+        li.style.backgroundColor = "#e8f5e9";
+        setTimeout(() => {
+            li.style.transition = "background-color 0.8s";
+            li.style.backgroundColor = "";
+        }, 50);
     };
 
     // --- Remove row (no reload) ---
@@ -117,12 +131,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const itemId = btn.dataset.itemId;
         const hwId = btn.dataset.hotwheelId;
 
-        if (!confirm('Remove this hotwheel from the collection?')) return;
+        if (!confirm("Remove this hotwheel from the collection?")) return;
 
         try {
-            const res = await fetch(`/api/collection/${collectionId}/items/${itemId}`, { method: 'DELETE' });
+            const res = await fetch(`/api/collection/${collectionId}/items/${itemId}`, { method: "DELETE" });
             if (res.ok) {
-                const row = btn.closest('.e-hw-row');
+                const row = btn.closest(".e-hw-row");
                 row.remove();
                 ownedCounts[hwId] = Math.max(0, (ownedCounts[hwId] || 1) - 1);
 
@@ -130,49 +144,49 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (selectedHw?._id === hwId) renderPreview(selectedHw);
 
                 // Show empty state if no rows left
-                const remaining = hwList?.querySelectorAll('.e-hw-row');
+                const remaining = hwList?.querySelectorAll(".e-hw-row");
                 if (!remaining || remaining.length === 0) {
-                    if (listControls) listControls.style.display = 'none';
-                    const emptyLi = document.createElement('li');
-                    emptyLi.className = 'm-hw-list__empty';
-                    emptyLi.id = 'hw-empty';
-                    emptyLi.textContent = 'No hotwheels in this collection yet.';
+                    if (listControls) listControls.style.display = "none";
+                    const emptyLi = document.createElement("li");
+                    emptyLi.className = "m-hw-list__empty";
+                    emptyLi.id = "hw-empty";
+                    emptyLi.textContent = "No hotwheels in this collection yet.";
                     hwList?.appendChild(emptyLi);
                 }
             } else {
                 const err = await res.json();
-                showError(err.message || 'Failed to remove hotwheel');
+                showError(err.message || "Failed to remove hotwheel");
             }
         } catch {
-            showError('Error removing hotwheel');
+            showError("Error removing hotwheel");
         }
     };
 
-    document.querySelectorAll('.remove-hotwheel-btn').forEach(btn => btn.addEventListener('click', handleRemove));
+    document.querySelectorAll(".remove-hotwheel-btn").forEach((btn) => btn.addEventListener("click", handleRemove));
 
     // --- Delete Collection ---
-    const deleteBtn = document.getElementById('delete-collection-btn');
+    const deleteBtn = document.getElementById("delete-collection-btn");
     if (deleteBtn) {
         deleteBtn.onclick = async () => {
-            if (!confirm('Are you sure you want to delete this collection? This cannot be undone.')) return;
+            if (!confirm("Are you sure you want to delete this collection? This cannot be undone.")) return;
             try {
-                const res = await fetch(`/api/collection/${collectionId}`, { method: 'DELETE' });
+                const res = await fetch(`/api/collection/${collectionId}`, { method: "DELETE" });
                 if (res.ok) {
-                    window.location.href = '/dashboard';
+                    window.location.href = "/dashboard";
                 } else {
                     const err = await res.json();
-                    showError(err.message || 'Failed to delete collection');
+                    showError(err.message || "Failed to delete collection");
                 }
             } catch {
-                showError('Error deleting collection');
+                showError("Error deleting collection");
             }
         };
     }
 
     // --- Search & Preview ---
-    const hwSearchInput = document.getElementById('hw-search-input');
-    const hwSearchResultsDiv = document.getElementById('hw-search-results');
-    const hwPreview = document.getElementById('hw-preview');
+    const hwSearchInput = document.getElementById("hw-search-input");
+    const hwSearchResultsDiv = document.getElementById("hw-search-results");
+    const hwPreview = document.getElementById("hw-preview");
 
     if (!hwSearchInput) return;
 
@@ -191,14 +205,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         hwPreview.innerHTML = `
             <div class="m-hw-add__preview-image">
-                <img src="${esc(hw.photoUrl || '/images/default.jpg')}" alt="${esc(hw.name)}">
+                <img src="${esc(hw.photoUrl || "/images/default.jpg")}" alt="${esc(hw.name)}">
                 ${buildBadgeHTML(hw.extra)}
             </div>
             <div class="m-hw-add__preview-body">
                 <p class="m-hw-add__preview-name">${esc(hw.name)}</p>
-                <p class="text--muffled">${esc(hw.series?.name || 'Unknown Series')}</p>
-                <p class="text--muffled">${esc([hw.toyNumber, hw.year].filter(Boolean).join(' · '))}</p>
-                ${owned > 0 ? `<p class="m-hw-add__owned">×${owned} already in collection</p>` : ''}
+                <p class="text--muffled">${esc(hw.series?.name || "Unknown Series")}</p>
+                <p class="text--muffled">${esc([hw.toyNumber, hw.year].filter(Boolean).join(" · "))}</p>
+                ${owned > 0 ? `<p class="m-hw-add__owned">×${owned} already in collection</p>` : ""}
             </div>
             <div class="m-hw-add__preview-actions">
                 <div class="m-hw-add__qty">
@@ -209,34 +223,43 @@ document.addEventListener('DOMContentLoaded', () => {
                 <button class="a-button" id="add-hw-confirm">Add to Collection</button>
             </div>
         `;
-        hwPreview.classList.add('m-hw-add__preview--visible');
+        hwPreview.classList.add("m-hw-add__preview--visible");
 
-        document.getElementById('qty-minus').onclick = () => {
-            if (quantity > 1) { quantity--; document.getElementById('qty-display').textContent = quantity; }
+        document.getElementById("qty-minus").onclick = () => {
+            if (quantity > 1) {
+                quantity--;
+                document.getElementById("qty-display").textContent = quantity;
+            }
         };
-        document.getElementById('qty-plus').onclick = () => {
+        document.getElementById("qty-plus").onclick = () => {
             if (quantity >= 50) return; // API limit per request
             quantity++;
-            document.getElementById('qty-display').textContent = quantity;
+            document.getElementById("qty-display").textContent = quantity;
         };
-        document.getElementById('add-hw-confirm').onclick = () => confirmAdd(hw, quantity);
+        document.getElementById("add-hw-confirm").onclick = () => confirmAdd(hw, quantity);
     };
 
     const confirmAdd = async (hw, qty) => {
-        const addBtn = document.getElementById('add-hw-confirm');
-        if (addBtn) { addBtn.disabled = true; addBtn.textContent = 'Adding...'; }
-        showError('');
+        const addBtn = document.getElementById("add-hw-confirm");
+        if (addBtn) {
+            addBtn.disabled = true;
+            addBtn.textContent = "Adding...";
+        }
+        showError("");
 
         try {
             const res = await fetch(`/api/collection/${collectionId}/items`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ hotwheel: hw._id, quantity: qty })
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ hotwheel: hw._id, quantity: qty }),
             });
             if (!res.ok) {
                 const err = await res.json();
-                showError(err.message || 'Failed to add hotwheel');
-                if (addBtn) { addBtn.disabled = false; addBtn.textContent = 'Add to Collection'; }
+                showError(err.message || "Failed to add hotwheel");
+                if (addBtn) {
+                    addBtn.disabled = false;
+                    addBtn.textContent = "Add to Collection";
+                }
                 return;
             }
             const items = await res.json();
@@ -244,23 +267,23 @@ document.addEventListener('DOMContentLoaded', () => {
             ownedCounts[hw._id] = (ownedCounts[hw._id] || 0) + items.length;
 
             // Reset search, refresh preview with updated count
-            hwSearchInput.value = '';
-            hwSearchResultsDiv.innerHTML = '';
-            hwSearchResultsDiv.style.display = 'none';
+            hwSearchInput.value = "";
+            hwSearchResultsDiv.innerHTML = "";
+            hwSearchResultsDiv.style.display = "none";
             searchResults = [];
             focusedIndex = -1;
             renderPreview(hw);
         } catch {
-            showError('Error adding hotwheel');
+            showError("Error adding hotwheel");
         }
     };
 
     const setFocused = (index) => {
-        const items = hwSearchResultsDiv.querySelectorAll('.a-search__item');
-        items.forEach(el => el.classList.remove('a-search__item--focused'));
+        const items = hwSearchResultsDiv.querySelectorAll(".a-search__item");
+        items.forEach((el) => el.classList.remove("a-search__item--focused"));
         if (index >= 0 && index < items.length) {
-            items[index].classList.add('a-search__item--focused');
-            items[index].scrollIntoView({ block: 'nearest' });
+            items[index].classList.add("a-search__item--focused");
+            items[index].scrollIntoView({ block: "nearest" });
             focusedIndex = index;
             renderPreview(searchResults[index]);
         }
@@ -272,57 +295,59 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (results.length === 0) {
             hwSearchResultsDiv.innerHTML = '<div class="a-search__no-results">No results found</div>';
-            hwSearchResultsDiv.style.display = 'block';
+            hwSearchResultsDiv.style.display = "block";
             return;
         }
 
-        hwSearchResultsDiv.innerHTML = results.map((hw, i) => {
-            const owned = ownedCounts[hw._id] || 0;
-            const ownedTag = owned > 0 ? `<span class="a-search__item-owned">×${owned} owned</span>` : '';
-            return `
+        hwSearchResultsDiv.innerHTML = results
+            .map((hw, i) => {
+                const owned = ownedCounts[hw._id] || 0;
+                const ownedTag = owned > 0 ? `<span class="a-search__item-owned">×${owned} owned</span>` : "";
+                return `
                 <div class="a-search__item" data-index="${i}">
-                    <img src="${esc(hw.photoUrl || '/images/default.jpg')}" class="a-search__item-thumb" alt="${esc(hw.name)}">
+                    <img src="${esc(hw.photoUrl || "/images/default.jpg")}" class="a-search__item-thumb" alt="${esc(hw.name)}">
                     <div class="a-search__item-info">
                         <span class="a-search__item-name">${esc(hw.name)}</span>
-                        <span class="a-search__item-id">${esc(hw.toyNumber || '')} · ${esc(hw.series?.name || '')}</span>
+                        <span class="a-search__item-id">${esc(hw.toyNumber || "")} · ${esc(hw.series?.name || "")}</span>
                     </div>
                     ${ownedTag}
                 </div>
             `;
-        }).join('');
-        hwSearchResultsDiv.style.display = 'block';
+            })
+            .join("");
+        hwSearchResultsDiv.style.display = "block";
 
-        hwSearchResultsDiv.querySelectorAll('.a-search__item').forEach((item) => {
+        hwSearchResultsDiv.querySelectorAll(".a-search__item").forEach((item) => {
             const index = Number(item.dataset.index);
-            item.addEventListener('mouseenter', () => setFocused(index));
-            item.addEventListener('click', () => {
+            item.addEventListener("mouseenter", () => setFocused(index));
+            item.addEventListener("click", () => {
                 renderPreview(searchResults[index]);
-                hwSearchResultsDiv.style.display = 'none';
+                hwSearchResultsDiv.style.display = "none";
             });
         });
     };
 
-    hwSearchInput.addEventListener('input', () => {
+    hwSearchInput.addEventListener("input", () => {
         clearTimeout(debounce);
         const query = hwSearchInput.value.trim();
 
         if (query.length < 2) {
-            hwSearchResultsDiv.innerHTML = '';
-            hwSearchResultsDiv.style.display = 'none';
+            hwSearchResultsDiv.innerHTML = "";
+            hwSearchResultsDiv.style.display = "none";
             searchResults = [];
             focusedIndex = -1;
             return;
         }
 
         hwSearchResultsDiv.innerHTML = '<div class="a-search__no-results">Loading...</div>';
-        hwSearchResultsDiv.style.display = 'block';
+        hwSearchResultsDiv.style.display = "block";
 
         debounce = setTimeout(async () => {
             try {
-                const res = await fetch(`/api/hotwheel?search=${encodeURIComponent(query)}`);
+                const res = await fetch(`/api/hotwheel?search=${encodeURIComponent(query)}&limit=8`);
                 if (!res.ok) throw new Error();
-                const data = await res.json();
-                renderResults(data.slice(0, 8));
+                const { data } = await res.json();
+                renderResults(data);
             } catch {
                 hwSearchResultsDiv.innerHTML = '<div class="a-search__no-results">Search failed</div>';
             }
@@ -330,28 +355,28 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Keyboard navigation
-    hwSearchInput.addEventListener('keydown', (e) => {
-        const items = hwSearchResultsDiv.querySelectorAll('.a-search__item');
+    hwSearchInput.addEventListener("keydown", (e) => {
+        const items = hwSearchResultsDiv.querySelectorAll(".a-search__item");
         if (!items.length) return;
 
-        if (e.key === 'ArrowDown') {
+        if (e.key === "ArrowDown") {
             e.preventDefault();
             setFocused(Math.min(focusedIndex + 1, items.length - 1));
-        } else if (e.key === 'ArrowUp') {
+        } else if (e.key === "ArrowUp") {
             e.preventDefault();
             setFocused(Math.max(focusedIndex - 1, 0));
-        } else if (e.key === 'Enter' && focusedIndex >= 0) {
+        } else if (e.key === "Enter" && focusedIndex >= 0) {
             e.preventDefault();
-            hwSearchResultsDiv.style.display = 'none';
+            hwSearchResultsDiv.style.display = "none";
             confirmAdd(searchResults[focusedIndex], 1);
-        } else if (e.key === 'Escape') {
-            hwSearchResultsDiv.style.display = 'none';
+        } else if (e.key === "Escape") {
+            hwSearchResultsDiv.style.display = "none";
         }
     });
 
-    document.addEventListener('click', (e) => {
+    document.addEventListener("click", (e) => {
         if (!hwSearchResultsDiv.contains(e.target) && e.target !== hwSearchInput) {
-            hwSearchResultsDiv.style.display = 'none';
+            hwSearchResultsDiv.style.display = "none";
         }
     });
 });

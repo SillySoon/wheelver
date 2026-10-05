@@ -1,51 +1,30 @@
 // src/services/seriesService.ts
-import { createLogger } from "../utils/logger";
-import { Series } from "../models";
+import { z } from "zod";
+import { Hotwheel, Series } from "../models";
+import { conflict } from "../errors/HttpError";
+import { seriesBody } from "../validation/schemas";
 
-const { logRequest } = createLogger("SERIES_SERVICE", "cyan");
+type SeriesInput = z.infer<typeof seriesBody>;
 
-export const createSeries = async (seriesData: any) => {
-    logRequest("Creating new series");
-    try {
-        const series = new Series(seriesData);
-        return await series.save();
-    } catch (error: any) {
-        throw new Error(`Failed to create series: ${error.message}`);
-    }
+export const createSeries = async (data: SeriesInput) => {
+    return await Series.create(data);
 };
 
 export const getAllSeries = async () => {
-    logRequest("Getting all series");
-    try {
-        return await Series.find();
-    } catch (error: any) {
-        throw new Error(`Failed to get series: ${error.message}`);
-    }
+    return await Series.find().sort({ name: 1 }).lean();
 };
 
 export const getSeries = async (id: string) => {
-    logRequest(`Getting series with id ${id}`);
-    try {
-        return await Series.findById(id);
-    } catch (error: any) {
-        throw new Error(`Failed to get series: ${error.message}`);
-    }
+    return await Series.findById(id).lean();
 };
 
-export const updateSeries = async (id: string, seriesData: any) => {
-    logRequest(`Updating series with id ${id}`);
-    try {
-        return await Series.findByIdAndUpdate(id, seriesData, { new: true });
-    } catch (error: any) {
-        throw new Error(`Failed to update series: ${error.message}`);
-    }
+export const updateSeries = async (id: string, data: Partial<SeriesInput>) => {
+    return await Series.findByIdAndUpdate(id, data, { new: true, runValidators: true });
 };
 
 export const deleteSeries = async (id: string) => {
-    logRequest(`Deleting series with id ${id}`);
-    try {
-        return await Series.findByIdAndDelete(id);
-    } catch (error: any) {
-        throw new Error(`Failed to delete series: ${error.message}`);
+    if (await Hotwheel.exists({ series: id })) {
+        throw conflict("Series still has hotwheels");
     }
+    return await Series.findByIdAndDelete(id);
 };

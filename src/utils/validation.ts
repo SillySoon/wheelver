@@ -1,11 +1,4 @@
-import mongoose from "mongoose";
+// src/utils/validation.ts
 
-export const isValidObjectId = (id: string): boolean => {
-    return mongoose.Types.ObjectId.isValid(id);
-};
-
-export const isValidCollectionName = (name: string): boolean => {
-    // lowercase, uppercase, maybe - and _ and &
-    const regex = /^[a-zA-Z0-9\-_& ]{1,50}$/;
-    return regex.test(name);
-};
+/** Strict check for a 24-character hex ObjectId (Mongoose also accepts any 12-character string). */
+export const isValidObjectId = (id: string): boolean => /^[a-f\d]{24}$/i.test(id);

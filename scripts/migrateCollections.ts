@@ -53,12 +53,11 @@ async function migrate() {
             collectedAt,
         }));
 
-        await collectionsCol.updateOne(
-            { _id: col._id },
-            { $set: { hotwheels: newHotwheels } }
-        );
+        await collectionsCol.updateOne({ _id: col._id }, { $set: { hotwheels: newHotwheels } });
 
-        console.log(`  [MIGRATED] collection "${col.name}" (${col._id}) - ${newHotwheels.length} hotwheel(s), collectedAt=${collectedAt.toISOString()}`);
+        console.log(
+            `  [MIGRATED] collection "${col.name}" (${col._id}) - ${newHotwheels.length} hotwheel(s), collectedAt=${collectedAt.toISOString()}`,
+        );
         migrated++;
     }
 

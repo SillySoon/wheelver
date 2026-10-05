@@ -1,126 +1,16 @@
 // src/routes/viewRoutes.ts
 import { Router } from "express";
 import { isAuthenticated, isOwner, isCollectionOwner } from "../middleware/authMiddleware";
-import * as UserService from "../services/userService";
-import * as CollectionService from "../services/collectionService";
-import * as HotwheelService from "../services/hotwheelService";
-import { isValidObjectId } from "../utils/validation";
+import * as viewController from "../controllers/viewController";
 
 const router: Router = Router();
 
-router.get("/", async (req, res) => {
-    const search = req.query.search as string;
-    let users: any[] = [];
-    if (search && search.trim().length >= 2) {
-        try {
-            users = await UserService.getUsers(search);
-            users = users.slice(0, 5);
-        } catch (error) {
-            console.error("Home search error:", error);
-        }
-    }
-    res.render("site/home", { users, search: search || "" });
-});
-
-router.get("/dashboard", isAuthenticated, async (req, res) => {
-    try {
-        const user = (req.user as any).toObject(); // Convert Mongoose document to plain object
-        if (!user) {
-            return res.redirect("/login"); // Should not happen with isAuthenticated, but as a safeguard
-        }
-
-        const collections = await CollectionService.getCollectionsWithItems({ owner: user._id });
-        res.render("site/dashboard", { user, collections, error: null });
-    } catch (error) {
-        console.error("Error loading dashboard:", error);
-        res.status(500).render("site/dashboard", { user: req.user, collections: [], error: "Failed to load dashboard data." });
-    }
-});
-
-router.get("/dashboard/u/:id", isOwner, (req, res) => {
-    res.render("site/dashboard_user");
-});
-
-router.get("/dashboard/c/:id", isCollectionOwner, async (req, res) => {
-    const collectionId: string  = req.params.id as string;
-
-    if (!isValidObjectId(collectionId)) {
-        return res.status(400).render("site/dashboard_collection", { error: "Invalid Collection ID", collection: null });
-    }
-
-    try {
-        const collection = await CollectionService.getCollection(collectionId);
-        if (!collection) {
-            return res.status(404).render("site/dashboard_collection", { error: "Collection not found", collection: null });
-        }
-
-        res.render("site/dashboard_collection", { collection, error: null });
-    } catch (error) {
-        console.error("Error loading dashboard collection:", error);
-        res.status(500).render("site/dashboard_collection", { error: "Failed to load collection for editing", collection: null });
-    }
-});
-
-router.get("/u/:handle", async (req, res) => {
-    const segment = req.params.handle;
-
-    try {
-        const { user, redirectTo } = await UserService.resolveProfile(segment);
-        if (redirectTo) {
-            return res.redirect(301, `/u/${encodeURIComponent(redirectTo)}`);
-        }
-        if (!user) {
-            return res.status(404).render("site/user", { error: "User not found", user: null, collections: [] });
-        }
-
-        const collections = await CollectionService.getCollectionsWithItems({ owner: user._id });
-        const currentUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
-        res.render("site/user", { user, collections, error: null, currentUrl });
-    } catch (error) {
-        console.error("Error loading user profile:", error);
-        res.status(500).render("site/user", { error: "Failed to load user profile", user: null, collections: [] });
-    }
-});
-
-router.get("/c/:id", async (req, res) => {
-    const collectionId = req.params.id;
-
-    if (!isValidObjectId(collectionId)) {
-        return res.status(400).render("site/collection", { error: "Invalid Collection ID", collection: null });
-    }
-
-    try {
-        const collection = await CollectionService.getCollection(collectionId);
-        if (!collection) {
-            return res.status(404).render("site/collection", { error: "Collection not found", collection: null });
-        }
-
-        const currentUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
-        res.render("site/collection", { collection, error: null, currentUrl, currentUser: req.user || null });
-    } catch (error) {
-        console.error("Error loading collection:", error);
-        res.status(500).render("site/collection", { error: "Failed to load collection", collection: null });
-    }
-});
-
-router.get("/hw/:id", async (req, res) => {
-    const hotwheelId = req.params.id;
-
-    if (!isValidObjectId(hotwheelId)) {
-        return res.status(400).render("site/hotwheel", { error: "Invalid Hotwheel ID", hotwheel: null });
-    }
-
-    try {
-        const hotwheel = await HotwheelService.getHotwheel(hotwheelId);
-        if (!hotwheel) {
-            return res.status(404).render("site/hotwheel", { error: "Hotwheel not found", hotwheel: null });
-        }
-
-        res.render("site/hotwheel", { hotwheel, error: null });
-    } catch (error) {
-        console.error("Error loading hotwheel:", error);
-        res.status(500).render("site/hotwheel", { error: "Failed to load hotwheel", hotwheel: null });
-    }
-});
+router.get("/", viewController.home);
+router.get("/dashboard", isAuthenticated, viewController.dashboard);
+router.get("/dashboard/u/:id", isOwner, viewController.account);
+router.get("/dashboard/c/:id", isCollectionOwner, viewController.editCollection);
+router.get("/u/:handle", viewController.profile);
+router.get("/c/:id", viewController.collection);
+router.get("/hw/:id", viewController.hotwheel);
 
 export default router;

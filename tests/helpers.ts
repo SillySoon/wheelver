@@ -1,5 +1,6 @@
 // Shared fixtures and a real session-based login for tests
 import crypto from "crypto";
+import type { SessionData } from "express-session";
 import signature from "cookie-signature";
 import request from "supertest";
 import app, { sessionStore } from "../src/app";
@@ -21,16 +22,31 @@ export const createAdmin = () => createUser({ discordId: ADMIN_DISCORD_ID });
 export const createHotwheel = async (overrides: Record<string, unknown> = {}) => {
     const n = nextId();
     const series = await Series.create({ name: `Series ${n}`, shortName: `S${n}` });
-    return await Hotwheel.create({ toyNumber: `T${n}`, name: `Car ${n}`, series: series._id, seriesNumber: 1, year: 2024, ...overrides });
+    return await Hotwheel.create({
+        toyNumber: `T${n}`,
+        name: `Car ${n}`,
+        series: series._id,
+        seriesNumber: 1,
+        year: 2024,
+        ...overrides,
+    });
 };
 
 export const createCollection = async (owner: { _id: unknown }, name = "My Collection") => {
     return await Collection.create({ name, owner: owner._id });
 };
 
-export const addItems = async (collection: { _id: unknown; owner: unknown }, hotwheel: { _id: unknown }, count: number) => {
+export const addItems = async (
+    collection: { _id: unknown; owner: unknown },
+    hotwheel: { _id: unknown },
+    count: number,
+) => {
     return await CollectionItem.insertMany(
-        Array.from({ length: count }, () => ({ collectionId: collection._id, hotwheel: hotwheel._id, owner: collection.owner }))
+        Array.from({ length: count }, () => ({
+            collectionId: collection._id,
+            hotwheel: hotwheel._id,
+            owner: collection.owner,
+        })),
     );
 };
 
@@ -40,12 +56,14 @@ export const addItems = async (collection: { _id: unknown; owner: unknown }, hot
  */
 export const loginAs = async (user: { _id: unknown }) => {
     const sid = crypto.randomBytes(16).toString("hex");
-    const sessionData: any = {
+    const sessionData = {
         cookie: { originalMaxAge: 60_000, expires: new Date(Date.now() + 60_000), httpOnly: true, path: "/" },
         passport: { user: String(user._id) },
         csrfToken: CSRF_TOKEN,
-    };
-    await new Promise<void>((resolve, reject) => sessionStore.set(sid, sessionData, (err) => (err ? reject(err) : resolve())));
+    } as unknown as SessionData;
+    await new Promise<void>((resolve, reject) =>
+        sessionStore.set(sid, sessionData, (err) => (err ? reject(err) : resolve())),
+    );
 
     const cookie = `connect.sid=${encodeURIComponent("s:" + signature.sign(sid, process.env.SESSION_SECRET!))}`;
     return { Cookie: cookie, "X-CSRF-Token": CSRF_TOKEN };

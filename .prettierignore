@@ -1,0 +1,6 @@
+dist
+node_modules
+_backup
+coverage
+package-lock.json
+src/views

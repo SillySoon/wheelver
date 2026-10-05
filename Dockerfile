@@ -1,23 +1,33 @@
-# Use an official Node.js runtime as a parent image
-FROM node:24-alpine
+# --- Build stage: compile TypeScript with all dependencies ---
+FROM node:24-alpine AS build
 
-# Set the working directory in the container
 WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
-
-# Install any needed packages
 RUN npm ci
 
-# Bundle app source
-COPY . .
-
-# Build the TypeScript code
+COPY tsconfig.json ./
+COPY src ./src
 RUN npm run build
 
-# Your app binds to port 3000, so expose it
+# --- Runtime stage: production dependencies and compiled output only ---
+FROM node:24-alpine
+
+ENV NODE_ENV=production
+WORKDIR /usr/src/app
+
+COPY package*.json ./
+RUN npm ci --omit=dev && npm cache clean --force
+
+COPY --from=build /usr/src/app/dist ./dist
+COPY public ./public
+
+# Run as the unprivileged user that ships with the Node image
+USER node
+
 EXPOSE 3000
 
-# Define the command to run your app
-CMD [ "npm", "run", "start" ]
+HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
+    CMD wget -qO- http://localhost:3000/healthz || exit 1
+
+CMD ["node", "dist/server.js"]

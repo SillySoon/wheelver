@@ -1,17 +1,18 @@
 // src/middleware/csrf.ts
-import crypto from 'crypto';
-import { Request, Response, NextFunction } from 'express';
+import crypto from "crypto";
+import { Request, Response, NextFunction } from "express";
+import { forbidden } from "../errors/HttpError";
 
-declare module 'express-session' {
+declare module "express-session" {
     interface SessionData {
         csrfToken?: string;
     }
 }
 
-const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
+const SAFE_METHODS = new Set(["GET", "HEAD", "OPTIONS"]);
 
 const tokensMatch = (expected: string, actual: unknown): boolean => {
-    if (typeof actual !== 'string' || actual.length !== expected.length) {
+    if (typeof actual !== "string" || actual.length !== expected.length) {
         return false;
     }
     return crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(actual));
@@ -29,7 +30,7 @@ export const csrfProtection = (req: Request, res: Response, next: NextFunction) 
     }
 
     if (!req.session.csrfToken) {
-        req.session.csrfToken = crypto.randomBytes(32).toString('hex');
+        req.session.csrfToken = crypto.randomBytes(32).toString("hex");
     }
     res.locals.csrfToken = req.session.csrfToken;
 
@@ -37,9 +38,9 @@ export const csrfProtection = (req: Request, res: Response, next: NextFunction) 
         return next();
     }
 
-    const token = req.get('x-csrf-token') ?? req.body?._csrf;
+    const token = req.get("x-csrf-token") ?? req.body?._csrf;
     if (!tokensMatch(req.session.csrfToken, token)) {
-        return res.status(403).json({ message: "Invalid or missing CSRF token" });
+        return next(forbidden("Invalid or missing CSRF token"));
     }
 
     next();

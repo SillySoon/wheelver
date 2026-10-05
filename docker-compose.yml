@@ -1,15 +1,15 @@
-version: '3.8'
+version: "3.8"
 services:
-  app:
-    build: .
-    ports:
-      - "3000:3000"
-    environment:
-      - PORT=3000
-      - MONGODB_URI=${MONGODB_URI}
-      - DISCORD_SECRET=${DISCORD_SECRET}
-      - DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID}
-      - DISCORD_CALLBACK_URL=${DISCORD_CALLBACK_URL}
-      - SESSION_SECRET=${SESSION_SECRET}
-      - ADMIN_DISCORD_IDS=${ADMIN_DISCORD_IDS}
-      - NODE_ENV=${NODE_ENV:-development}
+    app:
+        build: .
+        ports:
+            - "3000:3000"
+        environment:
+            - PORT=3000
+            - MONGODB_URI=${MONGODB_URI}
+            - DISCORD_SECRET=${DISCORD_SECRET}
+            - DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID}
+            - DISCORD_CALLBACK_URL=${DISCORD_CALLBACK_URL}
+            - SESSION_SECRET=${SESSION_SECRET}
+            - ADMIN_DISCORD_IDS=${ADMIN_DISCORD_IDS}
+            - NODE_ENV=${NODE_ENV:-development}

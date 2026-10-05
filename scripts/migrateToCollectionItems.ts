@@ -37,7 +37,12 @@ async function migrateUsers(db: mongoose.mongo.Db) {
     log(`Users to migrate: ${pending.length}`);
 
     const taken = new Set(
-        (await users.find({ handle: { $exists: true } }).project({ handle: 1 }).toArray()).map((u) => u.handle)
+        (
+            await users
+                .find({ handle: { $exists: true } })
+                .project({ handle: 1 })
+                .toArray()
+        ).map((u) => u.handle),
     );
 
     for (const user of pending) {
@@ -79,7 +84,10 @@ async function migrateCollectionItems(db: mongoose.mongo.Db) {
     let totalItems = 0;
     for (const col of pending) {
         const now = new Date();
-        const docs = (col.hotwheels as any[]).map((entry) => {
+        type LegacyEntry =
+            | mongoose.Types.ObjectId
+            | { _id: mongoose.Types.ObjectId; hotwheel: mongoose.Types.ObjectId; collectedAt?: Date };
+        const docs = (col.hotwheels as LegacyEntry[]).map((entry) => {
             // Very old format stored plain ObjectIds instead of entry objects
             const isPlainId = entry instanceof mongoose.Types.ObjectId;
             const acquiredAt = (isPlainId ? null : entry.collectedAt) ?? col.createdAt ?? now;
@@ -102,7 +110,7 @@ async function migrateCollectionItems(db: mongoose.mongo.Db) {
             await items.bulkWrite(
                 docs.map((doc) => ({
                     updateOne: { filter: { _id: doc._id }, update: { $setOnInsert: doc }, upsert: true },
-                }))
+                })),
             );
         }
 
@@ -118,10 +126,9 @@ async function migrateCollectionItems(db: mongoose.mongo.Db) {
     const missingUpdatedAt = await collections.countDocuments({ updatedAt: { $exists: false } });
     log(`Collections without updatedAt: ${missingUpdatedAt}`);
     if (!DRY_RUN && missingUpdatedAt > 0) {
-        await collections.updateMany(
-            { updatedAt: { $exists: false } },
-            [{ $set: { updatedAt: { $ifNull: ["$createdAt", "$$NOW"] } } }]
-        );
+        await collections.updateMany({ updatedAt: { $exists: false } }, [
+            { $set: { updatedAt: { $ifNull: ["$createdAt", "$$NOW"] } } },
+        ]);
     }
 }
 

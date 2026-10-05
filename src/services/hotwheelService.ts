@@ -1,62 +1,50 @@
 // src/services/hotwheelService.ts
-import { createLogger } from "../utils/logger";
-import { Hotwheel } from "../models";
+import { z } from "zod";
+import { CollectionItem, Hotwheel } from "../models";
+import { conflict } from "../errors/HttpError";
 import { diacriticSensitiveRegex } from "../utils/stringUtils";
+import { PageOptions, skipFor, toPage } from "../utils/pagination";
+import { hotwheelBody } from "../validation/schemas";
 
-const { logRequest } = createLogger("HOTWHEEL_SERVICE", "cyan");
+type HotwheelInput = z.infer<typeof hotwheelBody>;
 
-export const createHotwheel = async (hotwheelData: any) => {
-    logRequest("Creating new hotwheel");
-    try {
-        const hotwheel = new Hotwheel(hotwheelData);
-        return await hotwheel.save();
-    } catch (error: any) {
-        throw new Error(`Failed to create hotwheel: ${error.message}`);
-    }
+export const createHotwheel = async (data: HotwheelInput) => {
+    return await Hotwheel.create(data);
 };
 
-export const getHotwheels = async (search?: string) => {
-    logRequest("Getting all hotwheels" + (search ? ` with search: ${search}` : ""));
-    try {
-        let query = {};
-        if (search) {
-            const fuzzySearch = diacriticSensitiveRegex(search);
-            query = {
-                $or: [
-                    { name: { $regex: fuzzySearch, $options: "i" } },
-                    { toyNumber: { $regex: fuzzySearch, $options: "i" } }
-                ]
-            };
-        }
-        return await Hotwheel.find(query).populate('series');
-    } catch (error: any) {
-        throw new Error(`Failed to get hotwheels: ${error.message}`);
-    }
+export const getHotwheels = async (search: string | undefined, page: PageOptions) => {
+    const filter = search
+        ? {
+              $or: [
+                  { name: { $regex: diacriticSensitiveRegex(search), $options: "i" } },
+                  { toyNumber: { $regex: diacriticSensitiveRegex(search), $options: "i" } },
+              ],
+          }
+        : {};
+
+    const [data, total] = await Promise.all([
+        Hotwheel.find(filter)
+            .sort({ year: -1, colNumber: 1 })
+            .skip(skipFor(page))
+            .limit(page.limit)
+            .populate("series")
+            .lean(),
+        Hotwheel.countDocuments(filter),
+    ]);
+    return toPage(data, total, page);
 };
 
 export const getHotwheel = async (id: string) => {
-    logRequest(`Getting hotwheel with id ${id}`);
-    try {
-        return await Hotwheel.findById(id).populate('series').lean();
-    } catch (error: any) {
-        throw new Error(`Failed to get hotwheel: ${error.message}`);
-    }
+    return await Hotwheel.findById(id).populate("series").lean();
 };
 
-export const updateHotwheel = async (id: string, hotwheelData: any) => {
-    logRequest(`Updating hotwheel with id ${id}`);
-    try {
-        return await Hotwheel.findByIdAndUpdate(id, hotwheelData, { new: true });
-    } catch (error: any) {
-        throw new Error(`Failed to update hotwheel: ${error.message}`);
-    }
+export const updateHotwheel = async (id: string, data: Partial<HotwheelInput>) => {
+    return await Hotwheel.findByIdAndUpdate(id, data, { new: true, runValidators: true });
 };
 
 export const deleteHotwheel = async (id: string) => {
-    logRequest(`Deleting hotwheel with id ${id}`);
-    try {
-        return await Hotwheel.findByIdAndDelete(id);
-    } catch (error: any) {
-        throw new Error(`Failed to delete hotwheel: ${error.message}`);
+    if (await CollectionItem.exists({ hotwheel: id })) {
+        throw conflict("Hotwheel is still part of collections");
     }
+    return await Hotwheel.findByIdAndDelete(id);
 };

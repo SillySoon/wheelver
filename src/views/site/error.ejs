@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <%- include('../partials/head', {
+        metaTitle: status + ' - Wheelver',
+        metaDescription: message
+    }) %>
+</head>
+<body>
+<div class="content-wrapper">
+    <%- include('../partials/header') %>
+    <section class="m-jumbotron">
+        <h1 class="m-jumbotron__title"><%= status === 404 ? '404 - Page Not Found' : 'Error ' + status %></h1>
+        <p class="m-jumbotron__description"><%= message %></p>
+        <a href="/" class="m-jumbotron__example a-link">Back to start</a>
+    </section>
+</div>
+</body>
+</html>

@@ -11,7 +11,7 @@ const HotwheelSchema: Schema<IHotwheel> = new mongoose.Schema<IHotwheel>({
     year: { type: Number, required: true },
     extra: {
         type: String,
-        enum: Object.values(HotwheelExtra)
+        enum: Object.values(HotwheelExtra),
     },
     photoUrl: { type: String },
 });

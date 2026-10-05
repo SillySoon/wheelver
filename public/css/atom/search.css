@@ -18,7 +18,7 @@
 }
 
 .a-search__input::placeholder {
-    font-family: 'Poppins', serif;
+    font-family: "Poppins", serif;
     color: var(--text-primary);
 }
 

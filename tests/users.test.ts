@@ -5,7 +5,7 @@ import { syncDiscordUser } from "../src/config/passport";
 import { User, Collection, CollectionItem } from "../src/models";
 
 const profile = (id: string, username: string, global_name?: string) =>
-    ({ id, username, global_name } as DiscordProfile);
+    ({ id, username, global_name }) as DiscordProfile;
 
 describe("public user API", () => {
     it("only exposes public fields", async () => {
@@ -13,8 +13,8 @@ describe("public user API", () => {
 
         const res = await api().get("/api/user?search=sil");
         expect(res.status).toBe(200);
-        expect(res.body).toHaveLength(1);
-        expect(Object.keys(res.body[0]).sort()).toEqual(["_id", "createdAt", "displayName", "handle"]);
+        expect(res.body.data).toHaveLength(1);
+        expect(Object.keys(res.body.data[0]).sort()).toEqual(["_id", "createdAt", "displayName", "handle"]);
     });
 });
 

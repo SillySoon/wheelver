@@ -39,7 +39,8 @@ describe("CSRF protection", () => {
 
     it("rejects authenticated writes with a wrong token", async () => {
         const { Cookie } = await loginAs(await createUser());
-        const res = await api().post("/api/collection")
+        const res = await api()
+            .post("/api/collection")
             .set("Cookie", Cookie)
             .set("X-CSRF-Token", "x".repeat(CSRF_TOKEN.length))
             .send({ name: "Test" });

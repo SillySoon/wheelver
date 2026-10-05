@@ -1,17 +1,18 @@
 // src/routes/collectionRoutes.ts
-import { Router } from 'express';
-import * as collectionController from '../controllers/collectionController';
-import { isAuthenticated, isCollectionOwner } from '../middleware/authMiddleware';
+import { Router } from "express";
+import * as collectionController from "../controllers/collectionController";
+import { isAuthenticated, isCollectionOwner } from "../middleware/authMiddleware";
 
 const router: Router = Router();
 
 // Routes of /api/collection
-router.post('/', isAuthenticated, collectionController.createCollection);
-router.get('/', collectionController.getCollections);
-router.get('/:id', collectionController.getCollection);
-router.put('/:id', isCollectionOwner, collectionController.updateCollection);
-router.delete('/:id', isCollectionOwner, collectionController.deleteCollection);
-router.post('/:id/items', isCollectionOwner, collectionController.addItems);
-router.delete('/:id/items/:itemId', isCollectionOwner, collectionController.removeItem);
+router.post("/", isAuthenticated, collectionController.createCollection);
+router.get("/", collectionController.getCollections);
+router.get("/:id", collectionController.getCollection);
+router.put("/:id", isCollectionOwner, collectionController.updateCollection);
+router.delete("/:id", isCollectionOwner, collectionController.deleteCollection);
+router.get("/:id/items", collectionController.getItems);
+router.post("/:id/items", isCollectionOwner, collectionController.addItems);
+router.delete("/:id/items/:itemId", isCollectionOwner, collectionController.removeItem);
 
 export default router;

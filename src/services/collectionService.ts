@@ -1,10 +1,11 @@
 // src/services/collectionService.ts
 import { Types } from "mongoose";
-import { createLogger } from "../utils/logger";
 import { Collection, CollectionItem, Hotwheel } from "../models";
 import { ItemCondition } from "../interfaces/ICollectionItem";
+import { notFound } from "../errors/HttpError";
+import { PageOptions, skipFor, toPage } from "../utils/pagination";
 
-const { logRequest } = createLogger("COLLECTION_SERVICE", "cyan");
+type Id = string | Types.ObjectId;
 
 const ITEM_POPULATE = { path: "hotwheel", populate: { path: "series" } };
 
@@ -12,119 +13,99 @@ const ITEM_POPULATE = { path: "hotwheel", populate: { path: "series" } };
  * Loads the items of the given (lean) collections and attaches them as `items`
  * (newest first) plus `itemCount`. Items whose hotwheel no longer exists are skipped.
  */
-const attachItems = async (collections: any[]) => {
-    if (collections.length === 0) return collections;
+const attachItems = async <T extends { _id: Types.ObjectId }>(collections: T[]) => {
+    const items = collections.length
+        ? await CollectionItem.find({ collectionId: { $in: collections.map((c) => c._id) } })
+              .sort({ acquiredAt: -1 })
+              .populate(ITEM_POPULATE)
+              .lean()
+        : [];
 
-    const items = await CollectionItem.find({ collectionId: { $in: collections.map((c) => c._id) } })
-        .sort({ acquiredAt: -1 })
-        .populate(ITEM_POPULATE)
-        .lean();
-
-    const byCollection = new Map<string, any[]>();
+    const byCollection = new Map<string, typeof items>();
     for (const item of items) {
         if (!item.hotwheel) continue;
         const key = item.collectionId.toString();
-        if (!byCollection.has(key)) byCollection.set(key, []);
-        byCollection.get(key)!.push(item);
+        byCollection.set(key, [...(byCollection.get(key) ?? []), item]);
     }
 
     return collections.map((col) => {
-        const colItems = byCollection.get(col._id.toString()) || [];
+        const colItems = byCollection.get(col._id.toString()) ?? [];
         return { ...col, items: colItems, itemCount: colItems.length };
     });
 };
 
-export const createCollection = async (collectionData: { name: string; owner: Types.ObjectId | string }) => {
-    logRequest("Creating new collection");
-    try {
-        const collection = new Collection(collectionData);
-        return await collection.save();
-    } catch (error: any) {
-        throw new Error(`Failed to create collection: ${error.message}`);
-    }
-}
-
-export const getCollections = async (filter: any = {}) => {
-    logRequest(`Getting collections with filter ${JSON.stringify(filter)}`);
-    try {
-        return await Collection.find(filter);
-    } catch (error: any) {
-        throw new Error(`Failed to get collections: ${error.message}`);
-    }
+export const createCollection = async (data: { name: string; owner: Id }) => {
+    return await Collection.create(data);
 };
 
-export const getCollectionsWithItems = async (filter: any = {}) => {
-    logRequest(`Getting collections with items for filter ${JSON.stringify(filter)}`);
-    try {
-        const collections = await Collection.find(filter).sort({ createdAt: -1 }).lean();
-        return await attachItems(collections);
-    } catch (error: any) {
-        throw new Error(`Failed to get collections: ${error.message}`);
-    }
+export const getCollections = async (owner: string | undefined, page: PageOptions) => {
+    const filter = owner ? { owner } : {};
+    const [data, total] = await Promise.all([
+        Collection.find(filter).sort({ createdAt: -1 }).skip(skipFor(page)).limit(page.limit).lean(),
+        Collection.countDocuments(filter),
+    ]);
+    return toPage(data, total, page);
+};
+
+/** All collections of a user including their items (used by profile and dashboard pages). */
+export const getCollectionsWithItems = async (owner: Id) => {
+    const collections = await Collection.find({ owner }).sort({ createdAt: -1 }).lean();
+    return await attachItems(collections);
 };
 
 export const getCollection = async (id: string) => {
-    logRequest(`Getting collection with id ${id}`);
-    try {
-        const collection = await Collection.findById(id)
-            .populate("owner", "handle displayName")
-            .lean();
-        if (!collection) return null;
-        const [withItems] = await attachItems([collection]);
-        return withItems;
-    } catch (error: any) {
-        throw new Error(`Failed to get collection: ${error.message}`);
-    }
+    const collection = await Collection.findById(id).populate("owner", "handle displayName").lean();
+    if (!collection) return null;
+    const [withItems] = await attachItems([collection]);
+    return withItems;
 };
 
-export const updateCollection = async (id: string, collectionData: { name: string }) => {
-    logRequest(`Updating collection with id ${id}`);
-    try {
-        return await Collection.findByIdAndUpdate(id, collectionData, { new: true, runValidators: true });
-    } catch (error: any) {
-        throw new Error(`Failed to update collection: ${error.message}`);
-    }
+export const updateCollection = async (id: string, data: { name: string }) => {
+    return await Collection.findByIdAndUpdate(id, data, { new: true, runValidators: true });
 };
 
 export const deleteCollection = async (id: string) => {
-    logRequest(`Deleting collection with id ${id}`);
-    try {
-        await CollectionItem.deleteMany({ collectionId: id });
-        return await Collection.findByIdAndDelete(id);
-    } catch (error: any) {
-        throw new Error(`Failed to delete collection: ${error.message}`);
-    }
+    await CollectionItem.deleteMany({ collectionId: id });
+    return await Collection.findByIdAndDelete(id);
 };
 
-/**
- * Adds `quantity` physical copies of a hotwheel to a collection.
- * Returns null if the collection does not exist, throws if the hotwheel does not exist.
- */
+export const getItems = async (collectionId: string, page: PageOptions) => {
+    const filter = { collectionId };
+    const [data, total] = await Promise.all([
+        CollectionItem.find(filter)
+            .sort({ acquiredAt: -1 })
+            .skip(skipFor(page))
+            .limit(page.limit)
+            .populate(ITEM_POPULATE)
+            .lean(),
+        CollectionItem.countDocuments(filter),
+    ]);
+    return toPage(data, total, page);
+};
+
+/** Adds `quantity` physical copies of a hotwheel to a collection. */
 export const addItems = async (
     collectionId: string,
     hotwheelId: string,
     quantity: number,
-    condition?: ItemCondition
+    condition?: ItemCondition,
 ) => {
-    logRequest(`Adding ${quantity}x hotwheel ${hotwheelId} to collection ${collectionId}`);
+    const collection = await Collection.findById(collectionId).select("owner").lean();
+    if (!collection) throw notFound("Collection not found");
 
-    const collection = await Collection.findById(collectionId).lean();
-    if (!collection) return null;
-
-    const hotwheelExists = await Hotwheel.exists({ _id: hotwheelId });
-    if (!hotwheelExists) {
-        throw new Error(`Hotwheel with id ${hotwheelId} not found`);
+    if (!(await Hotwheel.exists({ _id: hotwheelId }))) {
+        throw notFound("Hotwheel not found");
     }
 
-    const now = new Date();
+    const acquiredAt = new Date();
     const created = await CollectionItem.insertMany(
         Array.from({ length: quantity }, () => ({
             collectionId,
             hotwheel: hotwheelId,
             owner: collection.owner,
-            acquiredAt: now,
+            acquiredAt,
             condition,
-        }))
+        })),
     );
 
     return await CollectionItem.find({ _id: { $in: created.map((i) => i._id) } })
@@ -134,10 +115,5 @@ export const addItems = async (
 
 /** Removes a single copy. Returns null if the item is not part of the collection. */
 export const removeItem = async (collectionId: string, itemId: string) => {
-    logRequest(`Removing item ${itemId} from collection ${collectionId}`);
-    try {
-        return await CollectionItem.findOneAndDelete({ _id: itemId, collectionId });
-    } catch (error: any) {
-        throw new Error(`Failed to remove item from collection: ${error.message}`);
-    }
+    return await CollectionItem.findOneAndDelete({ _id: itemId, collectionId });
 };

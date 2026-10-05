@@ -19,7 +19,10 @@ describe("collections", () => {
         const collection = await createCollection(user, "Old");
         const headers = await loginAs(user);
 
-        const res = await api().put(`/api/collection/${collection._id}`).set(headers).send({ name: "New", owner: other._id });
+        const res = await api()
+            .put(`/api/collection/${collection._id}`)
+            .set(headers)
+            .send({ name: "New", owner: other._id });
         expect(res.status).toBe(200);
 
         const stored = await Collection.findById(collection._id).lean();
@@ -61,7 +64,9 @@ describe("collection items", () => {
         const hotwheel = await createHotwheel();
         const headers = await loginAs(user);
 
-        const res = await api().post(`/api/collection/${collection._id}/items`).set(headers)
+        const res = await api()
+            .post(`/api/collection/${collection._id}/items`)
+            .set(headers)
             .send({ hotwheel: String(hotwheel._id), quantity: 3 });
         expect(res.status).toBe(201);
         expect(res.body).toHaveLength(3);
@@ -79,7 +84,9 @@ describe("collection items", () => {
         const hotwheel = await createHotwheel();
         const headers = await loginAs(user);
 
-        const res = await api().post(`/api/collection/${collection._id}/items`).set(headers)
+        const res = await api()
+            .post(`/api/collection/${collection._id}/items`)
+            .set(headers)
             .send({ hotwheel: String(hotwheel._id), quantity });
         expect(res.status).toBe(400);
     });
@@ -112,7 +119,9 @@ describe("collection items", () => {
         const hotwheel = await createHotwheel();
         const headers = await loginAs(await createUser());
 
-        const res = await api().post(`/api/collection/${collection._id}/items`).set(headers)
+        const res = await api()
+            .post(`/api/collection/${collection._id}/items`)
+            .set(headers)
             .send({ hotwheel: String(hotwheel._id) });
         expect(res.status).toBe(403);
     });
