@@ -4,7 +4,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const nameInput = document.getElementById('new-collection-name');
     const formErrorEl = document.getElementById('form-error-message');
-    const currentUserId = createForm.dataset.userId;
 
     const showError = (message) => {
         if (formErrorEl) {
@@ -26,7 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const response = await fetch('/api/collection', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ name, owner: currentUserId })
+                    body: JSON.stringify({ name })
                 });
 
                 if (response.ok) {

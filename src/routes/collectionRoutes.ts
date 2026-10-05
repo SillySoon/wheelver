@@ -11,7 +11,7 @@ router.get('/', collectionController.getCollections);
 router.get('/:id', collectionController.getCollection);
 router.put('/:id', isCollectionOwner, collectionController.updateCollection);
 router.delete('/:id', isCollectionOwner, collectionController.deleteCollection);
-router.post('/:id/hotwheel/:hotwheelId', isCollectionOwner, collectionController.addHotwheel);
-router.delete('/:id/hotwheel/:hotwheelId', isCollectionOwner, collectionController.removeHotwheel);
+router.post('/:id/items', isCollectionOwner, collectionController.addItems);
+router.delete('/:id/items/:itemId', isCollectionOwner, collectionController.removeItem);
 
 export default router;

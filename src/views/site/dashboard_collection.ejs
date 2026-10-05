@@ -17,9 +17,9 @@
             </section>
         <% } else if (collection) { %>
             <%
-                const total = collection.hotwheels ? collection.hotwheels.length : 0;
-                const seriesSet = new Set(collection.hotwheels ? collection.hotwheels.filter(e => e.hotwheel && e.hotwheel.series).map(e => e.hotwheel.series._id ? e.hotwheel.series._id.toString() : e.hotwheel.series.toString()) : []);
-                const specialCount = collection.hotwheels ? collection.hotwheels.filter(e => e.hotwheel && e.hotwheel.extra && e.hotwheel.extra !== 'Regular').length : 0;
+                const total = collection.items ? collection.items.length : 0;
+                const seriesSet = new Set(collection.items ? collection.items.filter(e => e.hotwheel && e.hotwheel.series).map(e => e.hotwheel.series._id ? e.hotwheel.series._id.toString() : e.hotwheel.series.toString()) : []);
+                const specialCount = collection.items ? collection.items.filter(e => e.hotwheel && e.hotwheel.extra && e.hotwheel.extra !== 'Regular').length : 0;
             %>
 
             <section class="m-user-info">
@@ -73,7 +73,7 @@
                     </div>
                 </div>
 
-                <div class="m-collection__controls" id="list-controls"<% if (!collection.hotwheels || collection.hotwheels.length === 0) { %> style="display:none"<% } %>>
+                <div class="m-collection__controls" id="list-controls"<% if (!collection.items || collection.items.length === 0) { %> style="display:none"<% } %>>
                     <input type="text" id="hw-filter-search" class="a-search__input" placeholder="Filter list...">
                     <div class="m-collection__pills">
                         <button class="a-pill a-pill--active" data-extra="all">All</button>
@@ -99,10 +99,10 @@
                         <span>Collected</span>
                         <span></span>
                     </li>
-                    <% if (!collection.hotwheels || collection.hotwheels.length === 0) { %>
+                    <% if (!collection.items || collection.items.length === 0) { %>
                         <li class="m-hw-list__empty" id="hw-empty">No hotwheels in this collection yet.</li>
                     <% } else { %>
-                        <% collection.hotwheels.forEach(entry => { %>
+                        <% collection.items.forEach(entry => { %>
                             <%- include('../partials/e-hotwheel-row', { hotwheel: entry.hotwheel, entry, collection }) %>
                         <% }); %>
                     <% } %>

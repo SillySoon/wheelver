@@ -1,10 +1,40 @@
 // src/services/collectionService.ts
+import { Types } from "mongoose";
 import { createLogger } from "../utils/logger";
-import { Collection, Hotwheel, User } from "../models";
+import { Collection, CollectionItem, Hotwheel } from "../models";
+import { ItemCondition } from "../interfaces/ICollectionItem";
 
 const { logRequest } = createLogger("COLLECTION_SERVICE", "cyan");
 
-export const createCollection = async (collectionData: any) => {
+const ITEM_POPULATE = { path: "hotwheel", populate: { path: "series" } };
+
+/**
+ * Loads the items of the given (lean) collections and attaches them as `items`
+ * (newest first) plus `itemCount`. Items whose hotwheel no longer exists are skipped.
+ */
+const attachItems = async (collections: any[]) => {
+    if (collections.length === 0) return collections;
+
+    const items = await CollectionItem.find({ collectionId: { $in: collections.map((c) => c._id) } })
+        .sort({ acquiredAt: -1 })
+        .populate(ITEM_POPULATE)
+        .lean();
+
+    const byCollection = new Map<string, any[]>();
+    for (const item of items) {
+        if (!item.hotwheel) continue;
+        const key = item.collectionId.toString();
+        if (!byCollection.has(key)) byCollection.set(key, []);
+        byCollection.get(key)!.push(item);
+    }
+
+    return collections.map((col) => {
+        const colItems = byCollection.get(col._id.toString()) || [];
+        return { ...col, items: colItems, itemCount: colItems.length };
+    });
+};
+
+export const createCollection = async (collectionData: { name: string; owner: Types.ObjectId | string }) => {
     logRequest("Creating new collection");
     try {
         const collection = new Collection(collectionData);
@@ -23,16 +53,11 @@ export const getCollections = async (filter: any = {}) => {
     }
 };
 
-export const getCollectionsWithHotwheels = async (filter: any = {}) => {
-    logRequest(`Getting collections with hotwheels for filter ${JSON.stringify(filter)}`);
+export const getCollectionsWithItems = async (filter: any = {}) => {
+    logRequest(`Getting collections with items for filter ${JSON.stringify(filter)}`);
     try {
-        const collections = await Collection.find(filter)
-            .populate({ path: 'hotwheels.hotwheel' })
-            .lean();
-        return collections.map((col: any) => ({
-            ...col,
-            totalHotwheelsCount: col.hotwheels ? col.hotwheels.length : 0,
-        }));
+        const collections = await Collection.find(filter).sort({ createdAt: -1 }).lean();
+        return await attachItems(collections);
     } catch (error: any) {
         throw new Error(`Failed to get collections: ${error.message}`);
     }
@@ -41,25 +66,21 @@ export const getCollectionsWithHotwheels = async (filter: any = {}) => {
 export const getCollection = async (id: string) => {
     logRequest(`Getting collection with id ${id}`);
     try {
-        return await Collection.findById(id)
-            .populate({
-                path: 'hotwheels.hotwheel',
-                populate: { path: 'series' }
-            })
-            .populate('owner', 'username discordId')
+        const collection = await Collection.findById(id)
+            .populate("owner", "handle displayName")
             .lean();
+        if (!collection) return null;
+        const [withItems] = await attachItems([collection]);
+        return withItems;
     } catch (error: any) {
         throw new Error(`Failed to get collection: ${error.message}`);
     }
 };
 
-export const updateCollection = async (id: string, collectionData: any) => {
+export const updateCollection = async (id: string, collectionData: { name: string }) => {
     logRequest(`Updating collection with id ${id}`);
     try {
-        return await Collection.findByIdAndUpdate(id, collectionData, { new: true }).populate({
-            path: 'hotwheels.hotwheel',
-            populate: { path: 'series' }
-        });
+        return await Collection.findByIdAndUpdate(id, collectionData, { new: true, runValidators: true });
     } catch (error: any) {
         throw new Error(`Failed to update collection: ${error.message}`);
     }
@@ -68,56 +89,55 @@ export const updateCollection = async (id: string, collectionData: any) => {
 export const deleteCollection = async (id: string) => {
     logRequest(`Deleting collection with id ${id}`);
     try {
+        await CollectionItem.deleteMany({ collectionId: id });
         return await Collection.findByIdAndDelete(id);
     } catch (error: any) {
         throw new Error(`Failed to delete collection: ${error.message}`);
     }
 };
 
-export const addHotwheelToCollection = async (collectionId: string, hotwheelId: string) => {
-    logRequest(`Adding hotwheel ${hotwheelId} to collection ${collectionId}`);
-    try {
-        // Verify Hotwheel exists
-        const hotwheel = await Hotwheel.findById(hotwheelId);
-        if (!hotwheel) {
-            throw new Error(`Hotwheel with id ${hotwheelId} not found`);
-        }
+/**
+ * Adds `quantity` physical copies of a hotwheel to a collection.
+ * Returns null if the collection does not exist, throws if the hotwheel does not exist.
+ */
+export const addItems = async (
+    collectionId: string,
+    hotwheelId: string,
+    quantity: number,
+    condition?: ItemCondition
+) => {
+    logRequest(`Adding ${quantity}x hotwheel ${hotwheelId} to collection ${collectionId}`);
 
-        return await Collection.findByIdAndUpdate(
-            collectionId,
-            { $push: { hotwheels: { hotwheel: hotwheelId, collectedAt: new Date() } } },
-            { new: true }
-        ).populate({
-            path: 'hotwheels.hotwheel',
-            populate: { path: 'series' }
-        });
-    } catch (error: any) {
-        throw new Error(`Failed to add hotwheel to collection: ${error.message}`);
+    const collection = await Collection.findById(collectionId).lean();
+    if (!collection) return null;
+
+    const hotwheelExists = await Hotwheel.exists({ _id: hotwheelId });
+    if (!hotwheelExists) {
+        throw new Error(`Hotwheel with id ${hotwheelId} not found`);
     }
+
+    const now = new Date();
+    const created = await CollectionItem.insertMany(
+        Array.from({ length: quantity }, () => ({
+            collectionId,
+            hotwheel: hotwheelId,
+            owner: collection.owner,
+            acquiredAt: now,
+            condition,
+        }))
+    );
+
+    return await CollectionItem.find({ _id: { $in: created.map((i) => i._id) } })
+        .populate(ITEM_POPULATE)
+        .lean();
 };
 
-export const removeHotwheelFromCollection = async (collectionId: string, hotwheelId: string) => {
-    logRequest(`Removing hotwheel ${hotwheelId} from collection ${collectionId}`);
+/** Removes a single copy. Returns null if the item is not part of the collection. */
+export const removeItem = async (collectionId: string, itemId: string) => {
+    logRequest(`Removing item ${itemId} from collection ${collectionId}`);
     try {
-        const collection = await Collection.findById(collectionId);
-        if (!collection) return null;
-
-        const entry = collection.hotwheels?.find(
-            (e) => e.hotwheel.toString() === hotwheelId
-        );
-        if (!entry) {
-            throw new Error(`Hotwheel ${hotwheelId} not found in collection`);
-        }
-
-        return await Collection.findByIdAndUpdate(
-            collectionId,
-            { $pull: { hotwheels: { _id: entry._id } } },
-            { new: true }
-        ).populate({
-            path: 'hotwheels.hotwheel',
-            populate: { path: 'series' }
-        });
+        return await CollectionItem.findOneAndDelete({ _id: itemId, collectionId });
     } catch (error: any) {
-        throw new Error(`Failed to remove hotwheel from collection: ${error.message}`);
+        throw new Error(`Failed to remove item from collection: ${error.message}`);
     }
 };

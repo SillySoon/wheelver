@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
     <%- include('../partials/head', {
-        metaTitle: (user ? user.username + ' - Wheelver' : 'Wheelver'),
+        metaTitle: (user ? user.displayName + ' - Wheelver' : 'Wheelver'),
         metaDescription: user
-            ? user.username + ' has ' + collections.length + ' collection' + (collections.length !== 1 ? 's' : '') + ' on Wheelver.'
+            ? user.displayName + ' has ' + collections.length + ' collection' + (collections.length !== 1 ? 's' : '') + ' on Wheelver.'
             : 'View Hot Wheels collections on Wheelver.',
         metaUrl: locals.currentUrl || 'https://wheelver.sillysoon.de'
     }) %>
@@ -20,13 +20,14 @@
             </section>
         <% } else if (user) { %>
             <%
-                const totalCars = collections.reduce((sum, c) => sum + (typeof c.totalHotwheelsCount !== 'undefined' ? c.totalHotwheelsCount : (c.hotwheels ? c.hotwheels.length : 0)), 0);
-                const allEntries = collections.flatMap(c => c.hotwheels || []);
+                const totalCars = collections.reduce((sum, c) => sum + (typeof c.itemCount !== 'undefined' ? c.itemCount : (c.items ? c.items.length : 0)), 0);
+                const allEntries = collections.flatMap(c => c.items || []);
                 const allSeriesIds = new Set(allEntries.filter(e => e.hotwheel && e.hotwheel.series).map(e => e.hotwheel.series._id ? e.hotwheel.series._id.toString() : e.hotwheel.series.toString()));
                 const totalSpecial = allEntries.filter(e => e.hotwheel && e.hotwheel.extra && e.hotwheel.extra !== 'Regular').length;
             %>
             <section class="m-user-info">
-                <h1><%= user.username %></h1>
+                <h1><%= user.displayName %></h1>
+                <p class="text--muffled">@<%= user.handle %></p>
                 <div class="e-stats">
                     <div class="e-stats__item">
                         <p class="text--muffled">Collections</p>

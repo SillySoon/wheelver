@@ -39,19 +39,12 @@ function setupUserSearch(container) {
                 
                 if (displayList.length > 0) {
                     resultsDiv.innerHTML = displayList.map(user => `
-                        <div class="a-search__item" data-id="${esc(user._id)}">
-                            <strong class="a-search__item-name">${esc(user.username || 'No username')}</strong>
-                            <div class="a-search__item-id">ID: ${esc(user.discordId)}</div>
-                        </div>
+                        <a class="a-search__item" href="/u/${encodeURIComponent(user.handle)}">
+                            <strong class="a-search__item-name">${esc(user.displayName)}</strong>
+                            <span class="a-search__item-id">@${esc(user.handle)}</span>
+                        </a>
                     `).join('');
                     resultsDiv.style.display = 'block';
-
-                    resultsDiv.querySelectorAll('.a-search__item').forEach(item => {
-                        item.onclick = () => {
-                            const id = item.dataset.id;
-                            window.location.href = `/u/${id}`;
-                        };
-                    });
                 } else {
                     resultsDiv.innerHTML = '<div class="a-search__no-results">No users found</div>';
                     resultsDiv.style.display = 'block';

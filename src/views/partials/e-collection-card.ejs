@@ -1,9 +1,9 @@
 <%
-    const hwCount = typeof collection.totalHotwheelsCount !== 'undefined' ? collection.totalHotwheelsCount : (collection.hotwheels ? collection.hotwheels.length : 0);
-    const entries = collection.hotwheels || [];
+    const hwCount = typeof collection.itemCount !== 'undefined' ? collection.itemCount : (collection.items ? collection.items.length : 0);
+    const entries = collection.items || [];
 
     // Sort newest first, then deduplicate by hotwheel ID for stats and preview
-    const sortedEntries = [...entries].sort((a, b) => new Date(b.collectedAt) - new Date(a.collectedAt));
+    const sortedEntries = [...entries].sort((a, b) => new Date(b.acquiredAt) - new Date(a.acquiredAt));
     const seenIds = new Set();
     const uniqueEntries = [];
     for (const e of sortedEntries) {

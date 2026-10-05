@@ -1,52 +1,3 @@
-async function fetchUserData() {
-    const pathParts = window.location.pathname.split('/');
-    const userId = pathParts[pathParts.length - 1];
-    
-    if (!userId) {
-        return;
-    }
-
-    try {
-        const response = await fetch(`/api/user/${userId}`);
-        if (!response.ok) throw new Error('Failed to fetch user data');
-        const user = await response.json();
-        
-        document.getElementById('username').value = user.username || '';
-        document.getElementById('discord-id').textContent = user.discordId || 'N/A';
-    } catch (error) {
-        console.error(error);
-        showError('Error loading user data');
-    }
-}
-
-async function handleFormSubmit(event) {
-    event.preventDefault();
-    const pathParts = window.location.pathname.split('/');
-    const userId = pathParts[pathParts.length - 1];
-    
-    const username = document.getElementById('username').value;
-    showError('');
-
-    try {
-        const response = await fetch(`/api/user/${userId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ username })
-        });
-
-        if (response.ok) {
-        } else {
-            const data = await response.json();
-            showError(data.message || 'Failed to update profile');
-        }
-    } catch (error) {
-        console.error(error);
-        showError('An error occurred while updating profile');
-    }
-}
-
 function showError(message) {
     const errorEl = document.getElementById('error-message');
     if (errorEl) {
@@ -54,9 +5,8 @@ function showError(message) {
     }
 }
 
-async function handleDeleteAccount() {
-    const pathParts = window.location.pathname.split('/');
-    const userId = pathParts[pathParts.length - 1];
+async function handleDeleteAccount(event) {
+    const userId = event.currentTarget.dataset.userId;
 
     if (!confirm('Delete your account and all collections permanently? This cannot be undone.')) {
         return;
@@ -77,6 +27,4 @@ async function handleDeleteAccount() {
     }
 }
 
-document.getElementById('edit-user-form').addEventListener('submit', handleFormSubmit);
 document.getElementById('delete-account-btn').addEventListener('click', handleDeleteAccount);
-fetchUserData();

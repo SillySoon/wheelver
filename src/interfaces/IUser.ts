@@ -1,10 +1,12 @@
 // src/interfaces/IUser.ts
-import { Document, Types } from "mongoose";
-import { ICollection } from "./ICollection";
+import { Document } from "mongoose";
 
-export interface IUser extends Document{
+export interface IUser extends Document {
     discordId: string;
-    username?: string;
-    isRegistered: boolean;
+    handle: string;
+    displayName: string;
+    previousHandles: string[];
+    lastLoginAt?: Date;
     createdAt: Date;
+    updatedAt: Date;
 }

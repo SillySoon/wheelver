@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Owned counts (tracked in memory) ---
     const ownedCounts = {};
     document.querySelectorAll('.e-hw-row').forEach(row => {
-        const id = row.querySelector('.remove-hotwheel-btn')?.dataset.id;
+        const id = row.querySelector('.remove-hotwheel-btn')?.dataset.hotwheelId;
         if (id) ownedCounts[id] = (ownedCounts[id] || 0) + 1;
     });
 
@@ -75,7 +75,8 @@ document.addEventListener('DOMContentLoaded', () => {
     };
 
     // --- Insert row into list (no reload) ---
-    const insertRow = (hw, collectedAt) => {
+    const insertRow = (hw, item) => {
+        const collectedAt = item.acquiredAt;
         showListControls();
 
         const li = document.createElement('li');
@@ -96,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <span class="e-hw-row__series text--muffled">${esc(hw.series?.name || '-')}</span>
             <span class="e-hw-row__toy-number text--muffled">${esc(hw.toyNumber || '-')}</span>
             <span class="e-hw-row__date text--muffled">${formatDate(collectedAt)}</span>
-            <button class="a-button a-button--danger remove-hotwheel-btn" data-id="${esc(hw._id)}" data-collection-id="${esc(collectionId)}">Remove</button>
+            <button class="a-button a-button--danger remove-hotwheel-btn" data-item-id="${esc(item._id)}" data-hotwheel-id="${esc(hw._id)}">Remove</button>
         `;
 
         li.querySelector('.remove-hotwheel-btn').addEventListener('click', handleRemove);
@@ -113,12 +114,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Remove row (no reload) ---
     const handleRemove = async (e) => {
         const btn = e.currentTarget;
-        const hwId = btn.dataset.id;
+        const itemId = btn.dataset.itemId;
+        const hwId = btn.dataset.hotwheelId;
 
         if (!confirm('Remove this hotwheel from the collection?')) return;
 
         try {
-            const res = await fetch(`/api/collection/${collectionId}/hotwheel/${hwId}`, { method: 'DELETE' });
+            const res = await fetch(`/api/collection/${collectionId}/items/${itemId}`, { method: 'DELETE' });
             if (res.ok) {
                 const row = btn.closest('.e-hw-row');
                 row.remove();
@@ -213,6 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (quantity > 1) { quantity--; document.getElementById('qty-display').textContent = quantity; }
         };
         document.getElementById('qty-plus').onclick = () => {
+            if (quantity >= 50) return; // API limit per request
             quantity++;
             document.getElementById('qty-display').textContent = quantity;
         };
@@ -225,19 +228,20 @@ document.addEventListener('DOMContentLoaded', () => {
         showError('');
 
         try {
-            for (let i = 0; i < qty; i++) {
-                const res = await fetch(`/api/collection/${collectionId}/hotwheel/${hw._id}`, { method: 'POST' });
-                if (!res.ok) {
-                    const err = await res.json();
-                    showError(err.message || 'Failed to add hotwheel');
-                    return;
-                }
-                const data = await res.json();
-                const entries = data.hotwheels;
-                const newEntry = entries[entries.length - 1];
-                insertRow(hw, newEntry?.collectedAt);
-                ownedCounts[hw._id] = (ownedCounts[hw._id] || 0) + 1;
+            const res = await fetch(`/api/collection/${collectionId}/items`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ hotwheel: hw._id, quantity: qty })
+            });
+            if (!res.ok) {
+                const err = await res.json();
+                showError(err.message || 'Failed to add hotwheel');
+                if (addBtn) { addBtn.disabled = false; addBtn.textContent = 'Add to Collection'; }
+                return;
             }
+            const items = await res.json();
+            items.forEach((item) => insertRow(hw, item));
+            ownedCounts[hw._id] = (ownedCounts[hw._id] || 0) + items.length;
 
             // Reset search, refresh preview with updated count
             hwSearchInput.value = '';

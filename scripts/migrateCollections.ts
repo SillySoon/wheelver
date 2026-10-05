@@ -7,7 +7,7 @@
  * The collectedAt date is set to the collection's createdAt timestamp.
  *
  * Run with:
- *   npx ts-node scripts/migrateCollections.ts
+ *   npx tsx scripts/migrateCollections.ts
  */
 
 import mongoose from "mongoose";

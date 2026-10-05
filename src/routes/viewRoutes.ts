@@ -29,7 +29,7 @@ router.get("/dashboard", isAuthenticated, async (req, res) => {
             return res.redirect("/login"); // Should not happen with isAuthenticated, but as a safeguard
         }
 
-        const collections = await CollectionService.getCollectionsWithHotwheels({ owner: user._id });
+        const collections = await CollectionService.getCollectionsWithItems({ owner: user._id });
         res.render("site/dashboard", { user, collections, error: null });
     } catch (error) {
         console.error("Error loading dashboard:", error);
@@ -61,23 +61,23 @@ router.get("/dashboard/c/:id", isCollectionOwner, async (req, res) => {
     }
 });
 
-router.get("/u/:id", async (req, res) => {
-    const userId = req.params.id;
-
-    if (!isValidObjectId(userId)) {
-        return res.status(400).render("site/user", { error: "Invalid User ID", user: null, collections: [] });
-    }
+router.get("/u/:handle", async (req, res) => {
+    const segment = req.params.handle;
 
     try {
-        const user = await UserService.getUser(userId);
+        const { user, redirectTo } = await UserService.resolveProfile(segment);
+        if (redirectTo) {
+            return res.redirect(301, `/u/${encodeURIComponent(redirectTo)}`);
+        }
         if (!user) {
             return res.status(404).render("site/user", { error: "User not found", user: null, collections: [] });
         }
 
-        const collections = await CollectionService.getCollectionsWithHotwheels({ owner: userId });
+        const collections = await CollectionService.getCollectionsWithItems({ owner: user._id });
         const currentUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
         res.render("site/user", { user, collections, error: null, currentUrl });
     } catch (error) {
+        console.error("Error loading user profile:", error);
         res.status(500).render("site/user", { error: "Failed to load user profile", user: null, collections: [] });
     }
 });

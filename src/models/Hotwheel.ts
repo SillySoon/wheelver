@@ -16,4 +16,7 @@ const HotwheelSchema: Schema<IHotwheel> = new mongoose.Schema<IHotwheel>({
     photoUrl: { type: String },
 });
 
+HotwheelSchema.index({ year: 1, colNumber: 1 });
+HotwheelSchema.index({ series: 1 });
+
 export default mongoose.model<IHotwheel>("Hotwheel", HotwheelSchema);

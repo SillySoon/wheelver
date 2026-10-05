@@ -1,9 +1,6 @@
 // src/routes/authRoutes.ts
 import { Router } from 'express';
 import passport from 'passport';
-import * as UserService from '../services/userService';
-import { isValidUsername } from '../utils/validation';
-import { IUser } from '../interfaces/IUser';
 
 const router = Router();
 
@@ -11,68 +8,16 @@ const router = Router();
 router.get('/discord', passport.authenticate('discord'));
 
 // Callback route after Discord authentication
-router.get('/discord/callback', 
+router.get('/discord/callback',
     passport.authenticate('discord', { failureRedirect: '/' }),
     (req, res) => {
-        const user = req.user as IUser;
-        if (user && !user.isRegistered) {
-            return res.redirect('/auth/register');
-        }
-        // Successful authentication, redirect to home or profile.
-        res.redirect('/');
+        res.redirect('/dashboard');
     }
 );
 
-// Registration routes
-router.get('/register', (req, res) => {
-    if (!req.isAuthenticated()) {
-        return res.redirect('/auth/discord');
-    }
-    const user = req.user as IUser;
-    if (user.isRegistered) {
-        return res.redirect('/');
-    }
-    res.render('auth/register');
-});
-
-router.post('/register', async (req, res) => {
-    if (!req.isAuthenticated()) {
-        return res.status(401).send('Unauthorized');
-    }
-    const user = req.user as IUser;
-    if (user.isRegistered) {
-        return res.redirect('/');
-    }
-
-    const { username } = req.body;
-    if (!isValidUsername(username)) {
-        return res.redirect('/auth/register?error=' + encodeURIComponent('Username must be 3-20 characters (letters, numbers, _)'));
-    }
-
-    try {
-        if (await UserService.isUsernameTaken(username)) {
-            return res.redirect('/auth/register?error=Username already taken');
-        }
-
-        user.username = username;
-        user.isRegistered = true;
-        await user.save();
-
-        res.redirect('/');
-    } catch (err) {
-        console.error(err);
-        res.redirect('/auth/register?error=An error occurred');
-    }
-});
-
 router.get('/login', (req, res) => {
     if (req.isAuthenticated()) {
-        const user = req.user as IUser;
-        if (user.isRegistered) {
-            return res.redirect('/');
-        } else {
-            return res.redirect('/auth/register');
-        }
+        return res.redirect('/dashboard');
     }
     res.render('auth/login');
 });

@@ -4,7 +4,7 @@
     data-series="<%= (hotwheel.series && hotwheel.series.name) ? hotwheel.series.name.toLowerCase() : '' %>"
     data-year="<%= hotwheel.year || 0 %>"
     data-extra="<%= hotwheel.extra || 'Regular' %>"
-    data-collected-at="<%= entry.collectedAt ? new Date(entry.collectedAt).getTime() : 0 %>"
+    data-collected-at="<%= entry.acquiredAt ? new Date(entry.acquiredAt).getTime() : 0 %>"
 >
     <img class="e-hw-row__thumb" src="<%= hotwheel.photoUrl || '/images/default.jpg' %>" alt="<%= hotwheel.name %>">
 
@@ -19,7 +19,7 @@
 
     <span class="e-hw-row__series text--muffled"><%= (hotwheel.series && hotwheel.series.name) ? hotwheel.series.name : '-' %></span>
     <span class="e-hw-row__toy-number text--muffled"><%= hotwheel.toyNumber || '-' %></span>
-    <span class="e-hw-row__date text--muffled"><%= entry.collectedAt ? new Date(entry.collectedAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '-' %></span>
+    <span class="e-hw-row__date text--muffled"><%= entry.acquiredAt ? new Date(entry.acquiredAt).toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' }) : '-' %></span>
 
-    <button class="a-button a-button--danger remove-hotwheel-btn" data-id="<%= hotwheel._id %>" data-collection-id="<%= collection._id %>">Remove</button>
+    <button class="a-button a-button--danger remove-hotwheel-btn" data-item-id="<%= entry._id %>" data-hotwheel-id="<%= hotwheel._id %>">Remove</button>
 </li>

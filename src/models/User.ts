@@ -4,14 +4,13 @@ import { IUser } from "../interfaces/IUser";
 
 const UserSchema: Schema<IUser> = new mongoose.Schema<IUser>({
     discordId: { type: String, required: true, unique: true },
-    username: { 
-        type: String, 
-        unique: true, 
-        sparse: true,
-        match: [/^[a-zA-Z0-9_]{3,20}$/, 'Please fill a valid username (3-20 characters, alphanumeric and underscore)']
-    },
-    isRegistered: { type: Boolean, default: false },
-    createdAt: { type: Date, default: Date.now },
-});
+    // Discord username (unique handle), synced on every login and used in profile URLs
+    handle: { type: String, required: true, unique: true, lowercase: true, trim: true },
+    // Discord global name, falls back to the handle
+    displayName: { type: String, required: true, trim: true },
+    // Old handles so that /u/<old-handle> can redirect after a rename
+    previousHandles: { type: [String], default: [], index: true },
+    lastLoginAt: { type: Date },
+}, { timestamps: true });
 
 export default mongoose.model<IUser>("User", UserSchema);

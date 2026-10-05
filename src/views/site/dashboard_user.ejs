@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <%- include('../partials/head', {
-        metaTitle: 'Edit Profile - Wheelver',
-        metaDescription: 'Edit your Wheelver profile.'
+        metaTitle: 'Account - Wheelver',
+        metaDescription: 'Manage your Wheelver account.'
     }) %>
 </head>
 <body>
@@ -11,30 +11,31 @@
     <%- include('../partials/header') %>
     <main>
         <section class="m-jumbotron">
-            <h1 class="m-jumbotron__title">Edit Profile</h1>
-            <p class="m-jumbotron__description">Change your Profile settings</p>
-            <div id="error-message" class="error"></div>
-            <form id="edit-user-form">
-                <div>
-                    <label for="username">Username:</label>
-                    <input type="text" id="username" name="username" required
-                           pattern="^[a-zA-Z0-9_]{3,20}$"
-                           title="Username must be 3-20 characters long and contain only letters, numbers, and underscores."
-                           minlength="3" maxlength="20"
-                           class="a-search__input"
-                    >
+            <h1 class="m-jumbotron__title">Account</h1>
+            <p class="m-jumbotron__description">Your name and handle are taken from Discord and update every time you log in.</p>
+
+            <div class="e-stats">
+                <div class="e-stats__item">
+                    <p class="text--muffled">Name</p>
+                    <span class="text"><%= authUser.displayName %></span>
                 </div>
-            </form>
-            <div>
-                <p>Discord ID: <span id="discord-id"></span></p>
+                <div class="e-stats__item">
+                    <p class="text--muffled">Handle</p>
+                    <span class="text">@<%= authUser.handle %></span>
+                </div>
+                <div class="e-stats__item">
+                    <p class="text--muffled">Discord ID</p>
+                    <span class="text"><%= authUser.discordId %></span>
+                </div>
             </div>
-            <button form="edit-user-form" type="submit" class="a-button">Save Changes</button>
+
+            <div id="error-message" class="error"></div>
             <a href="/dashboard" class="m-jumbotron__example a-link">Return to Dashboard</a>
 
             <div class="m-danger-zone">
                 <h2>Delete Account</h2>
                 <p class="text--muffled">Permanently deletes your account and all of your collections. This cannot be undone.</p>
-                <button type="button" id="delete-account-btn" class="a-button a-button--danger">Delete Account</button>
+                <button type="button" id="delete-account-btn" class="a-button a-button--danger" data-user-id="<%= authUser._id %>">Delete Account</button>
             </div>
         </section>
         <script src="/js/edit-user.js"></script>

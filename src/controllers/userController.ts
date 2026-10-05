@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { createLogger } from "../utils/logger";
 import { asyncHandler } from "../handlers/asyncHandler";
 import * as UserService from "../services/userService";
-import { isValidObjectId, isValidUsername } from "../utils/validation";
+import { isValidObjectId } from "../utils/validation";
 
 const { logRequest, logWarning } = createLogger(
     "USER_CONTROLLER",
@@ -49,36 +49,6 @@ export const getUser = asyncHandler(async (req: Request, res: Response) => {
         return res.status(200).json(user);
     } catch (error: any) {
         logWarning(`Error retrieving user: ${error.message}`);
-        return res.status(500).json({ message: error.message });
-    }
-});
-
-export const updateUser = asyncHandler(async (req: Request, res: Response) => {
-    logRequest(`PUT /user/${req.params.id}`);
-
-    if (!isValidObjectId(req.params.id as string)) {
-        logWarning(`Invalid user ID format: ${req.params.id}`);
-        return res.status(400).json({ message: "Invalid ID format" });
-    }
-
-    const { username } = req.body;
-    if (!isValidUsername(username)) {
-        return res.status(400).json({ message: "Username must be 3-20 characters long and contain only letters, numbers, and underscores." });
-    }
-
-    try {
-        if (await UserService.isUsernameTaken(username, req.params.id as string)) {
-            return res.status(409).json({ message: "Username already taken" });
-        }
-
-        // Only whitelisted fields may be changed by the user
-        const user = await UserService.updateUser(req.params.id as string, { username });
-        if (!user) {
-            return res.status(404).json({ message: "User not found" });
-        }
-        return res.status(200).json(user);
-    } catch (error: any) {
-        logWarning(`Error updating user: ${error.message}`);
         return res.status(500).json({ message: error.message });
     }
 });

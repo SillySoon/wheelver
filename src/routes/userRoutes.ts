@@ -1,7 +1,7 @@
 // src/routes/userRoutes.ts
 import { Router } from 'express';
 import * as userController from '../controllers/userController';
-import { isAdmin, isOwner, isOwnerOrAdmin } from '../middleware/authMiddleware';
+import { isAdmin, isOwnerOrAdmin } from '../middleware/authMiddleware';
 
 const router: Router = Router();
 
@@ -16,7 +16,6 @@ router.get('/me', (req, res) => {
 router.post('/', isAdmin, userController.createUser);
 router.get('/', userController.getUsers);
 router.get('/:id', userController.getUser);
-router.put('/:id', isOwner, userController.updateUser);
 router.delete('/:id', isOwnerOrAdmin, userController.deleteUser);
 
 export default router;

@@ -1,5 +1,5 @@
 // src/interfaces/IHotwheel.ts
-import { Document, Types } from "mongoose";
+import { Document } from "mongoose";
 import { ISeries } from "./ISeries";
 
 export enum HotwheelExtra {
@@ -16,6 +16,6 @@ export interface IHotwheel extends Document {
     series: ISeries;
     seriesNumber: number;
     year: number;
-    extra?: Types.ObjectId | HotwheelExtra;
+    extra?: HotwheelExtra;
     photoUrl?: string;
 }

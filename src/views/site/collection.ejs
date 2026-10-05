@@ -4,7 +4,7 @@
     <%- include('../partials/head', {
         metaTitle: (collection ? collection.name + ' - Wheelver' : 'Wheelver'),
         metaDescription: collection
-            ? (collection.owner && collection.owner.username ? collection.owner.username + "'s " : '') + 'collection "' + collection.name + '" on Wheelver - ' + (collection.hotwheels ? collection.hotwheels.length : 0) + ' cars.'
+            ? (collection.owner && collection.owner.displayName ? collection.owner.displayName + "'s " : '') + 'collection "' + collection.name + '" on Wheelver - ' + (collection.items ? collection.items.length : 0) + ' cars.'
             : 'View Hot Wheels collections on Wheelver.',
         metaUrl: locals.currentUrl || 'https://wheelver.sillysoon.de'
     }) %>
@@ -20,9 +20,9 @@
             </section>
         <% } else if (collection) { %>
             <%
-                const total = collection.hotwheels ? collection.hotwheels.length : 0;
-                const seriesSet = new Set(collection.hotwheels ? collection.hotwheels.filter(e => e.hotwheel && e.hotwheel.series).map(e => e.hotwheel.series._id ? e.hotwheel.series._id.toString() : e.hotwheel.series.toString()) : []);
-                const specialCount = collection.hotwheels ? collection.hotwheels.filter(e => e.hotwheel && e.hotwheel.extra && e.hotwheel.extra !== 'Regular').length : 0;
+                const total = collection.items ? collection.items.length : 0;
+                const seriesSet = new Set(collection.items ? collection.items.filter(e => e.hotwheel && e.hotwheel.series).map(e => e.hotwheel.series._id ? e.hotwheel.series._id.toString() : e.hotwheel.series.toString()) : []);
+                const specialCount = collection.items ? collection.items.filter(e => e.hotwheel && e.hotwheel.extra && e.hotwheel.extra !== 'Regular').length : 0;
                 const isOwner = currentUser && collection.owner && (collection.owner._id || collection.owner).toString() === currentUser._id.toString();
             %>
 
@@ -46,8 +46,8 @@
                     <div class="e-stats__item">
                         <p class="text--muffled">Owner</p>
                         <span class="text">
-                            <% if (collection.owner) { %>
-                                <a href="/u/<%= collection.owner._id || collection.owner %>" class="a-link text"><%= collection.owner.username || 'View Profile' %></a>
+                            <% if (collection.owner && collection.owner.handle) { %>
+                                <a href="/u/<%= collection.owner.handle %>" class="a-link text"><%= collection.owner.displayName || 'View Profile' %></a>
                             <% } else { %>
                                 Unknown
                             <% } %>
@@ -67,7 +67,7 @@
                     </div>
                 </div>
 
-                <% if (collection.hotwheels && collection.hotwheels.length > 0) { %>
+                <% if (collection.items && collection.items.length > 0) { %>
                 <div class="m-collection__controls">
                     <input type="text" id="hw-filter-search" class="a-search__input" placeholder="Search by name or toy number...">
 
@@ -90,19 +90,19 @@
                 <% } %>
 
                 <div class="m-collection__grid">
-                    <% if (collection.hotwheels && collection.hotwheels.length > 0) { %>
+                    <% if (collection.items && collection.items.length > 0) { %>
                         <%
                             const countMap = {};
                             const seen = new Set();
                             const uniqueEntries = [];
-                            collection.hotwheels.forEach(entry => {
+                            collection.items.forEach(entry => {
                                 const id = entry.hotwheel._id.toString();
                                 countMap[id] = (countMap[id] || 0) + 1;
                                 if (!seen.has(id)) { seen.add(id); uniqueEntries.push(entry); }
                             });
                         %>
                         <% uniqueEntries.forEach(entry => { %>
-                            <%- include('../partials/e-hotwheel-card', { hotwheel: entry.hotwheel, count: countMap[entry.hotwheel._id.toString()], collectedAt: entry.collectedAt }) %>
+                            <%- include('../partials/e-hotwheel-card', { hotwheel: entry.hotwheel, count: countMap[entry.hotwheel._id.toString()], collectedAt: entry.acquiredAt }) %>
                         <% }); %>
                     <% } else { %>
                         <p>No Hot Wheels in this collection yet.</p>
