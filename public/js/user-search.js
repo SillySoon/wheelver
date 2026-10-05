@@ -1,4 +1,9 @@
 function setupUserSearch(container) {
+    // Escape values before inserting them into HTML strings
+    const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    })[c]);
+
     const searchInput = container.querySelector('.a-search__input');
     const resultsDiv = container.querySelector('.a-search__results');
 
@@ -34,9 +39,9 @@ function setupUserSearch(container) {
                 
                 if (displayList.length > 0) {
                     resultsDiv.innerHTML = displayList.map(user => `
-                        <div class="a-search__item" data-id="${user._id}">
-                            <strong class="a-search__item-name">${user.username || 'No username'}</strong>
-                            <div class="a-search__item-id">ID: ${user.discordId}</div>
+                        <div class="a-search__item" data-id="${esc(user._id)}">
+                            <strong class="a-search__item-name">${esc(user.username || 'No username')}</strong>
+                            <div class="a-search__item-id">ID: ${esc(user.discordId)}</div>
                         </div>
                     `).join('');
                     resultsDiv.style.display = 'block';

@@ -10,6 +10,8 @@ export let DISCORD_CLIENT_ID: string;
 export let DISCORD_SECRET: string;
 export let DISCORD_CALLBACK_URL: string;
 export let SESSION_SECRET: string;
+export let ADMIN_DISCORD_IDS: string[];
+export const IS_PRODUCTION = process.env.NODE_ENV === "production";
 
 if (!process.env.PORT) {
     logger.warn("PORT is not defined, using default port 3000");
@@ -34,6 +36,10 @@ if (!process.env.DISCORD_CALLBACK_URL) {
 }
 
 if (!process.env.SESSION_SECRET) {
+    if (IS_PRODUCTION) {
+        logger.error("SESSION_SECRET is not defined.");
+        process.exit(1);
+    }
     logger.warn("SESSION_SECRET is not defined, using default");
 }
 
@@ -43,3 +49,7 @@ DISCORD_CLIENT_ID = process.env.DISCORD_CLIENT_ID;
 DISCORD_SECRET = process.env.DISCORD_SECRET;
 DISCORD_CALLBACK_URL = process.env.DISCORD_CALLBACK_URL || "http://localhost:3000/auth/discord/callback";
 SESSION_SECRET = process.env.SESSION_SECRET || "wheelver-secret";
+ADMIN_DISCORD_IDS = (process.env.ADMIN_DISCORD_IDS || "")
+    .split(",")
+    .map((id) => id.trim())
+    .filter(Boolean);

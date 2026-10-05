@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { createLogger } from "../utils/logger";
 import { asyncHandler } from "../handlers/asyncHandler";
 import * as UserService from "../services/userService";
-import { isValidObjectId } from "../utils/validation";
+import { isValidObjectId, isValidUsername } from "../utils/validation";
 
 const { logRequest, logWarning } = createLogger(
     "USER_CONTROLLER",
@@ -61,8 +61,18 @@ export const updateUser = asyncHandler(async (req: Request, res: Response) => {
         return res.status(400).json({ message: "Invalid ID format" });
     }
 
+    const { username } = req.body;
+    if (!isValidUsername(username)) {
+        return res.status(400).json({ message: "Username must be 3-20 characters long and contain only letters, numbers, and underscores." });
+    }
+
     try {
-        const user = await UserService.updateUser(req.params.id as string, req.body);
+        if (await UserService.isUsernameTaken(username, req.params.id as string)) {
+            return res.status(409).json({ message: "Username already taken" });
+        }
+
+        // Only whitelisted fields may be changed by the user
+        const user = await UserService.updateUser(req.params.id as string, { username });
         if (!user) {
             return res.status(404).json({ message: "User not found" });
         }
@@ -85,6 +95,13 @@ export const deleteUser = asyncHandler(async (req: Request, res: Response) => {
         const user = await UserService.deleteUser(req.params.id as string);
         if (!user) {
             return res.status(404).json({ message: "User not found" });
+        }
+
+        // End the session when users delete their own account
+        if ((req.user as any)?._id.toString() === req.params.id) {
+            return req.logout(() => {
+                res.status(200).json({ message: "User deleted successfully" });
+            });
         }
         return res.status(200).json({ message: "User deleted successfully" });
     } catch (error: any) {

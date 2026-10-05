@@ -20,10 +20,10 @@
                     <div class="a-search__results" style="<%= (users && users.length > 0) || (search && search.length >= 2) ? 'display: block;' : 'display: none;' %>">
                         <% if (users && users.length > 0) { %>
                             <% users.forEach(user => { %>
-                                <div class="a-search__item" onclick="window.location.href='/u/<%= user._id %>'">
+                                <a class="a-search__item" href="/u/<%= user._id %>">
                                     <strong class="a-search__item-name"><%= user.username || 'No username' %></strong>
-                                    <div class="a-search__item-id">ID: <%= user.discordId %></div>
-                                </div>
+                                    <span class="a-search__item-id">ID: <%= user.discordId %></span>
+                                </a>
                             <% }); %>
                         <% } else if (search && search.length >= 2) { %>
                             <div class="a-search__no-results">No users found</div>

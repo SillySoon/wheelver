@@ -7,6 +7,11 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
+    // Escape values before inserting them into HTML strings
+    const esc = (value) => String(value ?? '').replace(/[&<>"']/g, (c) => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    })[c]);
+
     const formErrorEl = document.getElementById('form-error-message');
     const showError = (msg) => { if (formErrorEl) formErrorEl.textContent = msg; };
 
@@ -50,7 +55,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const buildBadgeHTML = (extra) =>
         extra && extra !== 'Regular'
-            ? `<span class="${extraBadgeClass(extra)}">${extraBadgeLabel(extra)}</span>`
+            ? `<span class="${esc(extraBadgeClass(extra))}">${esc(extraBadgeLabel(extra))}</span>`
             : '';
 
     // --- Owned counts (tracked in memory) ---
@@ -83,15 +88,15 @@ document.addEventListener('DOMContentLoaded', () => {
         li.dataset.collectedAt = collectedAt ? new Date(collectedAt).getTime() : Date.now();
 
         li.innerHTML = `
-            <img class="e-hw-row__thumb" src="${hw.photoUrl || '/images/default.jpg'}" alt="${hw.name}">
+            <img class="e-hw-row__thumb" src="${esc(hw.photoUrl || '/images/default.jpg')}" alt="${esc(hw.name)}">
             <div class="e-hw-row__main">
-                <span class="e-hw-row__name">${hw.name}</span>
+                <span class="e-hw-row__name">${esc(hw.name)}</span>
                 ${buildBadgeHTML(hw.extra)}
             </div>
-            <span class="e-hw-row__series text--muffled">${hw.series?.name || '-'}</span>
-            <span class="e-hw-row__toy-number text--muffled">${hw.toyNumber || '-'}</span>
+            <span class="e-hw-row__series text--muffled">${esc(hw.series?.name || '-')}</span>
+            <span class="e-hw-row__toy-number text--muffled">${esc(hw.toyNumber || '-')}</span>
             <span class="e-hw-row__date text--muffled">${formatDate(collectedAt)}</span>
-            <button class="a-button a-button--danger remove-hotwheel-btn" data-id="${hw._id}" data-collection-id="${collectionId}">Remove</button>
+            <button class="a-button a-button--danger remove-hotwheel-btn" data-id="${esc(hw._id)}" data-collection-id="${esc(collectionId)}">Remove</button>
         `;
 
         li.querySelector('.remove-hotwheel-btn').addEventListener('click', handleRemove);
@@ -184,13 +189,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         hwPreview.innerHTML = `
             <div class="m-hw-add__preview-image">
-                <img src="${hw.photoUrl || '/images/default.jpg'}" alt="${hw.name}">
+                <img src="${esc(hw.photoUrl || '/images/default.jpg')}" alt="${esc(hw.name)}">
                 ${buildBadgeHTML(hw.extra)}
             </div>
             <div class="m-hw-add__preview-body">
-                <p class="m-hw-add__preview-name">${hw.name}</p>
-                <p class="text--muffled">${hw.series?.name || 'Unknown Series'}</p>
-                <p class="text--muffled">${[hw.toyNumber, hw.year].filter(Boolean).join(' · ')}</p>
+                <p class="m-hw-add__preview-name">${esc(hw.name)}</p>
+                <p class="text--muffled">${esc(hw.series?.name || 'Unknown Series')}</p>
+                <p class="text--muffled">${esc([hw.toyNumber, hw.year].filter(Boolean).join(' · '))}</p>
                 ${owned > 0 ? `<p class="m-hw-add__owned">×${owned} already in collection</p>` : ''}
             </div>
             <div class="m-hw-add__preview-actions">
@@ -272,10 +277,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const ownedTag = owned > 0 ? `<span class="a-search__item-owned">×${owned} owned</span>` : '';
             return `
                 <div class="a-search__item" data-index="${i}">
-                    <img src="${hw.photoUrl || '/images/default.jpg'}" class="a-search__item-thumb" alt="${hw.name}">
+                    <img src="${esc(hw.photoUrl || '/images/default.jpg')}" class="a-search__item-thumb" alt="${esc(hw.name)}">
                     <div class="a-search__item-info">
-                        <span class="a-search__item-name">${hw.name}</span>
-                        <span class="a-search__item-id">${hw.toyNumber || ''} · ${hw.series?.name || ''}</span>
+                        <span class="a-search__item-name">${esc(hw.name)}</span>
+                        <span class="a-search__item-id">${esc(hw.toyNumber || '')} · ${esc(hw.series?.name || '')}</span>
                     </div>
                     ${ownedTag}
                 </div>

@@ -28,7 +28,6 @@ router.get("/dashboard", isAuthenticated, async (req, res) => {
         if (!user) {
             return res.redirect("/login"); // Should not happen with isAuthenticated, but as a safeguard
         }
-        console.log("Dashboard user object:", user);
 
         const collections = await CollectionService.getCollectionsWithHotwheels({ owner: user._id });
         res.render("site/dashboard", { user, collections, error: null });

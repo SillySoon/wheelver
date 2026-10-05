@@ -1,6 +1,7 @@
 // src/routes/userRoutes.ts
 import { Router } from 'express';
 import * as userController from '../controllers/userController';
+import { isAdmin, isOwner, isOwnerOrAdmin } from '../middleware/authMiddleware';
 
 const router: Router = Router();
 
@@ -12,10 +13,10 @@ router.get('/me', (req, res) => {
         res.status(401).json({ message: "Not authenticated" });
     }
 });
-router.post('/', userController.createUser);
+router.post('/', isAdmin, userController.createUser);
 router.get('/', userController.getUsers);
 router.get('/:id', userController.getUser);
-router.put('/:id', userController.updateUser);
-router.delete('/:id', userController.deleteUser);
+router.put('/:id', isOwner, userController.updateUser);
+router.delete('/:id', isOwnerOrAdmin, userController.deleteUser);
 
 export default router;

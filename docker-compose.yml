@@ -3,11 +3,13 @@ services:
   app:
     build: .
     ports:
-      - "3005:3000"
+      - "3000:3000"
     environment:
-      - PORT=${PORT}
+      - PORT=3000
       - MONGODB_URI=${MONGODB_URI}
       - DISCORD_SECRET=${DISCORD_SECRET}
       - DISCORD_CLIENT_ID=${DISCORD_CLIENT_ID}
       - DISCORD_CALLBACK_URL=${DISCORD_CALLBACK_URL}
       - SESSION_SECRET=${SESSION_SECRET}
+      - ADMIN_DISCORD_IDS=${ADMIN_DISCORD_IDS}
+      - NODE_ENV=${NODE_ENV:-development}

@@ -54,5 +54,29 @@ function showError(message) {
     }
 }
 
+async function handleDeleteAccount() {
+    const pathParts = window.location.pathname.split('/');
+    const userId = pathParts[pathParts.length - 1];
+
+    if (!confirm('Delete your account and all collections permanently? This cannot be undone.')) {
+        return;
+    }
+
+    showError('');
+    try {
+        const response = await fetch(`/api/user/${userId}`, { method: 'DELETE' });
+        if (response.ok) {
+            window.location.href = '/';
+        } else {
+            const data = await response.json();
+            showError(data.message || 'Failed to delete account');
+        }
+    } catch (error) {
+        console.error(error);
+        showError('An error occurred while deleting the account');
+    }
+}
+
 document.getElementById('edit-user-form').addEventListener('submit', handleFormSubmit);
+document.getElementById('delete-account-btn').addEventListener('click', handleDeleteAccount);
 fetchUserData();

@@ -1,7 +1,8 @@
 // src/routes/authRoutes.ts
 import { Router } from 'express';
 import passport from 'passport';
-import User from '../models/User';
+import * as UserService from '../services/userService';
+import { isValidUsername } from '../utils/validation';
 import { IUser } from '../interfaces/IUser';
 
 const router = Router();
@@ -44,13 +45,12 @@ router.post('/register', async (req, res) => {
     }
 
     const { username } = req.body;
-    if (!username || username.length < 3) {
-        return res.redirect('/auth/register?error=Username too short');
+    if (!isValidUsername(username)) {
+        return res.redirect('/auth/register?error=' + encodeURIComponent('Username must be 3-20 characters (letters, numbers, _)'));
     }
 
     try {
-        const existingUser = await User.findOne({ username: username.toLowerCase() });
-        if (existingUser) {
+        if (await UserService.isUsernameTaken(username)) {
             return res.redirect('/auth/register?error=Username already taken');
         }
 
@@ -78,7 +78,7 @@ router.get('/login', (req, res) => {
 });
 
 // Logout route
-router.get('/logout', (req, res, next) => {
+router.post('/logout', (req, res, next) => {
     req.logout((err) => {
         if (err) { return next(err); }
         res.redirect('/');

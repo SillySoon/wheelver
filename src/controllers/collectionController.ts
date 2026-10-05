@@ -14,10 +14,11 @@ export const createCollection = asyncHandler(async (req: Request, res: Response)
     logRequest("POST /collection");
     try {
         const { name } = req.body;
-        if (name && !isValidCollectionName(name)) {
+        if (typeof name !== "string" || !isValidCollectionName(name)) {
             return res.status(400).json({ message: "Invalid collection name. Only letters, numbers, spaces, -, _, and & are allowed." });
         }
-        const collection = await CollectionService.createCollection(req.body);
+        // Owner always comes from the session, never from the request body
+        const collection = await CollectionService.createCollection({ name, owner: (req.user as any)._id });
         return res.status(201).json(collection);
     } catch (error: any) {
         logWarning(`Error creating collection: ${error.message}`);
@@ -70,10 +71,11 @@ export const updateCollection = asyncHandler(async (req: Request, res: Response)
 
     try {
         const { name } = req.body;
-        if (name && !isValidCollectionName(name)) {
+        if (typeof name !== "string" || !isValidCollectionName(name)) {
             return res.status(400).json({ message: "Invalid collection name. Only letters, numbers, spaces, -, _, and & are allowed." });
         }
-        const collection = await CollectionService.updateCollection(req.params.id as string, req.body);
+        // Only the name may be changed here; entries go through the hotwheel sub-routes
+        const collection = await CollectionService.updateCollection(req.params.id as string, { name });
         if (!collection) {
             return res.status(404).json({ message: "Collection not found" });
         }

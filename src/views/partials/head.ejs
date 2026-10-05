@@ -35,3 +35,7 @@
 
 <link rel="icon" href="/images/favicon.ico">
 <link rel="stylesheet" href="/css/main.css">
+<% if (locals.csrfToken) { %>
+<meta name="csrf-token" content="<%= locals.csrfToken %>">
+<script src="/js/csrf.js"></script>
+<% } %>

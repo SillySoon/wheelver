@@ -46,7 +46,7 @@ export const getUser = async (id: string) => {
 export const updateUser = async (id: string, userData: any) => {
     logRequest(`Updating user with id ${id}`);
     try {
-        return await User.findByIdAndUpdate(id, userData, { new: true });
+        return await User.findByIdAndUpdate(id, userData, { new: true, runValidators: true });
     } catch (error: any) {
         throw new Error(`Failed to update user: ${error.message}`);
     }
@@ -55,8 +55,20 @@ export const updateUser = async (id: string, userData: any) => {
 export const deleteUser = async (id: string) => {
     logRequest(`Deleting user with id ${id}`);
     try {
+        // Remove the user's collections too, so no orphaned data stays behind
+        await Collection.deleteMany({ owner: id });
         return await User.findByIdAndDelete(id);
     } catch (error: any) {
         throw new Error(`Failed to delete user: ${error.message}`);
     }
+};
+
+export const isUsernameTaken = async (username: string, excludeUserId?: string) => {
+    const filter: any = { username };
+    if (excludeUserId) {
+        filter._id = { $ne: excludeUserId };
+    }
+    // Case-insensitive match so "Silly" and "silly" cannot both exist
+    const existing = await User.findOne(filter).collation({ locale: "en", strength: 2 });
+    return !!existing;
 };

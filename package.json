@@ -4,7 +4,7 @@
   "description": "A collection website for HotWheels Collectors",
   "main": "dist/server.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "dev": "tsx watch src/server.ts",
     "build": "tsc && cp -r src/views dist/views && cp -r public dist/public",
     "start": "node dist/server.js"
   },
@@ -21,7 +21,6 @@
   },
   "homepage": "https://github.com/SillySoon/wheelver#readme",
   "devDependencies": {
-    "@types/cors": "^2.8.19",
     "@types/ejs": "^3.1.5",
     "@types/express": "^5.0.6",
     "@types/express-session": "^1.18.2",
@@ -29,16 +28,16 @@
     "@types/node": "^25.2.1",
     "@types/passport": "^1.0.17",
     "@types/passport-oauth2": "^1.8.0",
-    "ts-node": "^10.9.2",
-    "ts-node-dev": "^2.0.0",
+    "tsx": "^4.23.15",
     "typescript": "^5.9.3"
   },
   "dependencies": {
-    "cors": "^2.8.6",
+    "connect-mongo": "^6.0.0",
     "discord-strategy": "^2.5.0",
     "dotenv": "^17.2.4",
     "ejs": "^4.0.1",
     "express": "^5.2.1",
+    "express-rate-limit": "^8.7.0",
     "express-session": "^1.19.0",
     "helmet": "^8.1.0",
     "mongoose": "^9.1.6",

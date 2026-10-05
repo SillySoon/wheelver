@@ -33,6 +33,16 @@
     gap: 1rem;
 }
 
+#auth-links {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.m-header__logout {
+    margin: 0;
+}
+
 .m-header--colorful {
     background-color: var(--text-colorful);
 }

@@ -21,10 +21,14 @@
             </form>
         <% } %>
         <div id="auth-links">
-            <% if (user) { %>
+            <% if (locals.authUser) { %>
                 <a href="/dashboard" id="dashboard-link">
                     <button class="a-button">Dashboard</button>
                 </a>
+                <form action="/auth/logout" method="POST" class="m-header__logout">
+                    <input type="hidden" name="_csrf" value="<%= locals.csrfToken || '' %>">
+                    <button type="submit" class="a-button">Logout</button>
+                </form>
             <% } else { %>
                 <a href="/auth/login" id="login-link">
                     <button class="a-button">Login</button>
